@@ -6,6 +6,10 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <InvariantGlobalization>true</InvariantGlobalization>
+
+        <DebugType>embedded</DebugType>
+        <SelfContained>true</SelfContained>
+        <PublishSingleFile>true</PublishSingleFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -19,4 +23,11 @@
       </None>
     </ItemGroup>
 
+    <Target Name="ZipPublish" AfterTargets="Publish">
+        <ZipDirectory 
+                Overwrite="true"
+                SourceDirectory="$(PublishDir)"
+                DestinationFile="$(PublishDir)\..\agent.zip" />
+    </Target>
+    
 </Project>
