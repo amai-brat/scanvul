@@ -109,7 +109,7 @@ internal static class Program
         }
         catch (Exception ex)
         {
-            return Result.Failure($"Error when installing agent to path {path.FullName}: {ex.Message}");
+            return Result.Failure($"Error when installing agent to path {path.FullName}", ex);
         }
     }
 
@@ -131,7 +131,7 @@ internal static class Program
         }
         catch (Exception ex)
         {
-            return Result.Failure<Guid>($"Error when registering agent on server: {ex.Message}");
+            return Result.Failure<Guid>($"Error when registering agent on server", ex);
         }
     }
 
@@ -159,7 +159,7 @@ internal static class Program
         }
         catch (Exception ex)
         {
-            return Result.Failure($"Error when creating {AppSettingsFileName}: {ex.Message}");
+            return Result.Failure($"Error when creating {AppSettingsFileName}", ex);
         }
     }
 }

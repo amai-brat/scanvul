@@ -17,11 +17,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Condition="$([MSBuild]::IsOSPlatform('Windows'))" 
+        <EmbeddedResource Condition="$(RuntimeIdentifier.StartsWith('win'))" 
                           Include="$(MSBuildThisFileDirectory)..\ScanVul.Agent\bin\Release\net9.0\win-x64\agent.zip" >
             <LogicalName>agent.win64.zip</LogicalName>
         </EmbeddedResource>
-        <EmbeddedResource Condition="$([MSBuild]::IsOSPlatform('Linux'))" 
+        <EmbeddedResource Condition="$(RuntimeIdentifier.StartsWith('linux'))" 
                           Include="$(MSBuildThisFileDirectory)..\ScanVul.Agent\bin\Release\net9.0\linux-x64\agent.zip">
             <LogicalName>agent.linux.zip</LogicalName>
         </EmbeddedResource>
