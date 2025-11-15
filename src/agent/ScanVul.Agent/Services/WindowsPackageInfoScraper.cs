@@ -35,7 +35,7 @@ public class WindowsPackageInfoScraper(ILogger<WindowsPackageInfoScraper> logger
         
         foreach (var error in ps.Streams.Error)
         {
-            logger.LogWarning("Error when scraping packages: {Error} : {StackTrace}", error.Exception.Message, error.Exception.StackTrace);
+            logger.LogWarning(error.Exception, "Error when scraping packages");
         }
 
         var result=  packages

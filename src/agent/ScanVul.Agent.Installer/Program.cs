@@ -12,14 +12,14 @@ internal static class Program
     
     public static int Main(string[] args)
     {
-        IPlatformInstallerFactory factory = OperatingSystem.IsWindows() 
-            ? new WindowsInstallerFactory() 
-            : new LinuxInstallerFactory(); 
+        IPlatformInstaller installer = OperatingSystem.IsWindows() 
+            ? new WindowsInstaller() 
+            : new LinuxInstaller();
 
         Option<DirectoryInfo> pathOption = new("--path")
         {
             Description = "Installation path",
-            DefaultValueFactory = _ => factory.DefaultInstallationPath
+            DefaultValueFactory = _ => installer.DefaultInstallationPath
         };
 
         Option<Uri> addressOption = new("--server")
@@ -47,7 +47,7 @@ internal static class Program
             var path = parseResult.GetRequiredValue(pathOption);
             
             Console.WriteLine($"Installing to {path}...");
-            var installResult = await InstallAgentAsync(path, factory.AgentZipResourceName, ct);
+            var installResult = await InstallAgentAsync(path, installer.AgentZipResourceName, ct);
             if (installResult.IsFailure)
             {
                 Console.WriteLine(installResult.Error);
@@ -67,6 +67,14 @@ internal static class Program
             if (settingsResult.IsFailure)
             {
                 Console.WriteLine(settingsResult.Error);
+                return;
+            }
+            
+            Console.WriteLine("Adding agent to autostart...");
+            var autostartResult = installer.AddAgentToAutoStart(path);
+            if (autostartResult.IsFailure)
+            {
+                Console.WriteLine(autostartResult.Error);
                 return;
             }
             

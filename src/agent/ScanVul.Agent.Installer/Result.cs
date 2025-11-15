@@ -28,7 +28,7 @@ public class Result
     
     public static Result Failure(string error) => new(false, error);
     
-    public static Result<TValue> Failure<TValue>(string error) => new(default, false, null);
+    public static Result<TValue> Failure<TValue>(string error) => new(default, false, error);
 }
 
 public class Result<TValue> : Result
