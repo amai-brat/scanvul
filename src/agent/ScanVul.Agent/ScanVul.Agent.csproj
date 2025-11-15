@@ -12,12 +12,12 @@
         <PublishSingleFile>true</PublishSingleFile>
     </PropertyGroup>
     
-    <ItemGroup Condition="$([MSBuild]::IsOsPlatform('Windows'))">
-        <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.5.4"/>
+    <ItemGroup Condition="$(RuntimeIdentifier.StartsWith('win'))">
+        <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.6.0-preview.3" />
     </ItemGroup>
     
     <ItemGroup>
-        <PackageReference Include="System.Management.Automation" Version="7.5.4"/>
+        <PackageReference Include="System.Management.Automation" Version="7.6.0-preview.3" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
     </ItemGroup>
 
