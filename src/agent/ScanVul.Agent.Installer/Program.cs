@@ -71,7 +71,7 @@ internal static class Program
             }
             
             Console.WriteLine("Adding agent to autostart...");
-            var autostartResult = await installer.AddAgentToAutoStartAsync(path);
+            var autostartResult = await installer.AddAgentToAutoStartAsync(path, ct);
             if (autostartResult.IsFailure)
             {
                 Console.WriteLine(autostartResult.Error);

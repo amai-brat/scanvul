@@ -32,6 +32,7 @@ builder.Services.Configure<TimeoutOptions>(builder.Configuration.GetSection("Tim
 
 builder.Services.AddScoped<WindowsPackageInfoScraper>();
 
+builder.Services.AddSystemd();
 builder.Services.AddWindowsService(options =>
 {
     options.ServiceName = "ScanVul.Agent service";
