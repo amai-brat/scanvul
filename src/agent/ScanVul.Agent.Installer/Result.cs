@@ -27,9 +27,9 @@ public class Result
     public static Result<TValue> Success<TValue>(TValue value) => new(value, true, null);
     
     public static Result Failure(string error) => new(false, error);
-    public static Result Failure(string error, Exception exception) => new(false, $"{error}\n\n{exception}");
+    public static Result Failure(string error, params List<Exception> exceptions) => new(false, $"{error}\n\n{string.Join("\n\n", exceptions)}");
     public static Result<TValue> Failure<TValue>(string error) => new(default, false, error);
-    public static Result<TValue> Failure<TValue>(string error, Exception exception) => new(default, false, $"{error}\n\n{exception}");
+    public static Result<TValue> Failure<TValue>(string error, params List<Exception> exceptions) => new(default, false, $"{error}\n\n{string.Join("\n\n", exceptions)}");
 
 }
 
