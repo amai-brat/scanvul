@@ -9,21 +9,25 @@ public class MainService(
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await using var scope = scopeFactory.CreateAsyncScope();
-
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<MainService>>();
-        var scraper = scope.ServiceProvider.GetRequiredService<WindowsPackageInfoScraper>();
-
-        try
+        while (!stoppingToken.IsCancellationRequested)
         {
-            var result = await scraper.ScrapeAsync(stoppingToken);
-            // TODO: send to server
-        }
-        catch (Exception ex)
-        {
-            logger.LogWarning(ex, "Error when scraping and sending packages");
-        }
+            await using var scope = scopeFactory.CreateAsyncScope();
+
+            var logger = scope.ServiceProvider.GetRequiredService<ILogger<MainService>>();
+            var scraper = scope.ServiceProvider.GetRequiredService<WindowsPackageInfoScraper>();
+            
+            try
+            {
+                var result = await scraper.ScrapeAsync(stoppingToken);
+                logger.LogInformation("Found {Count} packages at {Time}", result.Count, DateTimeOffset.Now);
+                // TODO: send to server
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Error when scraping and sending packages at {Time}", DateTimeOffset.Now);
+            }
         
-        await Task.Delay(optionsMonitor.CurrentValue.PackagesScraping, stoppingToken);
+            await Task.Delay(optionsMonitor.CurrentValue.PackagesScraping, stoppingToken);
+        }
     }
 }
