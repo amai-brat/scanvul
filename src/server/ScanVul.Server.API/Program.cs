@@ -25,6 +25,8 @@ builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
+await Migrator.MigrateAsync(app.Services);
+
 app.UseFastEndpoints(c =>
 {
     c.Versioning.Prefix = "v";

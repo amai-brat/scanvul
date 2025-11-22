@@ -1,3 +1,5 @@
+using JetBrains.Annotations;
+
 namespace ScanVul.Server.Domain.Entities;
 
 public class Agent
@@ -8,8 +10,12 @@ public class Agent
     public DateTime LastPingAt { get; set; }
     public DateTime LastPackagesScrapingAt { get; set; }
 
-    public Computer Computer { get; set; }
+    public long ComputerId { get; set; }
+    public Computer Computer { get; set; } = null!;
 
+    [UsedImplicitly]
+    private Agent(){}
+    
     public Agent(Computer computer)
     {
         Token = Guid.CreateVersion7();

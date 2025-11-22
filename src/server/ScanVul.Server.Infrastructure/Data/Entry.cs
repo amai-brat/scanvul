@@ -10,6 +10,7 @@ public static class Entry
         services.AddDbContext<AppDbContext>(b =>
         {
             b.UseNpgsql(connectionString);
+            b.UseSnakeCaseNamingConvention();
         });
 
         return services;
