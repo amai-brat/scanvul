@@ -1,15 +1,41 @@
+using FastEndpoints;
+using FastEndpoints.Swagger;
 using ScanVul.Server.Application;
 using ScanVul.Server.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddFeatures();
+builder.Services
+    .AddFeatures()
+    .SwaggerDocument(o =>
+    {
+        o.ShortSchemaNames = true;
+        o.MinEndpointVersion = 1;
+        o.MaxEndpointVersion = 1;
+        o.AutoTagPathSegmentIndex = 0;
+        o.DocumentSettings = s =>
+        {
+            s.Title = "ScanVul Server API";
+            s.Version = "v1";
+        };
+    });
 builder.Services.AddData(builder.Configuration.GetConnectionString("Postgres") 
                          ?? throw new InvalidOperationException("Connections string to postgres not found"));
+builder.Services.AddProblemDetails();
+
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+app.UseFastEndpoints(c =>
+{
+    c.Versioning.Prefix = "v";
+    c.Versioning.RouteTemplate = "{apiVersion}";
+});
 
-app.MapPost("/api/v1/agents/register", () => Results.Ok(new { token = Guid.CreateVersion7() }));
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwaggerGen();
+}
+
+app.MapGet("/", () => "Hello World!");
 
 app.Run();

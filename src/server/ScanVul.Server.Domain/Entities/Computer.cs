@@ -19,7 +19,7 @@ public class Computer
     
     public string? Name { get; set; }
     public int? MemoryInMb { get; set; }
-    public string? Cpu { get; set; }
+    public string? CpuName { get; set; }
 
     public List<PackageInfo> Packages { get; set; } = [];
 }
