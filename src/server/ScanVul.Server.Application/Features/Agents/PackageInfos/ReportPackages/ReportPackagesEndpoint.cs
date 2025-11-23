@@ -2,6 +2,8 @@ using System.Net;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using ScanVul.Contracts;
+using ScanVul.Contracts.PackageInfos;
 using ScanVul.Server.Domain.Entities;
 using ScanVul.Server.Domain.Repositories;
 

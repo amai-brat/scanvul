@@ -10,6 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\ScanVul.Contracts\ScanVul.Contracts.csproj" />
       <ProjectReference Include="..\ScanVul.Server.Domain\ScanVul.Server.Domain.csproj" />
     </ItemGroup>
 

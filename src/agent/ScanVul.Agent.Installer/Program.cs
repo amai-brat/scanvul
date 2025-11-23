@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Reflection;
 using System.Text.Json;
 using ScanVul.Agent.Installer.PlatformInstallers;
+using ScanVul.Contracts.Agents;
 
 namespace ScanVul.Agent.Installer;
 
@@ -72,11 +73,8 @@ internal static class Program
             Console.WriteLine($"{osVersionResult.Value ?? "unknown"}");
             
             Console.WriteLine($"Registering agent on server {serverAddress}...");
-            var tokenResult = await RegisterAgentAsync(serverAddress, new RegisterAgentRequest
-            {
-                OperatingSystemName = osNameResult.Value,
-                OperatingSystemVersion = osVersionResult.Value
-            }, ct);
+            var tokenResult = await RegisterAgentAsync(serverAddress, 
+                new Contracts.Agents.RegisterAgentRequest(osNameResult.Value, osVersionResult.Value), ct);
             if (tokenResult.IsFailure)
             {
                 Console.WriteLine(tokenResult.Error);
@@ -134,7 +132,7 @@ internal static class Program
         }
     }
 
-    private static async Task<Result<Guid>> RegisterAgentAsync(Uri serverAddress, RegisterAgentRequest request, CancellationToken ct = default)
+    private static async Task<Result<Guid>> RegisterAgentAsync(Uri serverAddress, Contracts.Agents.RegisterAgentRequest request, CancellationToken ct = default)
     {
         try
         {
@@ -148,8 +146,8 @@ internal static class Program
             if (!response.IsSuccessStatusCode)
                 return Result.Failure<Guid>(response.ReasonPhrase ?? "Error");
         
-            var resp = await response.Content.ReadFromJsonAsync<RegisterResponse>(
-                RegisterResponseContext.Default.RegisterResponse, 
+            var resp = await response.Content.ReadFromJsonAsync<Contracts.Agents.RegisterAgentResponse>(
+                RegisterAgentResponseContext.Default.RegisterAgentResponse, 
                 cancellationToken: ct);
             return resp!.Token;
         }

@@ -3,6 +3,8 @@ using FastEndpoints;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Logging;
+using ScanVul.Contracts;
+using ScanVul.Contracts.Agents;
 using ScanVul.Server.Application.Helpers;
 using ScanVul.Server.Domain.Entities;
 using ScanVul.Server.Domain.Repositories;
@@ -13,7 +15,7 @@ public class RegisterEndpoint(
     ILogger<RegisterEndpoint> logger,
     IAgentRepository agentRepository,
     IUnitOfWork unitOfWork) 
-    : Endpoint<RegisterRequest, Results<Ok<RegisterResponse>, ProblemDetails>>
+    : Endpoint<RegisterAgentRequest, Results<Ok<RegisterAgentResponse>, ProblemDetails>>
 {
     public override void Configure()
     {
@@ -24,13 +26,13 @@ public class RegisterEndpoint(
         {
             s.Summary = "Register agent";
             s.Description = "Register agent and return token that will be used to identify agent";
-            s.ExampleRequest = new RegisterRequest("Windows 10", "22H2");
+            s.ExampleRequest = new RegisterAgentRequest("Windows 10", "22H2");
         });
         Description(x => x.WithTags("Agents"));
     }
 
-    public override async Task<Results<Ok<RegisterResponse>, ProblemDetails>> ExecuteAsync(
-        RegisterRequest req, 
+    public override async Task<Results<Ok<RegisterAgentResponse>, ProblemDetails>> ExecuteAsync(
+        RegisterAgentRequest req, 
         CancellationToken ct)
     {
         if (HttpContext.Connection.RemoteIpAddress != null)
@@ -51,6 +53,6 @@ public class RegisterEndpoint(
 
         await unitOfWork.SaveChangesAsync(ct);
         
-        return TypedResults.Ok(new RegisterResponse(agent.Token.ToString()));
+        return TypedResults.Ok(new RegisterAgentResponse(agent.Token));
     }
 }

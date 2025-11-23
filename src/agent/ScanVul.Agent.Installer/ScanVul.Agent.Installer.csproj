@@ -31,4 +31,8 @@
             <LogicalName>agent.linux.zip</LogicalName>
         </EmbeddedResource>
     </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\..\ScanVul.Contracts\ScanVul.Contracts.csproj" />
+    </ItemGroup>
 </Project>

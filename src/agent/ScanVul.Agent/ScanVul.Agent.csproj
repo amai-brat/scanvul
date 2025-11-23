@@ -30,6 +30,10 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\ScanVul.Contracts\ScanVul.Contracts.csproj" />
+    </ItemGroup>
+
     <Target Name="ZipPublish" AfterTargets="Publish">
         <ZipDirectory 
                 Overwrite="true"
