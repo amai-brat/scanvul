@@ -16,6 +16,7 @@ public static class Entry
         });
 
         services.AddScoped<IAgentRepository, AgentRepository>();
+        services.AddScoped<IPackageInfoRepository, PackageInfoRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         
         return services;

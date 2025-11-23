@@ -1,0 +1,100 @@
+using System.Net;
+using FastEndpoints;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using ScanVul.Server.Domain.Entities;
+using ScanVul.Server.Domain.Repositories;
+
+namespace ScanVul.Server.Application.Features.Agents.PackageInfos.ReportPackages;
+
+public class ReportPackagesEndpoint(
+    IAgentRepository agentRepository,
+    IPackageInfoRepository packageInfoRepository,
+    IUnitOfWork unitOfWork) 
+    : Endpoint<ReportPackagesRequest, Results<Ok, ProblemDetails>>
+{
+    public override void Configure()
+    {
+        Version(1);
+        Post("api/{apiVersion}/agents/packages/report");
+        AllowAnonymous();
+        Summary(s =>
+        {
+            s.Summary = "Report agent's computer packages";
+            s.Description = "Report agent's computer packages";
+            s.ExampleRequest = new ReportPackagesRequest(Guid.Empty, [
+                new PackageInfoDto("7-Zip", "24.09"),
+                new PackageInfoDto("firefox", "145.0.1-1"),
+            ]);
+        });
+        Description(x => x.WithTags("Agents"));
+    }
+    
+    public override async Task<Results<Ok, ProblemDetails>> ExecuteAsync(
+        ReportPackagesRequest req, 
+        CancellationToken ct)
+    {
+        var agent = await agentRepository.GetByTokenWithComputerPackagesAsync(req.AgentToken, ct);
+        if (agent == null)
+        {
+            AddError(x => x.AgentToken, "Agent not found");
+            return new ProblemDetails(ValidationFailures, statusCode: (int) HttpStatusCode.Unauthorized);
+        }
+        
+        var incomingDtos = req.Packages
+            .Select(p => new { 
+                Name = p.Name.Trim().ToLowerInvariant(),
+                Version = p.Version.Trim().ToLowerInvariant()
+            })
+            .DistinctBy(x => x.Name)
+            .ToList();
+        
+        var currentlyLinkedPackages = agent.Computer.Packages;
+        
+        // remove
+        var packagesToUnlink = currentlyLinkedPackages
+            .Where(existing => !incomingDtos.Any(inc => 
+                inc.Name == existing.Name && 
+                inc.Version == existing.Version))
+            .ToList();
+        foreach (var pkg in packagesToUnlink)
+        {
+            currentlyLinkedPackages.Remove(pkg);
+        }
+
+        // add
+        var newLinksNeeded = incomingDtos
+            .Where(inc => !currentlyLinkedPackages.Any(existing => 
+                existing.Name == inc.Name && 
+                existing.Version == inc.Version))
+            .ToList();
+
+        if (newLinksNeeded.Count != 0)
+        {
+            var namesToLookUp = newLinksNeeded.Select(x => x.Name).ToList();
+            
+            var potentialMatches = await packageInfoRepository.GetAsync(
+                x => namesToLookUp.Contains(x.Name), ct);
+
+            foreach (var dto in newLinksNeeded)
+            {
+                var existingEntity = potentialMatches
+                    .FirstOrDefault(p => p.Name == dto.Name && p.Version == dto.Version);
+
+                if (existingEntity != null)
+                {
+                    currentlyLinkedPackages.Add(existingEntity);
+                }
+                else
+                {
+                    var newEntity = new PackageInfo(dto.Name, dto.Version);
+                    currentlyLinkedPackages.Add(newEntity);
+                }
+            }
+        }
+        
+        await unitOfWork.SaveChangesAsync(ct);
+        
+        return TypedResults.Ok();
+    }
+}

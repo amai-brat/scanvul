@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using ScanVul.Server.Domain.Entities;
 using ScanVul.Server.Domain.Repositories;
 
@@ -9,5 +10,14 @@ public class AgentRepository(AppDbContext dbContext) : IAgentRepository
     {
         var entry = dbContext.Agents.Add(agent);
         return Task.FromResult(entry.Entity);
+    }
+
+    public async Task<Agent?> GetByTokenWithComputerPackagesAsync(Guid token, CancellationToken ct = default)
+    {
+        var agent = await dbContext.Agents
+            .Include(x => x.Computer)
+                .ThenInclude(x => x.Packages)
+            .FirstOrDefaultAsync(x => x.Token == token, cancellationToken: ct);
+        return agent;
     }
 }
