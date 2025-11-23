@@ -3,6 +3,7 @@ using System.IO.Compression;
 using System.Net.Http.Json;
 using System.Reflection;
 using System.Text.Json;
+using ScanVul.Agent.Installer.PlatformInstallers;
 
 namespace ScanVul.Agent.Installer;
 
@@ -12,9 +13,7 @@ internal static class Program
     
     public static int Main(string[] args)
     {
-        IPlatformInstaller installer = OperatingSystem.IsWindows() 
-            ? new WindowsInstaller() 
-            : new LinuxInstaller();
+        var installer = new PlatformInstaller();
 
         Option<DirectoryInfo> pathOption = new("--path")
         {
