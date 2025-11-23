@@ -53,23 +53,23 @@ internal static class Program
                 return;
             }
 
-            Console.WriteLine("Determining OS name...");
+            Console.Write("Determining OS name... ");
             var osNameResult = await installer.GetOsNameAsync(ct);
             if (osNameResult.IsFailure)
             {
                 Console.WriteLine(osNameResult.Error);
                 return;
             }
-            Console.WriteLine($"OS name: {osNameResult.Value}");
+            Console.WriteLine($"{osNameResult.Value}");
             
-            Console.WriteLine("Determining OS version...");
-            var osVersionResult = await installer.GetOsNameAsync(ct);
+            Console.Write("Determining OS version... ");
+            var osVersionResult = await installer.GetOsVersionAsync(ct);
             if (osVersionResult.IsFailure)
             {
                 Console.WriteLine(osVersionResult.Error);
                 return;
             }
-            Console.WriteLine($"OS version: {osVersionResult.Value}");
+            Console.WriteLine($"{osVersionResult.Value ?? "unknown"}");
             
             Console.WriteLine($"Registering agent on server {serverAddress}...");
             var tokenResult = await RegisterAgentAsync(serverAddress, new RegisterAgentRequest
