@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Runtime.Versioning;
+using Microsoft.Win32;
 
 namespace ScanVul.Agent.Installer;
 
@@ -16,8 +18,12 @@ public interface IPlatformInstaller
     /// <param name="path">Agent installation path</param>
     /// <param name="ct"></param>
     Task<Result> AddAgentToAutoStartAsync(DirectoryInfo path, CancellationToken ct = default);
+
+    Task<Result<string>> GetOsNameAsync(CancellationToken ct = default);
+    Task<Result<string?>> GetOsVersionAsync(CancellationToken ct = default);
 }
 
+[SupportedOSPlatform("windows")]
 public class WindowsInstaller : IPlatformInstaller
 {
     private const string ServiceName = "ScanVul.Agent";
@@ -66,8 +72,63 @@ public class WindowsInstaller : IPlatformInstaller
             return Result.Failure("Error when adding agent to services", ex);
         }
     }
+    
+    public Task<Result<string>> GetOsNameAsync(CancellationToken ct = default)
+    {
+        try
+        {
+            using var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion");
+            
+            if (key == null)
+                return Task.FromResult(Result.Failure<string>("Registry key not found"));
+
+            var productName = key.GetValue("ProductName")?.ToString() ?? "Windows";
+
+            // FIX: Windows 11 often still reports "Windows 10" in the ProductName registry key.
+            // We check the build number to manually correct this for display purposes.
+            var currentBuild = Environment.OSVersion.Version.Build;
+            if (currentBuild >= 22000 && productName.Contains("Windows 10"))
+            {
+                productName = productName.Replace("Windows 10", "Windows 11");
+            }
+
+            return Task.FromResult(Result.Success(productName));
+        }
+        catch (Exception ex)
+        {
+            return Task.FromResult(Result.Failure<string>($"Failed to read Windows Name: {ex.Message}"));
+        }
+    }
+
+    public Task<Result<string?>> GetOsVersionAsync(CancellationToken ct = default)
+    {
+        try
+        {
+            using var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion");
+            
+            if (key == null)
+                return Task.FromResult(Result.Failure<string?>("Registry key not found."));
+
+            // "DisplayVersion" holds values like "22H2". 
+            // On older Windows 10 versions, this was "ReleaseId".
+            var displayVersion = key.GetValue("DisplayVersion")?.ToString();
+            
+            if (string.IsNullOrEmpty(displayVersion))
+            {
+                // Fallback for older Windows 10
+                displayVersion = key.GetValue("ReleaseId")?.ToString();
+            }
+
+            return Task.FromResult(Result.Success(displayVersion));
+        }
+        catch (Exception ex)
+        {
+            return Task.FromResult(Result.Failure<string?>($"Failed to read Windows Version: {ex.Message}"));
+        }
+    }
 }
 
+[SupportedOSPlatform("linux")]
 public class LinuxInstaller : IPlatformInstaller
 {
     private const string SystemdUnitFileName = "scanvul-agent.service";
@@ -83,6 +144,7 @@ public class LinuxInstaller : IPlatformInstaller
        [Install]
        WantedBy=multi-user.target
        """;
+    private const string OsReleasePath = "/etc/os-release";
     
     public DirectoryInfo DefaultInstallationPath => new("/opt/scanvul");
     public string AgentZipResourceName => "agent.linux.zip";
@@ -119,6 +181,39 @@ public class LinuxInstaller : IPlatformInstaller
             return Result.Failure("Error when adding agent to services", ex);
         }
     }
+    public async Task<Result<string>> GetOsNameAsync(CancellationToken ct = default)
+    {
+        try
+        {
+            var values = await ParseOsReleaseAsync(ct);
+            if (values.TryGetValue("NAME", out var name) && !string.IsNullOrWhiteSpace(name))
+            {
+                return Result.Success(name);
+            }
+
+            return Result.Failure<string>("NAME key not found in /etc/os-release");
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<string>($"Failed to read Linux OS Name: {ex.Message}");
+        }
+    }
+
+    public async Task<Result<string?>> GetOsVersionAsync(CancellationToken ct = default)
+    {
+        try
+        {
+            var values = await ParseOsReleaseAsync(ct);
+            
+            return values.TryGetValue("VERSION_ID", out var versionId) 
+                ? Result.Success<string?>(versionId) 
+                : Result.Success<string?>(null);
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<string?>($"Failed to read Linux OS Version: {ex.Message}");
+        }
+    }
     
     private static async Task<Result> RunSystemCommandAsync(string command, string arguments, CancellationToken ct = default)
     {
@@ -153,5 +248,32 @@ public class LinuxInstaller : IPlatformInstaller
         {
             return Result.Failure($"Error executing command {command} {arguments}", ex);
         }
+    }
+    
+    private static async Task<Dictionary<string, string>> ParseOsReleaseAsync(CancellationToken ct)
+    {
+        if (!File.Exists(OsReleasePath))
+            throw new FileNotFoundException($"Could not find {OsReleasePath}");
+
+        var lines = await File.ReadAllLinesAsync(OsReleasePath, ct);
+        var result = new Dictionary<string, string>();
+
+        foreach (var line in lines)
+        {
+            if (string.IsNullOrWhiteSpace(line) || !line.Contains('=')) 
+                continue;
+
+            var parts = line.Split('=', 2);
+            var key = parts[0].Trim();
+            var value = parts[1].Trim();
+
+            // Remove quotes if present (e.g., "Ubuntu" -> Ubuntu)
+            if (value.StartsWith('\"') && value.EndsWith('\"'))
+                value = value.Substring(1, value.Length - 2);
+
+            result[key] = value;
+        }
+
+        return result;
     }
 }

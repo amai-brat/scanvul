@@ -53,9 +53,31 @@ internal static class Program
                 Console.WriteLine(installResult.Error);
                 return;
             }
+
+            Console.WriteLine("Determining OS name...");
+            var osNameResult = await installer.GetOsNameAsync(ct);
+            if (osNameResult.IsFailure)
+            {
+                Console.WriteLine(osNameResult.Error);
+                return;
+            }
+            Console.WriteLine($"OS name: {osNameResult.Value}");
+            
+            Console.WriteLine("Determining OS version...");
+            var osVersionResult = await installer.GetOsNameAsync(ct);
+            if (osVersionResult.IsFailure)
+            {
+                Console.WriteLine(osVersionResult.Error);
+                return;
+            }
+            Console.WriteLine($"OS version: {osVersionResult.Value}");
             
             Console.WriteLine($"Registering agent on server {serverAddress}...");
-            var tokenResult = await RegisterAgentAsync(serverAddress, ct);
+            var tokenResult = await RegisterAgentAsync(serverAddress, new RegisterAgentRequest
+            {
+                OperatingSystemName = osNameResult.Value,
+                OperatingSystemVersion = osVersionResult.Value
+            }, ct);
             if (tokenResult.IsFailure)
             {
                 Console.WriteLine(tokenResult.Error);
@@ -113,14 +135,17 @@ internal static class Program
         }
     }
 
-    private static async Task<Result<Guid>> RegisterAgentAsync(Uri serverAddress, CancellationToken ct = default)
+    private static async Task<Result<Guid>> RegisterAgentAsync(Uri serverAddress, RegisterAgentRequest request, CancellationToken ct = default)
     {
         try
         {
             var httpClient = new HttpClient();
             httpClient.BaseAddress = serverAddress;
-
-            var response = await httpClient.PostAsync("/api/v1/agents/register", null, ct);
+            
+            var response = await httpClient.PostAsJsonAsync(
+                "/api/v1/agents/register", 
+                request, 
+                RegisterAgentRequestContext.Default.RegisterAgentRequest, ct);
             if (!response.IsSuccessStatusCode)
                 return Result.Failure<Guid>(response.ReasonPhrase ?? "Error");
         
@@ -131,7 +156,7 @@ internal static class Program
         }
         catch (Exception ex)
         {
-            return Result.Failure<Guid>($"Error when registering agent on server", ex);
+            return Result.Failure<Guid>("Error when registering agent on server", ex);
         }
     }
 
