@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ScanVul.Server.Domain.Repositories;
+using ScanVul.Server.Infrastructure.Data.Repositories;
 
 namespace ScanVul.Server.Infrastructure.Data;
 
@@ -13,6 +15,9 @@ public static class Entry
             b.UseSnakeCaseNamingConvention();
         });
 
+        services.AddScoped<IAgentRepository, AgentRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        
         return services;
     }
 }

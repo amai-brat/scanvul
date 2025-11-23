@@ -5,7 +5,7 @@ namespace ScanVul.Server.Domain.Entities;
 public class Agent
 {
     public long Id { get; set; }
-    public Guid Token { get; }
+    public Guid Token { get; init; }
 
     public DateTime LastPingAt { get; set; }
     public DateTime LastPackagesScrapingAt { get; set; }

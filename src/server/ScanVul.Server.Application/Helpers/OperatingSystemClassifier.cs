@@ -18,5 +18,4 @@ public static class OperatingSystemClassifier
             _ => OperatingSystem.Other
         };
     }
-
 }

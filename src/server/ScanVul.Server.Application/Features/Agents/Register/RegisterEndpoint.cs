@@ -5,12 +5,14 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Logging;
 using ScanVul.Server.Application.Helpers;
 using ScanVul.Server.Domain.Entities;
-using OperatingSystem = ScanVul.Server.Domain.Entities.OperatingSystem;
+using ScanVul.Server.Domain.Repositories;
 
 namespace ScanVul.Server.Application.Features.Agents.Register;
 
 public class RegisterEndpoint(
-    ILogger<RegisterEndpoint> logger) 
+    ILogger<RegisterEndpoint> logger,
+    IAgentRepository agentRepository,
+    IUnitOfWork unitOfWork) 
     : Endpoint<RegisterRequest, Results<Ok<RegisterResponse>, ProblemDetails>>
 {
     public override void Configure()
@@ -31,17 +33,24 @@ public class RegisterEndpoint(
         RegisterRequest req, 
         CancellationToken ct)
     {
-        await Task.CompletedTask;
-
+        if (HttpContext.Connection.RemoteIpAddress != null)
+            logger.LogInformation("Request to register agent from {IpEndpoint}", new IPEndPoint(HttpContext.Connection.RemoteIpAddress, HttpContext.Connection.RemotePort));
+        
         var computer = new Computer(HttpContext.Connection.RemoteIpAddress!)
         {
-            OperatingSystem = OperatingSystemClassifier.Classify(req.OperatingSystemName, req.OperatingSystemVersion)
+            OperatingSystem = OperatingSystemClassifier.Classify(
+                req.OperatingSystemName, 
+                req.OperatingSystemVersion)
         };
 
-        var agent = new Agent(computer);
+        var agent = new Agent(computer)
+        {
+            Token = Guid.CreateVersion7()
+        };
+        await agentRepository.AddAsync(agent, ct);
+
+        await unitOfWork.SaveChangesAsync(ct);
         
-        if (HttpContext.Connection.RemoteIpAddress != null)
-            logger.LogInformation("Request from {IpEndpoint}", new IPEndPoint(HttpContext.Connection.RemoteIpAddress, HttpContext.Connection.RemotePort));
-        return TypedResults.Ok(new RegisterResponse(Guid.CreateVersion7().ToString()));
+        return TypedResults.Ok(new RegisterResponse(agent.Token.ToString()));
     }
 }
