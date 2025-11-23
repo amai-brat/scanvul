@@ -9,5 +9,8 @@ public class PackageInfoConfiguration : IEntityTypeConfiguration<PackageInfo>
     public void Configure(EntityTypeBuilder<PackageInfo> builder)
     {
         builder.HasKey(p => p.Id);
+
+        builder.HasIndex(x => new { x.Name, x.Version })
+            .IsUnique();
     }
 }
