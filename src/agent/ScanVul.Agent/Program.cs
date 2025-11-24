@@ -10,7 +10,7 @@ builder.Services.AddLogging(b =>
 {
     b.ClearProviders();
     
-    b.SetMinimumLevel(LogLevel.Debug);
+    b.SetMinimumLevel(LogLevel.Information);
     b.AddJsonConsole();
     b.AddJsonFile(o =>
     {
@@ -50,6 +50,7 @@ builder.Services.AddWindowsService(options =>
     options.ServiceName = "ScanVul.Agent service";
 });
 builder.Services.AddHostedService<MainService>();
+builder.Services.AddHostedService<HealthCheckService>();
 
 var app = builder.Build();
 app.Run();

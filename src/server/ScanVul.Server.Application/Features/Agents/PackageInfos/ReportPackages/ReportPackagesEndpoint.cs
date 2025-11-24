@@ -98,6 +98,7 @@ public class ReportPackagesEndpoint(
             }
         }
         
+        agent.LastPackagesScrapingAt = DateTime.UtcNow;
         await unitOfWork.SaveChangesAsync(ct);
         
         return TypedResults.Ok();
