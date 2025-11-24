@@ -21,6 +21,10 @@ public static class Entry
             {
                 services.AddTransient<IPackageInfoScraper, ArchLinuxPackageInfoScraper>();
             }
+            else if (File.Exists("/etc/altlinux-release"))
+            {
+                services.AddTransient<IPackageInfoScraper, AltLinuxPackageInfoScraper>();
+            }
         }
 
         return services;
