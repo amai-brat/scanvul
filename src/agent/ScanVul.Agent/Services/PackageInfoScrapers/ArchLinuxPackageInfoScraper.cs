@@ -48,10 +48,18 @@ public class ArchLinuxPackageInfoScraper(ILogger<ArchLinuxPackageInfoScraper> lo
 
                 if (parts.Length == 2)
                 {
+                    var rawVersion = parts[1];
+                    
+                    // remove pkgrel
+                    var hyphenIndex = rawVersion.IndexOf('-');
+                    var cleanVersion = hyphenIndex > 0 
+                        ? rawVersion[..hyphenIndex]
+                        : rawVersion;
+
                     packages.Add(new PackageInfo
                     {
                         Name = parts[0],
-                        Version = parts[1]
+                        Version = cleanVersion
                     });
                 }
                 else
