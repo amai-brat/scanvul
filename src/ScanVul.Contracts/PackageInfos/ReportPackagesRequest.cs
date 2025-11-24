@@ -3,9 +3,13 @@ namespace ScanVul.Contracts.PackageInfos;
 /// <summary>
 /// Request for reporting packages on computer
 /// </summary>
-/// <param name="AgentToken">Token of agent</param>
-/// <param name="Packages">Packages</param>
-public record ReportPackagesRequest(Guid AgentToken, List<PackageInfoDto> Packages);
+public class ReportPackagesRequest
+{
+    /// <summary>
+    /// Packages
+    /// </summary>
+    public required List<PackageInfoDto> Packages { get; init; }
+}
 
 /// <summary>
 /// Package

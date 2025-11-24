@@ -2,7 +2,6 @@ using System.Net;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using ScanVul.Contracts;
 using ScanVul.Contracts.PackageInfos;
 using ScanVul.Server.Domain.Entities;
 using ScanVul.Server.Domain.Repositories;
@@ -13,7 +12,7 @@ public class ReportPackagesEndpoint(
     IAgentRepository agentRepository,
     IPackageInfoRepository packageInfoRepository,
     IUnitOfWork unitOfWork) 
-    : Endpoint<ReportPackagesRequest, Results<Ok, ProblemDetails>>
+    : Endpoint<ReportPackagesRequestWrapper, Results<Ok, ProblemDetails>>
 {
     public override void Configure()
     {
@@ -24,16 +23,20 @@ public class ReportPackagesEndpoint(
         {
             s.Summary = "Report agent's computer packages";
             s.Description = "Report agent's computer packages";
-            s.ExampleRequest = new ReportPackagesRequest(Guid.Empty, [
-                new PackageInfoDto("7-Zip", "24.09"),
-                new PackageInfoDto("firefox", "145.0.1-1"),
-            ]);
+            s.ExampleRequest = new ReportPackagesRequestWrapper
+            {
+                AgentToken = Guid.Empty,
+                Packages = [
+                    new PackageInfoDto("7-Zip", "24.09"),
+                    new PackageInfoDto("firefox", "145.0.1-1"),
+                ]
+            };
         });
         Description(x => x.WithTags("Agents"));
     }
     
     public override async Task<Results<Ok, ProblemDetails>> ExecuteAsync(
-        ReportPackagesRequest req, 
+        ReportPackagesRequestWrapper req, 
         CancellationToken ct)
     {
         var agent = await agentRepository.GetByTokenWithComputerPackagesAsync(req.AgentToken, ct);
