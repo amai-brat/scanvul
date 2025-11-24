@@ -2,9 +2,9 @@
 using System.Management.Automation.Runspaces;
 using ScanVul.Agent.Models;
 
-namespace ScanVul.Agent.Services.PackageInfoScrapers;
+namespace ScanVul.Agent.Services.PlatformScrapers;
 
-public class WindowsPackageInfoScraper(ILogger<WindowsPackageInfoScraper> logger) : IPackageInfoScraper
+public class WindowsPlatformScraper(ILogger<WindowsPlatformScraper> logger) : IPlatformScraper
 {
     // using hardcoded script because of possible: *.ps1 cannot be loaded because running scripts is disabled on this system
     private const string Script = """
@@ -21,7 +21,7 @@ public class WindowsPackageInfoScraper(ILogger<WindowsPackageInfoScraper> logger
       $installedPrograms | Sort-Object -Property DisplayName -Unique
       """;
     
-    public async Task<List<PackageInfo>> ScrapeAsync(CancellationToken ct = default)
+    public async Task<List<PackageInfo>> ScrapePackagesAsync(CancellationToken ct = default)
     {
         using var runspace = RunspaceFactory.CreateRunspace();
         // ReSharper disable once MethodHasAsyncOverload

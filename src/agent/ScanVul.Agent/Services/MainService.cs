@@ -2,7 +2,7 @@ using Microsoft.Extensions.Options;
 using ScanVul.Agent.Options;
 using System.Net.Http.Json;
 using ScanVul.Agent.Helpers;
-using ScanVul.Agent.Services.PackageInfoScrapers;
+using ScanVul.Agent.Services.PlatformScrapers;
 using ScanVul.Contracts.PackageInfos;
 
 namespace ScanVul.Agent.Services;
@@ -19,12 +19,12 @@ public class MainService(
             await using var scope = scopeFactory.CreateAsyncScope();
 
             var logger = scope.ServiceProvider.GetRequiredService<ILogger<MainService>>();
-            var scraper = scope.ServiceProvider.GetRequiredService<IPackageInfoScraper>();
+            var scraper = scope.ServiceProvider.GetRequiredService<IPlatformScraper>();
             var httpClient = httpClientFactory.CreateClient(Consts.HttpClientNames.Server);
             
             try
             {
-                var result = await scraper.ScrapeAsync(stoppingToken);
+                var result = await scraper.ScrapePackagesAsync(stoppingToken);
                 logger.LogInformation("Found {Count} packages at {Time}", result.Count, DateTimeOffset.Now);
                 
                 var response = await httpClient.PostAsJsonAsync("api/v1/agents/packages/report", new ReportPackagesRequest

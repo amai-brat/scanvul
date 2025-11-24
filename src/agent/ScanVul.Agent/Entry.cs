@@ -1,5 +1,5 @@
 using System.Runtime.InteropServices;
-using ScanVul.Agent.Services.PackageInfoScrapers;
+using ScanVul.Agent.Services.PlatformScrapers;
 
 namespace ScanVul.Agent;
 
@@ -13,17 +13,17 @@ public static class Entry
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            services.AddTransient<IPackageInfoScraper, WindowsPackageInfoScraper>();
+            services.AddTransient<IPlatformScraper, WindowsPlatformScraper>();
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
             if (File.Exists("/usr/bin/pacman")) 
             {
-                services.AddTransient<IPackageInfoScraper, ArchLinuxPackageInfoScraper>();
+                services.AddTransient<IPlatformScraper, ArchLinuxPlatformScraper>();
             }
             else if (File.Exists("/etc/altlinux-release"))
             {
-                services.AddTransient<IPackageInfoScraper, AltLinuxPackageInfoScraper>();
+                services.AddTransient<IPlatformScraper, AltLinuxPlatformScraper>();
             }
         }
 

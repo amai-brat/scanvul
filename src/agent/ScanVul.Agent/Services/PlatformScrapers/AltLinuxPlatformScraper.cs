@@ -1,11 +1,11 @@
 using System.Diagnostics;
 using ScanVul.Agent.Models;
 
-namespace ScanVul.Agent.Services.PackageInfoScrapers;
+namespace ScanVul.Agent.Services.PlatformScrapers;
 
-public class AltLinuxPackageInfoScraper(ILogger<AltLinuxPackageInfoScraper> logger) : IPackageInfoScraper
+public class AltLinuxPlatformScraper(ILogger<AltLinuxPlatformScraper> logger) : IPlatformScraper
 {
-    public async Task<List<PackageInfo>> ScrapeAsync(CancellationToken ct = default)
+    public async Task<List<PackageInfo>> ScrapePackagesAsync(CancellationToken ct = default)
     {
         var packages = new List<PackageInfo>();
 
