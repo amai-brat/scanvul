@@ -4,32 +4,35 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using ScanVul.Server.Domain.Repositories;
 
-namespace ScanVul.Server.Application.Features.Agents.Ping;
+namespace ScanVul.Server.Application.Features.Agents.ReportComputerInfo;
 
-public class PingEndpoint(
+public class ReportComputerInfoEndpoint(
     IAgentRepository agentRepository,
     IUnitOfWork unitOfWork) 
-    : Endpoint<PingRequest, Results<Ok, ProblemDetails>>
+    : Endpoint<ReportComputerInfoRequestWrapper, Results<Ok, ProblemDetails>>
 {
     public override void Configure()
     {
         Version(1);
-        Post("api/{apiVersion}/agents/ping");
+        Post("api/{apiVersion}/agents/computer/report");
         AllowAnonymous();
         Summary(s =>
         {
-            s.Summary = "Ping server";
-            s.Description = "Ping server for healthcheck";
-            s.ExampleRequest = new PingRequest
+            s.Summary = "Report computer info";
+            s.Description = "Report computer info";
+            s.ExampleRequest = new ReportComputerInfoRequestWrapper
             {
-                AgentToken = Guid.Empty
+                AgentToken = Guid.Empty,
+                ComputerName = "pepega",
+                MemoryInMb = 32768,
+                CpuName = "AMD Ryzen 7 8745HS",
             };
         });
         Description(x => x.WithTags("Agents"));
     }
 
     public override async Task<Results<Ok, ProblemDetails>> ExecuteAsync(
-        PingRequest req,
+        ReportComputerInfoRequestWrapper req,
         CancellationToken ct)
     {
         var agent = await agentRepository.GetByTokenWithComputerAsync(req.AgentToken, ct);
@@ -39,7 +42,10 @@ public class PingEndpoint(
             return new ProblemDetails(ValidationFailures, statusCode: (int) HttpStatusCode.Unauthorized);
         }
 
-        agent.LastPingAt = DateTime.UtcNow;
+        agent.Computer.Name = req.ComputerName;
+        agent.Computer.MemoryInMb = req.MemoryInMb;
+        agent.Computer.CpuName = req.CpuName;
+        
         await unitOfWork.SaveChangesAsync(ct);
         
         return TypedResults.Ok();

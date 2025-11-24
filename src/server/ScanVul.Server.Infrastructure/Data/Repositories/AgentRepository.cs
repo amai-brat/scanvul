@@ -12,6 +12,14 @@ public class AgentRepository(AppDbContext dbContext) : IAgentRepository
         return Task.FromResult(entry.Entity);
     }
 
+    public async Task<Agent?> GetByTokenWithComputerAsync(Guid token, CancellationToken ct = default)
+    {
+        var agent = await dbContext.Agents
+            .Include(x => x.Computer)
+            .FirstOrDefaultAsync(x => x.Token == token, cancellationToken: ct);
+        return agent;
+    }
+
     public async Task<Agent?> GetByTokenWithComputerPackagesAsync(Guid token, CancellationToken ct = default)
     {
         var agent = await dbContext.Agents
