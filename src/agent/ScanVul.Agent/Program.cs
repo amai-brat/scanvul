@@ -1,4 +1,6 @@
 ﻿using Karambolo.Extensions.Logging.File;
+using ScanVul.Agent;
+using ScanVul.Agent.Helpers;
 using ScanVul.Agent.Options;
 using ScanVul.Agent.Services;
 
@@ -29,8 +31,18 @@ builder.Services.AddLogging(b =>
 });
 
 builder.Services.Configure<TimeoutOptions>(builder.Configuration.GetSection("Timeout"));
+builder.Services.Configure<ServerOptions>(builder.Configuration.GetSection("Server"));
 
-builder.Services.AddScoped<WindowsPackageInfoScraper>();
+builder.Services.AddScraper();
+builder.Services.AddHttpClient(Consts.HttpClientNames.Server, client =>
+{
+    var options = builder.Configuration
+        .GetSection("Server")
+        .Get<ServerOptions>() ?? throw new ArgumentNullException(null, "Server options not configured");
+
+    client.BaseAddress = new Uri(options.BaseUrl);
+    client.DefaultRequestHeaders.Add(Consts.Headers.AgentToken, options.Token);
+});
 
 builder.Services.AddSystemd();
 builder.Services.AddWindowsService(options =>

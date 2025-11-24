@@ -2,7 +2,7 @@
 using System.Management.Automation.Runspaces;
 using ScanVul.Agent.Models;
 
-namespace ScanVul.Agent.Services;
+namespace ScanVul.Agent.Services.PackageInfoScrapers;
 
 public class WindowsPackageInfoScraper(ILogger<WindowsPackageInfoScraper> logger) : IPackageInfoScraper
 {
