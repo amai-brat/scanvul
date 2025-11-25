@@ -1,11 +1,11 @@
-using Microsoft.Extensions.Options;
-using ScanVul.Agent.Options;
 using System.Net.Http.Json;
+using Microsoft.Extensions.Options;
 using ScanVul.Agent.Helpers;
+using ScanVul.Agent.Options;
 using ScanVul.Agent.Services.PlatformScrapers;
 using ScanVul.Contracts.PackageInfos;
 
-namespace ScanVul.Agent.Services;
+namespace ScanVul.Agent.Services.BackgroundServices;
 
 public class MainService(
     IServiceScopeFactory scopeFactory, 

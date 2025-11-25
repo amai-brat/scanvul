@@ -3,9 +3,10 @@ using ScanVul.Agent.Models;
 
 namespace ScanVul.Agent.Services.PlatformScrapers;
 
-public class AltLinuxPlatformScraper(ILogger<AltLinuxPlatformScraper> logger) : IPlatformScraper
+public class AltLinuxPlatformScraper(ILogger<AltLinuxPlatformScraper> logger) 
+    : LinuxPlatformScraper(logger), IPlatformScraper
 {
-    public async Task<List<PackageInfo>> ScrapePackagesAsync(CancellationToken ct = default)
+    public override async Task<List<PackageInfo>> ScrapePackagesAsync(CancellationToken ct = default)
     {
         var packages = new List<PackageInfo>();
 

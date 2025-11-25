@@ -2,7 +2,7 @@ using Microsoft.Extensions.Options;
 using ScanVul.Agent.Helpers;
 using ScanVul.Agent.Options;
 
-namespace ScanVul.Agent.Services;
+namespace ScanVul.Agent.Services.BackgroundServices;
 
 public class HealthCheckService(
     IServiceScopeFactory scopeFactory, 

@@ -2,7 +2,7 @@
 using ScanVul.Agent;
 using ScanVul.Agent.Helpers;
 using ScanVul.Agent.Options;
-using ScanVul.Agent.Services;
+using ScanVul.Agent.Services.BackgroundServices;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -51,6 +51,7 @@ builder.Services.AddWindowsService(options =>
 });
 builder.Services.AddHostedService<MainService>();
 builder.Services.AddHostedService<HealthCheckService>();
+builder.Services.AddHostedService<ComputerInfoScraperService>();
 
 var app = builder.Build();
 app.Run();
