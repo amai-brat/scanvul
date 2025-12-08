@@ -1,7 +1,12 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Hangfire;
+using Hangfire.PostgreSql;
+using Microsoft.AspNetCore.Mvc;
 using ScanVul.Server.Application;
+using ScanVul.Server.Domain.Services;
 using ScanVul.Server.Infrastructure.Data;
+using ScanVul.Server.Infrastructure.OpenSearch;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,13 +24,28 @@ builder.Services
             s.Version = "v1";
         };
     });
-builder.Services.AddData(builder.Configuration.GetConnectionString("Postgres") 
-                         ?? throw new InvalidOperationException("Connections string to postgres not found"));
+builder.Services.AddData(builder.Configuration.GetConnectionString("Postgres"));
+builder.Services.AddOpenSearch(builder.Environment, 
+    builder.Configuration
+    .GetSection("OpenSearch")
+    .Get<OpenSearchOptions>());
 builder.Services.AddProblemDetails();
+
+builder.Services.AddHangfire(conf =>
+{
+    conf.UsePostgreSqlStorage(o =>
+    {
+        o.UseNpgsqlConnection(builder.Configuration.GetConnectionString("Hangfire"));
+    });
+});
+builder.Services.AddHangfireServer();
+
 
 var app = builder.Build();
 
 await Migrator.MigrateAsync(app.Services);
+
+app.UseHangfireDashboard();
 
 app.UseFastEndpoints(c =>
 {
@@ -39,5 +59,15 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapGet("/", () => "Hello World!");
+app.MapPost("/{computerId:long}", async (
+    [FromRoute] long computerId, 
+    IVulnerablePackageScanner packageScanner,
+    CancellationToken ct) =>
+{
+    if (computerId == 0)
+        computerId = 6;
+    
+    await packageScanner.ScanAsync(computerId, ct);
+});
 
 app.Run();
