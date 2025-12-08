@@ -22,4 +22,6 @@ public class Computer
     public string? CpuName { get; set; }
 
     public List<PackageInfo> Packages { get; set; } = [];
+
+    public List<VulnerablePackage> VulnerablePackages { get; set; } = [];
 }
