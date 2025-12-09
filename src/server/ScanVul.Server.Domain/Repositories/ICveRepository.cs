@@ -4,5 +4,5 @@ namespace ScanVul.Server.Domain.Repositories;
 
 public interface ICveRepository
 {
-    Task<IReadOnlyCollection<dynamic>> GetMatchedCveDocumentsAsync(PackageInfo packageInfo, CancellationToken ct = default);
+    Task<IReadOnlyCollection<CveDocument>> GetMatchedCveDocumentsAsync(PackageInfo packageInfo, CancellationToken ct = default);
 }

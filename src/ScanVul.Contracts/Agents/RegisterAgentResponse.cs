@@ -8,6 +8,6 @@ namespace ScanVul.Contracts.Agents;
 /// <param name="Token">Token of agent to identify it</param>
 public record RegisterAgentResponse(Guid Token);
 
-[JsonSourceGenerationOptions(PropertyNameCaseInsensitive =  true)]
+[JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)]
 [JsonSerializable(typeof(RegisterAgentResponse))]
 public partial class RegisterAgentResponseContext : JsonSerializerContext;

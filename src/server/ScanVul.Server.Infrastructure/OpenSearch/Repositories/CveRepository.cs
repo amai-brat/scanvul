@@ -18,7 +18,9 @@ public partial class CveRepository(IOpenSearchClient client) : ICveRepository
     [GeneratedRegex(@"\s+v?\d+(?:\.\d+)*$")]
     private static partial Regex VersionLikeRegex { get; }
     
-    public async Task<IReadOnlyCollection<dynamic>> GetMatchedCveDocumentsAsync(PackageInfo packageInfo, CancellationToken ct = default)
+    public async Task<IReadOnlyCollection<CveDocument>> GetMatchedCveDocumentsAsync(
+        PackageInfo packageInfo,
+        CancellationToken ct = default)
     {
         var sanitizedPackageName = SanitizePackageName(packageInfo.Name);
         if (string.IsNullOrWhiteSpace(sanitizedPackageName))
@@ -81,7 +83,7 @@ public partial class CveRepository(IOpenSearchClient client) : ICveRepository
             }
         };
         
-        var response = await client.SearchAsync<dynamic>(searchRequest, ct);
+        var response = await client.SearchAsync<CveDocument>(searchRequest, ct);
         return response.Documents;
     }
 
