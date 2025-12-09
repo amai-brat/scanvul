@@ -6,8 +6,9 @@ using Microsoft.Extensions.Logging;
 using ScanVul.Contracts;
 using ScanVul.Contracts.Agents;
 using ScanVul.Server.Application.Helpers;
-using ScanVul.Server.Domain.Entities;
-using ScanVul.Server.Domain.Repositories;
+using ScanVul.Server.Domain.AgentAggregate.Entities;
+using ScanVul.Server.Domain.AgentAggregate.Repositories;
+using ScanVul.Server.Domain.Common;
 
 namespace ScanVul.Server.Application.Features.Agents.Register;
 

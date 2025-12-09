@@ -1,4 +1,4 @@
-namespace ScanVul.Server.Domain.Services;
+namespace ScanVul.Server.Domain.Cve.Services;
 
 public interface IVulnerablePackageScanner
 {

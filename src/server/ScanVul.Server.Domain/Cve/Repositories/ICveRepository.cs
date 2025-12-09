@@ -1,6 +1,7 @@
-using ScanVul.Server.Domain.Entities;
+using ScanVul.Server.Domain.AgentAggregate.Entities;
+using ScanVul.Server.Domain.Cve.Entities;
 
-namespace ScanVul.Server.Domain.Repositories;
+namespace ScanVul.Server.Domain.Cve.Repositories;
 
 public interface ICveRepository
 {

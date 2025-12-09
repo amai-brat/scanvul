@@ -1,4 +1,4 @@
-namespace ScanVul.Server.Domain.Entities;
+namespace ScanVul.Server.Domain.AgentAggregate.Enums;
 
 public enum OperatingSystem
 {

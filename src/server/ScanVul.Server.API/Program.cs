@@ -4,7 +4,7 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Mvc;
 using ScanVul.Server.Application;
-using ScanVul.Server.Domain.Services;
+using ScanVul.Server.Domain.Cve.Services;
 using ScanVul.Server.Infrastructure.Data;
 using ScanVul.Server.Infrastructure.OpenSearch;
 

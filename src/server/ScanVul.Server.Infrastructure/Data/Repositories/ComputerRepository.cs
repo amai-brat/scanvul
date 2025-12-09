@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using ScanVul.Server.Domain.Entities;
-using ScanVul.Server.Domain.Repositories;
+using ScanVul.Server.Domain.AgentAggregate.Entities;
+using ScanVul.Server.Domain.AgentAggregate.Repositories;
 
 namespace ScanVul.Server.Infrastructure.Data.Repositories;
 

@@ -1,4 +1,4 @@
-using OperatingSystem = ScanVul.Server.Domain.Entities.OperatingSystem;
+using OperatingSystem = ScanVul.Server.Domain.AgentAggregate.Enums.OperatingSystem;
 
 namespace ScanVul.Server.Application.Helpers;
 

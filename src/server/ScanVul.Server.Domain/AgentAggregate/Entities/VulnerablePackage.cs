@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 
-namespace ScanVul.Server.Domain.Entities;
+namespace ScanVul.Server.Domain.AgentAggregate.Entities;
 
 public class VulnerablePackage
 {

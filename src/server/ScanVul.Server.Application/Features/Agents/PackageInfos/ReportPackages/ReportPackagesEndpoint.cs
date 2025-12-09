@@ -4,9 +4,10 @@ using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using ScanVul.Contracts.PackageInfos;
-using ScanVul.Server.Domain.Entities;
-using ScanVul.Server.Domain.Repositories;
-using ScanVul.Server.Domain.Services;
+using ScanVul.Server.Domain.AgentAggregate.Entities;
+using ScanVul.Server.Domain.AgentAggregate.Repositories;
+using ScanVul.Server.Domain.Common;
+using ScanVul.Server.Domain.Cve.Services;
 
 namespace ScanVul.Server.Application.Features.Agents.PackageInfos.ReportPackages;
 

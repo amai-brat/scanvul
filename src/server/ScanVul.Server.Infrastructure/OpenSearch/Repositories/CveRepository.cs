@@ -1,7 +1,8 @@
 using System.Text.RegularExpressions;
 using OpenSearch.Client;
-using ScanVul.Server.Domain.Entities;
-using ScanVul.Server.Domain.Repositories;
+using ScanVul.Server.Domain.AgentAggregate.Entities;
+using ScanVul.Server.Domain.Cve.Entities;
+using ScanVul.Server.Domain.Cve.Repositories;
 
 namespace ScanVul.Server.Infrastructure.OpenSearch.Repositories;
 

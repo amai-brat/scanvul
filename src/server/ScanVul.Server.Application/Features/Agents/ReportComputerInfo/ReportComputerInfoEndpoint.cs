@@ -2,7 +2,8 @@ using System.Net;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using ScanVul.Server.Domain.Repositories;
+using ScanVul.Server.Domain.AgentAggregate.Repositories;
+using ScanVul.Server.Domain.Common;
 
 namespace ScanVul.Server.Application.Features.Agents.ReportComputerInfo;
 

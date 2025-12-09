@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace ScanVul.Server.Domain.Entities;
+namespace ScanVul.Server.Domain.Cve.Entities;
 
 public class CveDocument
 {

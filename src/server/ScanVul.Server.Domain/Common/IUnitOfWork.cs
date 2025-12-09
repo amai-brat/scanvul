@@ -1,4 +1,4 @@
-namespace ScanVul.Server.Domain.Repositories;
+namespace ScanVul.Server.Domain.Common;
 
 public interface IUnitOfWork
 {

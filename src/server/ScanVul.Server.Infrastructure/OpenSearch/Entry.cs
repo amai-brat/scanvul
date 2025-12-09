@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OpenSearch.Client;
 using OpenSearch.Net;
-using ScanVul.Server.Domain.Repositories;
+using ScanVul.Server.Domain.Cve.Repositories;
 using ScanVul.Server.Infrastructure.OpenSearch.Repositories;
 
 namespace ScanVul.Server.Infrastructure.OpenSearch;

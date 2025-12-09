@@ -1,8 +1,10 @@
 using Microsoft.Extensions.Logging;
-using ScanVul.Server.Domain.Entities;
-using ScanVul.Server.Domain.Repositories;
+using ScanVul.Server.Domain.AgentAggregate.Entities;
+using ScanVul.Server.Domain.AgentAggregate.Repositories;
+using ScanVul.Server.Domain.Common;
+using ScanVul.Server.Domain.Cve.Repositories;
 
-namespace ScanVul.Server.Domain.Services;
+namespace ScanVul.Server.Domain.Cve.Services;
 
 public class VulnerablePackageScanner(
     ICveRepository cveRepository,

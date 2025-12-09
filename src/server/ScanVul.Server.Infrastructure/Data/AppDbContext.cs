@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using ScanVul.Server.Domain.Entities;
+using ScanVul.Server.Domain.AgentAggregate.Entities;
 
 namespace ScanVul.Server.Infrastructure.Data;
 

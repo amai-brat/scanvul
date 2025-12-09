@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
-using ScanVul.Server.Domain.Entities;
+using ScanVul.Server.Domain.AgentAggregate.Entities;
 
-namespace ScanVul.Server.Domain.Repositories;
+namespace ScanVul.Server.Domain.AgentAggregate.Repositories;
 
 public interface IPackageInfoRepository
 {

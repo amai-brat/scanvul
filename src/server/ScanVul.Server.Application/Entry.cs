@@ -1,6 +1,6 @@
 ﻿using FastEndpoints;
 using Microsoft.Extensions.DependencyInjection;
-using ScanVul.Server.Domain.Services;
+using ScanVul.Server.Domain.Cve.Services;
 
 namespace ScanVul.Server.Application;
 

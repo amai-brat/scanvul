@@ -1,4 +1,4 @@
-using ScanVul.Server.Domain.Repositories;
+using ScanVul.Server.Domain.Common;
 
 namespace ScanVul.Server.Infrastructure.Data.Repositories;
 

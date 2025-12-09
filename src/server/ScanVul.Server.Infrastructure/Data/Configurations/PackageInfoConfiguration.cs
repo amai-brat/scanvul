@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ScanVul.Server.Domain.Entities;
+using ScanVul.Server.Domain.AgentAggregate.Entities;
 
 namespace ScanVul.Server.Infrastructure.Data.Configurations;
 
