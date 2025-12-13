@@ -11,7 +11,7 @@ using ScanVul.Server.Infrastructure.OpenSearch;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddFeatures()
+    .AddFeatures(builder.Configuration)
     .SwaggerDocument(o =>
     {
         o.ShortSchemaNames = true;
@@ -60,13 +60,10 @@ if (app.Environment.IsDevelopment())
 
 app.MapGet("/", () => "Hello World!");
 app.MapPost("/{computerId:long}", async (
-    [FromRoute] long computerId, 
     IVulnerablePackageScanner packageScanner,
-    CancellationToken ct) =>
+    CancellationToken ct,
+    [FromRoute] long computerId = 6) =>
 {
-    if (computerId == 0)
-        computerId = 6;
-    
     await packageScanner.ScanAsync(computerId, ct);
 });
 

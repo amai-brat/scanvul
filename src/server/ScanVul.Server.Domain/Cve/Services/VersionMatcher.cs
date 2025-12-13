@@ -52,6 +52,25 @@ public class VersionMatcher(ILogger<VersionMatcher> logger)
 
         return versionObjectA.CompareTo(versionObjectB);
     }
+    
+    /// <summary>
+    /// Compare versions
+    /// </summary>
+    /// <param name="versionObjectA">This version</param>
+    /// <param name="versionB">Other version</param>
+    /// <param name="type">Type of version</param>
+    /// <returns><list type="table"><listheader><term> Value</term><description> Meaning</description></listheader><item><term> Less than zero</term><description><paramref name="versionObjectA" /> precedes <paramref name="versionB" /> in the sort order.</description></item><item><term> Zero</term><description><paramref name="versionObjectA" /> occurs in the same position in the sort order as <paramref name="versionB" />.</description></item><item><term> Greater than zero</term><description> <paramref name="versionObjectA" /> follows <paramref name="versionB" /> in the sort order.</description></item></list></returns>
+    /// <exception cref="ArgumentException">Incorrect version string</exception>
+    public int Compare(IVersion versionObjectA, string versionB, VersionMatchType type = VersionMatchType.Unspecified)
+    {
+        if (!TryCreateVersionObject(versionB, type, out var versionObjectB))
+            throw new ArgumentException($"Unable to create version object for '{versionB}' with type {type}");
+
+        if (versionObjectA.GetType() != versionObjectB.GetType())
+            throw new ArgumentException($"Cannot compare different version types: {versionObjectA.Type} vs {versionObjectB.Type}");
+
+        return versionObjectA.CompareTo(versionObjectB);
+    }
 
     public bool Match(string version, VersionMatchType type)
     {
@@ -79,12 +98,12 @@ public class VersionMatcher(ILogger<VersionMatcher> logger)
 
     private static IVersion? CreateUnspecified(string version)
     {
-        return CreateByType(version, VersionMatchType.CalVer) ??
-               CreateByType(version, VersionMatchType.Pep440) ??
+        return CreateByType(version, VersionMatchType.SemVer) ??
                CreateByType(version, VersionMatchType.MajorMinor) ??
-               CreateByType(version, VersionMatchType.SemVer) ??
+               CreateByType(version, VersionMatchType.CalVer) ??
                CreateByType(version, VersionMatchType.Dpkg) ??
-               CreateByType(version, VersionMatchType.Rpm);
+               CreateByType(version, VersionMatchType.Rpm) ??
+               CreateByType(version, VersionMatchType.Pep440);
     }
 
     private static IVersion? CreateByType(string version, VersionMatchType type)

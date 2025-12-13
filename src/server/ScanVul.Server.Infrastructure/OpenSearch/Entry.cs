@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OpenSearch.Client;
+using OpenSearch.Client.JsonNetSerializer;
 using OpenSearch.Net;
 using ScanVul.Server.Domain.Cve.Repositories;
 using ScanVul.Server.Infrastructure.OpenSearch.Repositories;
@@ -19,8 +20,9 @@ public static class Entry
             string.IsNullOrEmpty(options.Username) || 
             string.IsNullOrEmpty(options.Password)) 
             throw new InvalidOperationException("OpenSearch settings not set");
-        
-        var settings = new ConnectionSettings(new Uri(options.Url))
+
+        var pool = new SingleNodeConnectionPool(new Uri(options.Url));
+        var settings = new ConnectionSettings(pool, sourceSerializer: JsonNetSerializer.Default)
             .BasicAuthentication(options.Username, options.Password);
 
         if (environment.IsDevelopment())

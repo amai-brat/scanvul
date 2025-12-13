@@ -21,33 +21,41 @@ public class CveMetadata
 
 public class Containers
 {
-    public required CnaContainer Cna { get; set; }
-    public required List<AdpContainer> Adp { get; set; }
+    public CnaContainer? Cna { get; }
+    public List<AdpContainer> Adp { get; } = [];
 }
 
 public class CnaContainer
 {
-    public List<AffectedItem> Affected { get; set; } = [];
+    public List<AffectedItem> Affected { get; } = [];
 }
 
 public class AdpContainer
 {
-    public List<AffectedItem> Affected { get; set; } = [];
+    public List<AffectedItem> Affected { get; } = [];
 }
 
 public class AffectedItem
 {
     public required string Product { get; set; }
     public required string Vendor { get; set; }
-    public required List<Version> Versions { get; set; }
+    public List<VersionInfo> Versions { get; } = [];
 }
 
-public class Version
+public class VersionInfo
 {
-    [JsonPropertyName("version")]
-    public required string VersionValue { get; set; }
+    public required string Version { get; set; }
     public string Status { get; set; } = null!;
     public string VersionType { get; set; } = null!;
     public string? LessThan { get; set; }
     public string? LessThanOrEqual { get; set; }
+
+    public override string ToString()
+    {
+        return LessThanOrEqual != null 
+            ? $"[LessThanOrEqual = {LessThanOrEqual}]" 
+            : LessThan != null 
+                ? $"[LessThan = {LessThan}]" 
+                : $"[Version = {Version}]";
+    }
 }
