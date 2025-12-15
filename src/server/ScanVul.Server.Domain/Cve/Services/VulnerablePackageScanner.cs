@@ -39,7 +39,7 @@ public class VulnerablePackageScanner(
     {
         var possibleCves = await cveRepository.GetMatchedCveDocumentsAsync(package, ct);
 
-        List<VulnerablePackage> possibleVulnerablePackages = [];
+        List<VulnerablePackage> vulnerablePackages = [];
         
         // check CNA
         foreach (var cve in possibleCves)
@@ -51,7 +51,7 @@ public class VulnerablePackageScanner(
                     if (!IsPackageVersionAffected(package.Version, versionInfo)) continue;
                     
                     var vulnerablePackage = new VulnerablePackage(cve.Payload.CveMetadata.CveId, package, computer);
-                    possibleVulnerablePackages.Add(vulnerablePackage);
+                    vulnerablePackages.Add(vulnerablePackage);
                 }
             }
         }
@@ -71,15 +71,16 @@ public class VulnerablePackageScanner(
 
                             var vulnerablePackage =
                                 new VulnerablePackage(cve.Payload.CveMetadata.CveId, package, computer);
-                            possibleVulnerablePackages.Add(vulnerablePackage);
+                            vulnerablePackages.Add(vulnerablePackage);
                         }
                     }
                 }
             }
         }
-        
-        computer.VulnerablePackages.AddRange(possibleVulnerablePackages
-            .DistinctBy(x => x.CveId));
+
+        computer.VulnerablePackages = vulnerablePackages
+            .DistinctBy(x => x.CveId)
+            .ToList();
     }
 
     private bool IsPackageVersionAffected(string packageVersion, VersionInfo versionInfo)
