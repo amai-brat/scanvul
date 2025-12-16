@@ -1,11 +1,10 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using Hangfire;
-using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Mvc;
 using ScanVul.Server.Application;
 using ScanVul.Server.Domain.Cve.Services;
 using ScanVul.Server.Infrastructure.Data;
+using ScanVul.Server.Infrastructure.Hangfire;
 using ScanVul.Server.Infrastructure.OpenSearch;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,28 +23,21 @@ builder.Services
             s.Version = "v1";
         };
     });
+builder.Services.AddHttpClient();
 builder.Services.AddData(builder.Configuration.GetConnectionString("Postgres"));
 builder.Services.AddOpenSearch(builder.Environment, 
     builder.Configuration
     .GetSection("OpenSearch")
     .Get<OpenSearchOptions>());
+builder.Services.AddHangfireServices(builder.Configuration);
+
 builder.Services.AddProblemDetails();
-
-builder.Services.AddHangfire(conf =>
-{
-    conf.UsePostgreSqlStorage(o =>
-    {
-        o.UseNpgsqlConnection(builder.Configuration.GetConnectionString("Hangfire"));
-    });
-});
-builder.Services.AddHangfireServer();
-
 
 var app = builder.Build();
 
 await Migrator.MigrateAsync(app.Services);
 
-app.UseHangfireDashboard();
+app.UseHangfire();
 
 app.UseFastEndpoints(c =>
 {

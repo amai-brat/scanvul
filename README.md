@@ -6,7 +6,7 @@
 - [ ] main server api
   - [x] register agent
   - [x] version matching
-  - [ ] update CVEs snapshot
+  - [x] update CVEs snapshot
   - [ ] vulnerable package scanning jobs management
   - [ ] backend for frontend
   - [ ] tasks to agents

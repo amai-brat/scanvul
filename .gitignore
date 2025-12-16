@@ -3,6 +3,8 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
+cve_snapshot_last_sync.json
+
 # dotenv files
 .env
 
