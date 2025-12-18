@@ -83,14 +83,16 @@ public class VulnerablePackageScanner(
         
         // Remove packages no longer in the incoming list
         var toRemove = computer.VulnerablePackages
-            .Where(x => !incomingIds.Contains(x.PackageInfoId));
+            .Where(x => !incomingIds.Contains(x.PackageInfoId))
+            .ToList();
         foreach (var item in toRemove) 
             computer.VulnerablePackages.Remove(item);
         
         // Add new ones
         var toAdd = vulnerablePackages
             .Where(x => !existingIds.Contains(x.PackageInfoId))
-            .DistinctBy(x => x.CveId);
+            .DistinctBy(x => x.CveId)
+            .ToList();
         computer.VulnerablePackages.AddRange(toAdd);
     }
 

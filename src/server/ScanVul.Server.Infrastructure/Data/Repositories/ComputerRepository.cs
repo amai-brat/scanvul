@@ -11,6 +11,7 @@ public class ComputerRepository(AppDbContext dbContext) : IComputerRepository
         var computer = await dbContext.Computers
             .Include(x => x.Packages)
             .Include(x => x.VulnerablePackages)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(x => x.Id == computerId, ct);
 
         return computer;

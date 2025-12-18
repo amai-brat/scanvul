@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using JetBrains.Annotations;
 
 namespace ScanVul.Server.Domain.Cve.Entities;
 
@@ -21,25 +21,32 @@ public class CveMetadata
 
 public class Containers
 {
-    public CnaContainer? Cna { get; }
-    public List<AdpContainer> Adp { get; } = [];
+    [UsedImplicitly]
+    public CnaContainer? Cna { get; set; }
+    
+    [UsedImplicitly]
+    public List<AdpContainer> Adp { get; set; } = [];
 }
 
 public class CnaContainer
 {
-    public List<AffectedItem> Affected { get; } = [];
+    [UsedImplicitly]
+    public List<AffectedItem> Affected { get; set; } = [];
 }
 
 public class AdpContainer
 {
-    public List<AffectedItem> Affected { get; } = [];
+    [UsedImplicitly]
+    public List<AffectedItem> Affected { get; set; } = [];
 }
 
 public class AffectedItem
 {
     public required string Product { get; set; }
     public required string Vendor { get; set; }
-    public List<VersionInfo> Versions { get; } = [];
+    
+    [UsedImplicitly]
+    public List<VersionInfo> Versions { get; set; } = [];
 }
 
 public class VersionInfo
