@@ -8,5 +8,7 @@ public enum VersionType
     MajorMinor = 3,
     SemVer = 4,
     Dpkg = 5,
-    Rpm = 6
+    Rpm = 6,
+    
+    Base = 100
 }

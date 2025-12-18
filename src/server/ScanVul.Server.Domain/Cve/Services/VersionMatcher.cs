@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using ScanVul.Server.Domain.Cve.Entities.Versions;
+using ScanVul.Server.Domain.Cve.Enums;
 
 namespace ScanVul.Server.Domain.Cve.Services;
 
@@ -18,7 +19,8 @@ public enum VersionMatchType
     MajorMinor = 102,
     SemVer = 103,
     Dpkg = 104,
-    Rpm = 105
+    Rpm = 105,
+    Base = 200
 }
 
 public class VersionMatcher(ILogger<VersionMatcher> logger)
@@ -66,6 +68,12 @@ public class VersionMatcher(ILogger<VersionMatcher> logger)
         if (!TryCreateVersionObject(versionB, type, out var versionObjectB))
             throw new ArgumentException($"Unable to create version object for '{versionB}' with type {type}");
 
+        if (versionObjectA.Type == VersionType.Base)
+            return versionObjectA.CompareTo(versionObjectB);
+        
+        if (versionObjectB.Type == VersionType.Base)
+            return -versionObjectB.CompareTo(versionObjectA);
+        
         if (versionObjectA.GetType() != versionObjectB.GetType())
             throw new ArgumentException($"Cannot compare different version types: {versionObjectA.Type} vs {versionObjectB.Type}");
 
@@ -103,7 +111,8 @@ public class VersionMatcher(ILogger<VersionMatcher> logger)
                CreateByType(version, VersionMatchType.CalVer) ??
                CreateByType(version, VersionMatchType.Dpkg) ??
                CreateByType(version, VersionMatchType.Rpm) ??
-               CreateByType(version, VersionMatchType.Pep440);
+               CreateByType(version, VersionMatchType.Pep440) ??
+               CreateByType(version, VersionMatchType.Base);
     }
 
     private static IVersion? CreateByType(string version, VersionMatchType type)
@@ -116,6 +125,7 @@ public class VersionMatcher(ILogger<VersionMatcher> logger)
             VersionMatchType.SemVer => SemVer.TryParse(version, out var semVer) ? semVer : null,
             VersionMatchType.Dpkg => Dpkg.TryParse(version, out var dpkg) ? dpkg : null,
             VersionMatchType.Rpm => Rpm.TryParse(version, out var rpm) ? rpm : null,
+            VersionMatchType.Base => BaseVersion.TryParse(version, out var baseVersion) ? baseVersion : null,
             _ => throw new ArgumentException($"Unsupported version type: {type}")
         };
     }
