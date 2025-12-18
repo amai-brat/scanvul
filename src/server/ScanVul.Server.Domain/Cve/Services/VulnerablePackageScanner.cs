@@ -77,10 +77,21 @@ public class VulnerablePackageScanner(
                 }
             }
         }
-
-        computer.VulnerablePackages = vulnerablePackages
-            .DistinctBy(x => x.CveId)
-            .ToList();
+        
+        var incomingIds = new HashSet<long>(vulnerablePackages.Select(x => x.PackageInfoId));
+        var existingIds = new HashSet<long>(computer.VulnerablePackages.Select(x => x.PackageInfoId));
+        
+        // Remove packages no longer in the incoming list
+        var toRemove = computer.VulnerablePackages
+            .Where(x => !incomingIds.Contains(x.PackageInfoId));
+        foreach (var item in toRemove) 
+            computer.VulnerablePackages.Remove(item);
+        
+        // Add new ones
+        var toAdd = vulnerablePackages
+            .Where(x => !existingIds.Contains(x.PackageInfoId))
+            .DistinctBy(x => x.CveId);
+        computer.VulnerablePackages.AddRange(toAdd);
     }
 
     private bool IsPackageVersionAffected(string packageVersion, VersionInfo versionInfo)
@@ -113,7 +124,7 @@ public class VulnerablePackageScanner(
         }
         catch (ArgumentException)
         {
-            logger.LogWarning("Couldn't match versions: {PackageVersion} <=> {AffectedVersion}", packageVersion, versionInfo);
+            logger.LogDebug("Couldn't match versions: {PackageVersion} <=> {AffectedVersion}", packageVersion, versionInfo);
         }
 
         return false;
