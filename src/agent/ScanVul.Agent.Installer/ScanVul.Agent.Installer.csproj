@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        
+        <DebugType>embedded</DebugType>
+        <PublishTrimmed>false</PublishTrimmed> <!-- there are warnings because of PowerShell, so disabled -->
+        <SelfContained>true</SelfContained>
+        <PublishSingleFile>true</PublishSingleFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.CommandLine" Version="2.0.0" />
+        <PackageReference Include="System.Management.Automation" Version="7.6.0-preview.3" />
+    </ItemGroup>
+    
+    <ItemGroup Condition="$(RuntimeIdentifier.StartsWith('win'))">
+        <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.6.0-preview.3" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <EmbeddedResource Condition="$(RuntimeIdentifier.StartsWith('win'))" 
+                          Include="$(MSBuildThisFileDirectory)..\ScanVul.Agent\bin\Release\net9.0\win-x64\agent.zip" >
+            <LogicalName>agent.win64.zip</LogicalName>
+        </EmbeddedResource>
+        <EmbeddedResource Condition="$(RuntimeIdentifier.StartsWith('linux'))" 
+                          Include="$(MSBuildThisFileDirectory)..\ScanVul.Agent\bin\Release\net9.0\linux-x64\agent.zip">
+            <LogicalName>agent.linux.zip</LogicalName>
+        </EmbeddedResource>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\..\ScanVul.Contracts\ScanVul.Contracts.csproj" />
+    </ItemGroup>
+</Project>

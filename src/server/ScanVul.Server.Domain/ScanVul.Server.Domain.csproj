@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.11" />
+      <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.11" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="AgentAggregate\Services\" />
+    </ItemGroup>
+
+</Project>
