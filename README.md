@@ -6,6 +6,7 @@
 - [ ] main server api
   - [x] register agent
   - [x] version matching
+    - [ ] add BaseVersion (with segments split by \[.,-~:\]) that can be compared with all other version types 
   - [x] update CVEs snapshot
   - [ ] vulnerable package scanning jobs management
   - [ ] backend for frontend
