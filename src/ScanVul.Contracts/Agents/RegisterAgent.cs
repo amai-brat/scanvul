@@ -13,4 +13,14 @@ public record RegisterAgentRequest(
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(RegisterAgentRequest))]
-public partial class RegisterAgentRequestContext : JsonSerializerContext;    
+public partial class RegisterAgentRequestContext : JsonSerializerContext;
+
+/// <summary>
+/// Register agent response
+/// </summary>
+/// <param name="Token">Token of agent to identify it</param>
+public record RegisterAgentResponse(Guid Token);
+
+[JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)]
+[JsonSerializable(typeof(RegisterAgentResponse))]
+public partial class RegisterAgentResponseContext : JsonSerializerContext;
