@@ -22,7 +22,11 @@ public class VulnerablePackage
         Computer computer)
     {
         CveId = cveId;
+        
+        PackageInfoId = packageInfo.Id;
         PackageInfo = packageInfo;
+        
+        ComputerId = computer.Id;
         Computer = computer;
     }
 }

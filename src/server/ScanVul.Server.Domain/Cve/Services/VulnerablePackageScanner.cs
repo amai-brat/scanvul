@@ -26,16 +26,35 @@ public class VulnerablePackageScanner(
             logger.LogError("Could not find computer {ComputerId}", computerId);
             throw new Exception($"Could not find computer {computerId}");
         }
-                
+
+        List<VulnerablePackage> vulnerablePackages = [];
         foreach (var package in computer.Packages)
         {
-            await ScanPackageAsync(computer, package, ct);
+            vulnerablePackages.AddRange(await ScanPackageAsync(computer, package, ct));
         }
+        
+        var incomingIds = new HashSet<(long PackageInfoId, string CveId)>(vulnerablePackages
+            .Select(x => (x.PackageInfoId, x.CveId)));
+        var existingIds = new HashSet<(long PackageInfoId, string CveId)>(computer.VulnerablePackages
+            .Select(x => (x.PackageInfoId, x.CveId)));
+        
+        // Remove not relevant vulnerable packages
+        var toRemove = computer.VulnerablePackages
+            .Where(x => !incomingIds.Contains((x.PackageInfoId, x.CveId)))
+            .ToList();
+        foreach (var item in toRemove) 
+            computer.VulnerablePackages.Remove(item);
+        
+        // Add new ones
+        var toAdd = vulnerablePackages
+            .Where(x => !existingIds.Contains((x.PackageInfoId, x.CveId)))
+            .ToList();
+        computer.VulnerablePackages.AddRange(toAdd);
 
         await unitOfWork.SaveChangesAsync(ct);
     }
 
-    private async Task ScanPackageAsync(Computer computer, PackageInfo package, CancellationToken ct = default)
+    private async Task<List<VulnerablePackage>> ScanPackageAsync(Computer computer, PackageInfo package, CancellationToken ct = default)
     {
         var possibleCves = await cveRepository.GetMatchedCveDocumentsAsync(package, ct);
 
@@ -69,31 +88,15 @@ public class VulnerablePackageScanner(
                         {
                             if (!IsPackageVersionAffected(package.Version, versionInfo)) continue;
 
-                            var vulnerablePackage =
-                                new VulnerablePackage(cve.Payload.CveMetadata.CveId, package, computer);
+                            var vulnerablePackage = new VulnerablePackage(cve.Payload.CveMetadata.CveId, package, computer);
                             vulnerablePackages.Add(vulnerablePackage);
                         }
                     }
                 }
             }
         }
-        
-        var incomingIds = new HashSet<long>(vulnerablePackages.Select(x => x.PackageInfoId));
-        var existingIds = new HashSet<long>(computer.VulnerablePackages.Select(x => x.PackageInfoId));
-        
-        // Remove packages no longer in the incoming list
-        var toRemove = computer.VulnerablePackages
-            .Where(x => !incomingIds.Contains(x.PackageInfoId))
-            .ToList();
-        foreach (var item in toRemove) 
-            computer.VulnerablePackages.Remove(item);
-        
-        // Add new ones
-        var toAdd = vulnerablePackages
-            .Where(x => !existingIds.Contains(x.PackageInfoId))
-            .DistinctBy(x => x.CveId)
-            .ToList();
-        computer.VulnerablePackages.AddRange(toAdd);
+
+        return vulnerablePackages;
     }
 
     private bool IsPackageVersionAffected(string packageVersion, VersionInfo versionInfo)
