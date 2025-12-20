@@ -24,7 +24,9 @@ public class LoginEndpoint(
             s.Description = "Login";
             s.ExampleRequest = new LoginRequest("name", "password");
         });
-        Description(x => x.WithTags("Auth"));
+        Description(x => x
+            .WithTags("Auth")
+            .Produces<ProblemDetails>(401, "application/json+problem"));
     }
 
     public override async Task<Results<Ok<LoginResponse>, ProblemDetails>> ExecuteAsync(

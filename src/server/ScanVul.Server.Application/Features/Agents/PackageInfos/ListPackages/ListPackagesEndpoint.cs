@@ -19,7 +19,9 @@ public class ListPackagesEndpoint(
             s.Summary = "Get all packages on computer of agent";
             s.Description = "Get all packages on computer of agent";
         });
-        Description(x => x.WithTags("Agents"));
+        Description(x => x
+            .WithTags("Agents")
+            .Produces<ProblemDetails>(404, "application/problem+json"));
     }
     
     public override async Task<Results<Ok<ListPackagesResponse>, ProblemDetails>> ExecuteAsync(

@@ -25,7 +25,9 @@ public class InitAdminEndpoint(
             s.Summary = "Init admin user";
             s.Description = "Init admin user. Can be called only once";
         });
-        Description(x => x.WithTags("Auth"));
+        Description(x => x
+            .WithTags("Auth")
+            .Produces<ProblemDetails>(403, "application/json+problem"));
     }
 
     public override async Task<Results<Ok<InitAdminResponse>, ProblemDetails>> ExecuteAsync(
