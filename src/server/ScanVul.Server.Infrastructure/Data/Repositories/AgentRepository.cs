@@ -34,6 +34,7 @@ public class AgentRepository(AppDbContext dbContext) : IAgentRepository
         return await dbContext.Agents
             .Include(x => x.Computer)
             .AsNoTracking()
+            .OrderByDescending(x => x.LastPingAt)
             .ToListAsync(ct);
     }
 
