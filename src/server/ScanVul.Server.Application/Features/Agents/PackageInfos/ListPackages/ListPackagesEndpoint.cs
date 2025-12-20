@@ -37,6 +37,7 @@ public class ListPackagesEndpoint(
 
         var packages = agent.Computer.Packages
             .Select(p => new PackageResponse(p.Id, p.Name, p.Version))
+            .OrderBy(x => x.Name)
             .ToList();
         
         return TypedResults.Ok(new ListPackagesResponse(packages));

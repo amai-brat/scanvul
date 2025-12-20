@@ -42,6 +42,7 @@ public class ListVulnerablePackagesEndpoint(
                 PackageId: p.PackageInfoId, 
                 PackageName: p.PackageInfo.Name, 
                 PackageVersion: p.PackageInfo.Version))
+            .OrderBy(x => x.PackageName)
             .ToList();
         
         return TypedResults.Ok(new ListVulnerablePackagesResponse(packages));
