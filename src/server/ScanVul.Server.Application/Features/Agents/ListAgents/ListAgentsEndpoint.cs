@@ -1,8 +1,6 @@
 using FastEndpoints;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using ScanVul.Contracts.PackageInfos;
-using ScanVul.Server.Application.Features.Agents.PackageInfos.ReportPackages;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
 
 namespace ScanVul.Server.Application.Features.Agents.ListAgents;
@@ -11,7 +9,7 @@ public class ListAgentsEndpoint(
     IAgentRepository agentRepository)
     : EndpointWithoutRequest<Ok<ListAgentsResponse>>
 {
-     public override void Configure()
+    public override void Configure()
     {
         Version(1);
         Get("api/{apiVersion}/agents");
