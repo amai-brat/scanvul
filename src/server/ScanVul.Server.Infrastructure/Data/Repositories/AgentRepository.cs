@@ -28,4 +28,12 @@ public class AgentRepository(AppDbContext dbContext) : IAgentRepository
             .FirstOrDefaultAsync(x => x.Token == token, cancellationToken: ct);
         return agent;
     }
+
+    public async Task<List<Agent>> GetAllWithComputerNoTrackingAsync(CancellationToken ct = default)
+    {
+        return await dbContext.Agents
+            .Include(x => x.Computer)
+            .AsNoTracking()
+            .ToListAsync(ct);
+    }
 }
