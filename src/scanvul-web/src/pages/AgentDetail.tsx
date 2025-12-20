@@ -1,19 +1,14 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { agentsApi } from "../api/endpoints";
 import { Card } from "../components/Card";
-import {
-  Cpu,
-  MemoryStick,
-  Activity,
-  Package,
-} from "lucide-react";
+import { Cpu, MemoryStick, Activity, Package } from "lucide-react";
 
 export const AgentDetail = () => {
   const { id } = useParams<{ id: string }>();
 
-  // 1. Fetch Agent Info (by fetching list and finding, since no direct endpoint)
+  // 1. Fetch Agent Info
   const { data: agentsData } = useQuery({
     queryKey: ["agents"],
     queryFn: agentsApi.list,
@@ -35,7 +30,32 @@ export const AgentDetail = () => {
     enabled: !!id,
   });
 
-  if (!agent) return <div>Loading agent info...</div>;
+  // Group vulnerabilities by packageId
+  const groupedVulns = useMemo(() => {
+    if (!vulnData?.packages) return [];
+
+    const groups = new Map<
+      number,
+      { name: string; version: string; cves: string[] }
+    >();
+
+    vulnData.packages.forEach((v) => {
+      // Use packageId as the unique key for the installed package
+      if (!groups.has(v.packageId)) {
+        groups.set(v.packageId, {
+          name: v.packageName,
+          version: v.packageVersion,
+          cves: [],
+        });
+      }
+      groups.get(v.packageId)!.cves.push(v.cveId);
+    });
+
+    return Array.from(groups.values());
+  }, [vulnData]);
+
+  if (!agent)
+    return <div className="p-8 text-center">Loading agent info...</div>;
 
   return (
     <div className="space-y-6">
@@ -48,10 +68,9 @@ export const AgentDetail = () => {
         </p>
       </div>
 
-      {/* Grid Layout for Blocks */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-min">
         {/* Block 1: Computer Info */}
-        <Card title="Computer Info" className="h-fit">
+        <Card title="Computer Info" className="h-full">
           <div className="space-y-4">
             <InfoRow
               icon={<Activity />}
@@ -78,37 +97,44 @@ export const AgentDetail = () => {
           </div>
         </Card>
 
-        {/* Block 2: Vulnerable Packages */}
+        {/* Block 2: Vulnerable Packages (Grouped) */}
         <Card
-          title={`Vulnerabilities (${vulnData?.packages.length ?? 0})`}
-          className="md:col-span-2 lg:col-span-1 h-100"
+          title={`Vulnerable packages (${groupedVulns.length})`}
+          className="md:col-span-2 lg:col-span-1 h-90"
         >
           {vulnLoading ? (
             <p>Loading...</p>
           ) : (
-            <div className="space-y-2">
-              {vulnData?.packages.length === 0 ? (
+            <div className="space-y-3">
+              {groupedVulns.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-green-500">
                   <ShieldCheckIcon className="w-12 h-12 mb-2" />
                   <p>No vulnerabilities found.</p>
                 </div>
               ) : (
-                vulnData?.packages.map((v) => (
+                groupedVulns.map((pkg) => (
                   <div
-                    key={v.id}
-                    className="flex flex-col p-3 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/50 rounded-md"
+                    key={pkg.name}
+                    className="flex flex-col p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/50 rounded-lg"
                   >
-                    <div className="flex justify-between items-start">
-                      <span className="font-semibold text-red-700 dark:text-red-300">
-                        {v.packageName}
+                    <div className="flex justify-between items-baseline mb-2">
+                      <span className="font-bold text-red-700 dark:text-red-300">
+                        {pkg.name}
                       </span>
-                      <span className="text-xs bg-red-200 dark:bg-red-900 text-red-800 dark:text-red-100 px-2 py-0.5 rounded">
-                        {v.cveId}
+                      <span className="text-sm text-red-600/80 dark:text-red-400 font-mono">
+                        v{pkg.version}
                       </span>
                     </div>
-                    <span className="text-sm text-red-600/80 dark:text-red-400">
-                      v{v.packageVersion}
-                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      {pkg.cves.map((cve) => (
+                        <span
+                          key={cve}
+                          className="text-xs font-medium bg-red-200 dark:bg-red-900/60 text-red-800 dark:text-red-100 px-2 py-1 rounded border border-red-300 dark:border-red-800"
+                        >
+                          {cve}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 ))
               )}
@@ -161,7 +187,6 @@ export const AgentDetail = () => {
   );
 };
 
-// Helper for Info Card
 const InfoRow = ({
   icon,
   label,
@@ -172,10 +197,10 @@ const InfoRow = ({
   value: string;
 }) => (
   <div className="flex items-center gap-3">
-    <div className="text-gray-400">{icon}</div>
+    <div className="text-gray-400 w-5 flex justify-center">{icon}</div>
     <div>
-      <p className="text-xs text-gray-500 uppercase">{label}</p>
-      <p className="font-medium">{value}</p>
+      <p className="text-xs text-gray-500 uppercase font-semibold">{label}</p>
+      <p className="font-medium text-sm">{value}</p>
     </div>
   </div>
 );

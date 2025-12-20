@@ -1,14 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { agentsApi } from "../api/endpoints";
 import { useNavigate } from "react-router-dom";
-import { formatDistanceToNow } from "date-fns";
 import { Monitor } from "lucide-react";
 import { Card } from "../components/Card";
+import { ConnectivityIndicator } from "../components/ConnectivityIndicator";
 
 export const AgentsList = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["agents"],
     queryFn: agentsApi.list,
+    refetchInterval: 30000, // Refresh every 30s to update wifi status
   });
   const navigate = useNavigate();
 
@@ -49,13 +50,8 @@ export const AgentsList = () => {
               </div>
             </div>
 
-            <div className="text-right text-sm">
-              <p className="text-gray-500">Last Ping</p>
-              <p className="font-medium">
-                {formatDistanceToNow(new Date(agent.lastPingAt), {
-                  addSuffix: true,
-                })}
-              </p>
+            <div className="flex flex-col items-end gap-1">
+              <ConnectivityIndicator lastPingAt={agent.lastPingAt} />
             </div>
           </div>
         ))}
