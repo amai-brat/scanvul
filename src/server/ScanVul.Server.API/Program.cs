@@ -1,6 +1,7 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Mvc;
+using ScanVul.Server.API;
 using ScanVul.Server.Application;
 using ScanVul.Server.Domain.Cve.Services;
 using ScanVul.Server.Infrastructure.Data;
@@ -32,12 +33,17 @@ builder.Services.AddOpenSearch(builder.Environment,
 builder.Services.AddHangfireServices(builder.Configuration);
 
 builder.Services.AddProblemDetails();
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
 await Migrator.MigrateAsync(app.Services);
 
 app.UseHangfire();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseFastEndpoints(c =>
 {
