@@ -43,9 +43,9 @@ public class ReportComputerInfoEndpoint(
             return new ProblemDetails(ValidationFailures, statusCode: (int) HttpStatusCode.Unauthorized);
         }
 
-        agent.Computer.Name = req.ComputerName;
+        agent.Computer.Name = req.ComputerName.Trim();
         agent.Computer.MemoryInMb = req.MemoryInMb;
-        agent.Computer.CpuName = req.CpuName;
+        agent.Computer.CpuName = req.CpuName.Trim();
         
         await unitOfWork.SaveChangesAsync(ct);
         
