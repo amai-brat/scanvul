@@ -32,8 +32,12 @@ public class VulnerablePackageScanner(
         {
             vulnerablePackages.AddRange(await ScanPackageAsync(computer, package, ct));
         }
+
+        var uniqueVulnerablePackages = vulnerablePackages
+            .DistinctBy(x => (x.PackageInfoId, x.CveId))
+            .ToList();
         
-        var incomingIds = new HashSet<(long PackageInfoId, string CveId)>(vulnerablePackages
+        var incomingIds = new HashSet<(long PackageInfoId, string CveId)>(uniqueVulnerablePackages
             .Select(x => (x.PackageInfoId, x.CveId)));
         var existingIds = new HashSet<(long PackageInfoId, string CveId)>(computer.VulnerablePackages
             .Select(x => (x.PackageInfoId, x.CveId)));
@@ -46,7 +50,7 @@ public class VulnerablePackageScanner(
             computer.VulnerablePackages.Remove(item);
         
         // Add new ones
-        var toAdd = vulnerablePackages
+        var toAdd = uniqueVulnerablePackages
             .Where(x => !existingIds.Contains((x.PackageInfoId, x.CveId)))
             .ToList();
         computer.VulnerablePackages.AddRange(toAdd);

@@ -7,4 +7,8 @@ public interface IAgentRepository
     Task<Agent> AddAsync(Agent agent, CancellationToken ct = default);
     Task<Agent?> GetByTokenWithComputerAsync(Guid token, CancellationToken ct = default);
     Task<Agent?> GetByTokenWithComputerPackagesAsync(Guid token, CancellationToken ct = default);
+    
+    Task<List<Agent>> GetAllWithComputerNoTrackingAsync(CancellationToken ct = default);
+    Task<Agent?> GetWithPackagesNoTrackingAsync(long agentId, CancellationToken ct = default);
+    Task<Agent?> GetWithVulnerablePackagesNoTrackingAsync(long agentId, CancellationToken ct = default);
 }

@@ -28,4 +28,34 @@ public class AgentRepository(AppDbContext dbContext) : IAgentRepository
             .FirstOrDefaultAsync(x => x.Token == token, cancellationToken: ct);
         return agent;
     }
+
+    public async Task<List<Agent>> GetAllWithComputerNoTrackingAsync(CancellationToken ct = default)
+    {
+        return await dbContext.Agents
+            .Include(x => x.Computer)
+            .AsNoTracking()
+            .OrderByDescending(x => x.LastPingAt)
+            .ToListAsync(ct);
+    }
+
+    public async Task<Agent?> GetWithPackagesNoTrackingAsync(long agentId, CancellationToken ct = default)
+    {
+        var agent = await dbContext.Agents
+            .Include(x => x.Computer)
+                .ThenInclude(x => x.Packages)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == agentId, cancellationToken: ct);
+        return agent;
+    }
+
+    public async Task<Agent?> GetWithVulnerablePackagesNoTrackingAsync(long agentId, CancellationToken ct = default)
+    {
+        var agent = await dbContext.Agents
+            .Include(x => x.Computer)
+                .ThenInclude(x => x.VulnerablePackages)
+                    .ThenInclude(x => x.PackageInfo)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == agentId, cancellationToken: ct);
+        return agent;
+    }
 }

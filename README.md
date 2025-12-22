@@ -11,12 +11,16 @@
   - [ ] vulnerable package scanning jobs management
   - [ ] backend for frontend
   - [ ] tasks to agents
+  - [ ] remove agent (task to remove)
 - [ ] agent
   - [x] scrape packages on windows
   - [x] scrape packages on linux (alt linux)
-  - [ ] task to scan
-  - [ ] task to upgrade package (via winget, chocolatey)
+  - [ ] task management (long pooling)
+    - [ ] task to scan
+    - [ ] task to upgrade package (via winget, chocolatey)
+    - [ ] task to stop (remove)
 - [ ] frontend
-  - [ ] agent's pc info
-  - [ ] vulnerable packages
+  - [x] agent's pc info
+  - [x] vulnerable packages
+  - [ ] severity viewer (query opensearch?)
   - [ ] task to upgrade package

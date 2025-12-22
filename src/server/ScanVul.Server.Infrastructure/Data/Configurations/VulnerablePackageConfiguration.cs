@@ -10,6 +10,9 @@ public class VulnerablePackageConfiguration : IEntityTypeConfiguration<Vulnerabl
     {
         builder.HasKey(x => x.Id);
         
+        builder.HasIndex(x => new {x.PackageInfoId, x.CveId, x.ComputerId})
+            .IsUnique();
+        
         builder.HasOne(x => x.Computer)
             .WithMany(x => x.VulnerablePackages)
             .HasForeignKey(x => x.ComputerId);
