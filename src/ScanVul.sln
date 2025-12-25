@@ -16,8 +16,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScanVul.Agent", "agent\Scan
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScanVul.Agent.Installer", "agent\ScanVul.Agent.Installer\ScanVul.Agent.Installer.csproj", "{8DE5F545-0838-47F4-98B6-D3884043FDEB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "indexer", "indexer", "{EC9119DB-7995-4EC3-9E30-0F8E48F8560B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScanVul.Server.Domain", "server\ScanVul.Server.Domain\ScanVul.Server.Domain.csproj", "{FAC8472E-4770-41CC-AC04-8B9F8766E146}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScanVul.Server.Application", "server\ScanVul.Server.Application\ScanVul.Server.Application.csproj", "{B209245C-3AE3-4ADB-996C-29AC2E37AC97}"
