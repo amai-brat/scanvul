@@ -69,6 +69,8 @@ public class VulnerablePackageScanner(
         {
             foreach (var affectedItem in cve.Payload.Containers.Cna?.Affected ?? [])
             {
+                if (!IsPackageAffectedItem(package.Name, affectedItem)) continue;
+                
                 foreach (var versionInfo in affectedItem.Versions)
                 {
                     if (!IsPackageVersionAffected(package.Version, versionInfo)) continue;
@@ -88,6 +90,8 @@ public class VulnerablePackageScanner(
                 {
                     foreach (var affectedItem in adp.Affected)
                     {
+                        if (!IsPackageAffectedItem(package.Name, affectedItem)) continue;
+
                         foreach (var versionInfo in affectedItem.Versions)
                         {
                             if (!IsPackageVersionAffected(package.Version, versionInfo)) continue;
@@ -103,6 +107,11 @@ public class VulnerablePackageScanner(
         return vulnerablePackages;
     }
 
+    private static bool IsPackageAffectedItem(string packageName, AffectedItem affectedItem)
+    {
+        return affectedItem.Product.StartsWith(packageName, StringComparison.OrdinalIgnoreCase);
+    }
+    
     private bool IsPackageVersionAffected(string packageVersion, VersionInfo versionInfo)
     {
         try
