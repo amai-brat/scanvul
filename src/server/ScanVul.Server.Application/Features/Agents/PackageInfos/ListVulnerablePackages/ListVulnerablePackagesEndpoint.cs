@@ -36,12 +36,7 @@ public class ListVulnerablePackagesEndpoint(
         }
 
         var packages = agent.Computer.VulnerablePackages
-            .Select(p => new VulnerablePackageResponse(
-                Id: p.Id, 
-                CveId: p.CveId, 
-                PackageId: p.PackageInfoId, 
-                PackageName: p.PackageInfo.Name, 
-                PackageVersion: p.PackageInfo.Version))
+            .Select(p => p.MapToResponse())
             .OrderBy(x => x.PackageName)
             .ToList();
         

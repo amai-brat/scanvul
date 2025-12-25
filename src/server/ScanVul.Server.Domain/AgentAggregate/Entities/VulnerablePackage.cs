@@ -7,11 +7,13 @@ public class VulnerablePackage
     public long Id { get; set; }
     public string CveId { get; private set; } = null!;
 
-    public long PackageInfoId { get; set; }
+    public long PackageInfoId { get; private set; }
     public PackageInfo PackageInfo { get; private set; } = null!;
 
-    public long ComputerId { get; set; }
+    public long ComputerId { get; private set; }
     public Computer Computer { get; private set; } = null!;
+
+    public bool IsFalsePositive { get; set; } = false;
 
     [UsedImplicitly]
     private VulnerablePackage() { }

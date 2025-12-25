@@ -52,7 +52,7 @@ public class AgentRepository(AppDbContext dbContext) : IAgentRepository
     {
         var agent = await dbContext.Agents
             .Include(x => x.Computer)
-                .ThenInclude(x => x.VulnerablePackages)
+                .ThenInclude(x => x.VulnerablePackages.Where(vp => !vp.IsFalsePositive))
                     .ThenInclude(x => x.PackageInfo)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == agentId, cancellationToken: ct);
