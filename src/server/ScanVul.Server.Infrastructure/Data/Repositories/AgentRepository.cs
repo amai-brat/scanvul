@@ -29,6 +29,23 @@ public class AgentRepository(AppDbContext dbContext) : IAgentRepository
         return agent;
     }
 
+    public async Task<Agent?> GetByTokenWithNotSentCommandsAsync(Guid token, CancellationToken ct = default)
+    {
+        var agent = await dbContext.Agents
+            .Include(x =>  x.Commands
+                .Where(c => c.SentAt == null))
+            .FirstOrDefaultAsync(x => x.Token == token, cancellationToken: ct);
+        return agent;
+    }
+
+    public async Task<Agent?> GetWithCommandsAsync(long agentId, CancellationToken ct = default)
+    {
+        var agent = await dbContext.Agents
+            .Include(x => x.Commands)
+            .FirstOrDefaultAsync(x => x.Id == agentId, cancellationToken: ct);
+        return agent;
+    }
+
     public async Task<List<Agent>> GetAllWithComputerNoTrackingAsync(CancellationToken ct = default)
     {
         return await dbContext.Agents

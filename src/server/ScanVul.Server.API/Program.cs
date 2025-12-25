@@ -23,6 +23,7 @@ builder.Services
             s.Title = "ScanVul Server API";
             s.Version = "v1";
         };
+        o.UseOneOfForPolymorphism = true;
     });
 builder.Services.AddHttpClient();
 builder.Services.AddData(builder.Configuration.GetConnectionString("Postgres"));

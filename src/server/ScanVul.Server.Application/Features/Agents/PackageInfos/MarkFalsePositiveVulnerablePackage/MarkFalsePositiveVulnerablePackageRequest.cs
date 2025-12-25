@@ -7,4 +7,4 @@ namespace ScanVul.Server.Application.Features.Agents.PackageInfos.MarkFalsePosit
 /// </summary>
 /// <param name="VulnerablePackageId">Vulnerable package ID</param>
 public record MarkFalsePositiveVulnerablePackageRequest(
-    [FromRoute(Name = "vulnerablePackageId")]long VulnerablePackageId);
+    [FromRoute(Name = "vulnerablePackageId")] long VulnerablePackageId);

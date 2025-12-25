@@ -19,7 +19,7 @@
 - [ ] agent
   - [x] scrape packages on windows
   - [x] scrape packages on linux (alt linux)
-  - [ ] task management (long pooling)
+  - [ ] task management (short pooling)
     - [ ] task to scan
     - [ ] task to upgrade package (via winget, chocolatey)
     - [ ] task to stop (remove)
