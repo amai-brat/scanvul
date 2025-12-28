@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ScanVul.Server.Application.Features.Agents.PackageInfos.MarkFalsePositiveVulnerablePackage;
+namespace ScanVul.Server.Application.Features.Admin.Agents.PackageInfos.MarkFalsePositiveVulnerablePackage;
 
 /// <summary>
 /// Mark false positive vulnerable package request

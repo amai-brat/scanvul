@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
 using ScanVul.Server.Domain.Common;
 
-namespace ScanVul.Server.Application.Features.Agents.PackageInfos.MarkFalsePositiveVulnerablePackage;
+namespace ScanVul.Server.Application.Features.Admin.Agents.PackageInfos.MarkFalsePositiveVulnerablePackage;
 
 public class MarkFalsePositiveVulnerablePackageEndpoint(
     IPackageInfoRepository packageRepository,
@@ -18,7 +18,7 @@ public class MarkFalsePositiveVulnerablePackageEndpoint(
     public override void Configure()
     {
         Version(1);
-        Patch("api/{apiVersion}/agents/vulnerable-packages/{vulnerablePackageId}/false-positive");
+        Patch("api/{apiVersion}/admin/agents/vulnerable-packages/{vulnerablePackageId}/false-positive");
         Summary(s =>
         {
             s.Summary = "Mark false positive vulnerable package";
@@ -26,7 +26,7 @@ public class MarkFalsePositiveVulnerablePackageEndpoint(
             s.ExampleRequest = new MarkFalsePositiveVulnerablePackageRequest(-1);
         });
         Description(x => x
-            .WithTags("Agents")
+            .WithTags("Admin")
             .Produces<ProblemDetails>(404, "application/problem+json"));
     }
     

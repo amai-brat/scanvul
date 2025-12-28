@@ -6,7 +6,7 @@ using ScanVul.Server.Domain.AgentAggregate.Entities.Commands;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
 using ScanVul.Server.Domain.Common;
 
-namespace ScanVul.Server.Application.Features.Agents.Commands.ReportPackagesCommand;
+namespace ScanVul.Server.Application.Features.Admin.Agents.Commands.ReportPackagesCommand;
 
 public class ReportPackagesCommandEndpoint(
     IAgentRepository agentRepository,
@@ -16,14 +16,14 @@ public class ReportPackagesCommandEndpoint(
     public override void Configure()
     {
         Version(1);
-        Post("api/{apiVersion}/agents/{agentId}/commands/report-packages");
+        Post("api/{apiVersion}/admin/agents/{agentId}/commands/report-packages");
         Summary(s =>
         {
             s.Summary = "Send to agent report packages command";
             s.Description = "Send to agent report packages command";
         });
         Description(x => x
-            .WithTags("Agents")
+            .WithTags("Admin")
             .Accepts<ReportPackagesCommandRequest>());
     }
 

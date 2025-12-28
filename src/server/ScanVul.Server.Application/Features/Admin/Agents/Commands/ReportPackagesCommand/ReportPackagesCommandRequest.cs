@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ScanVul.Server.Application.Features.Agents.Commands.ReportPackagesCommand;
+namespace ScanVul.Server.Application.Features.Admin.Agents.Commands.ReportPackagesCommand;
 
 /// <summary>
 /// Request to send report packages command to agent

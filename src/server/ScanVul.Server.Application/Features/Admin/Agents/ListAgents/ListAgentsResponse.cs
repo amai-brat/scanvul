@@ -1,4 +1,4 @@
-namespace ScanVul.Server.Application.Features.Agents.ListAgents;
+namespace ScanVul.Server.Application.Features.Admin.Agents.ListAgents;
 
 /// <summary>
 /// List agents response
