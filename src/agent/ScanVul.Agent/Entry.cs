@@ -1,5 +1,7 @@
+using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
-using ScanVul.Agent.Services.CommandHandlers;
+using ScanVul.Agent.Helpers;
+using ScanVul.Agent.Services.Commands;
 using ScanVul.Agent.Services.PlatformScrapers;
 using ScanVul.Contracts.Agents;
 
@@ -32,8 +34,9 @@ public static class Entry
         return services;
     }
     
-    public static IServiceCollection AddHandlers(this IServiceCollection services)
+    public static IServiceCollection AddCommands(this IServiceCollection services)
     {
+        services.AddKeyedSingleton<ConcurrentQueue<AgentCommand>>(Consts.KeyedServices.CommandQueue);
         services.AddTransient<ICommandHandler<ReportPackagesCommand>, ReportPackagesCommandHandler>();
 
         return services;

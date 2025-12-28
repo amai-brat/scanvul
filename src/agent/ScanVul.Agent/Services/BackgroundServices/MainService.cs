@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Options;
 using ScanVul.Agent.Options;
-using ScanVul.Agent.Services.CommandHandlers;
+using ScanVul.Agent.Services.Commands;
 using ScanVul.Contracts.Agents;
 
 namespace ScanVul.Agent.Services.BackgroundServices;

@@ -34,7 +34,7 @@ builder.Services.Configure<TimeoutOptions>(builder.Configuration.GetSection("Tim
 builder.Services.Configure<ServerOptions>(builder.Configuration.GetSection("Server"));
 
 builder.Services.AddScraper();
-builder.Services.AddHandlers();
+builder.Services.AddCommands();
 builder.Services.AddHttpClient(Consts.HttpClientNames.Server, client =>
 {
     var options = builder.Configuration

@@ -4,7 +4,7 @@ using ScanVul.Agent.Services.PlatformScrapers;
 using ScanVul.Contracts.Agents;
 using ScanVul.Contracts.PackageInfos;
 
-namespace ScanVul.Agent.Services.CommandHandlers;
+namespace ScanVul.Agent.Services.Commands;
 
 public class ReportPackagesCommandHandler(
     ILogger<ReportPackagesCommandHandler> logger,
