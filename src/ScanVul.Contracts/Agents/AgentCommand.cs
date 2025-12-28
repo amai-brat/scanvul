@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace ScanVul.Contracts.Agents;
 
 /// <summary>
-/// Agent's commands response
+/// Commands to agent
 /// </summary>
 /// <param name="Commands">Commands</param>
 public record AgentCommandsResponse(List<AgentCommand> Commands);
