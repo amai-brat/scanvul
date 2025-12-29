@@ -55,47 +55,68 @@ internal static class Program
                 return;
             }
             
-            Console.WriteLine($"Installing to {path}...");
-            var installResult = await InstallAgentAsync(path, installer.AgentZipResourceName, ct);
-            if (installResult.IsFailure)
+            Console.WriteLine("Checking if agent was installed earlier...");
+            var isInstalledEarlierResult = IsInstalledEarlier(path);
+            if (isInstalledEarlierResult.IsFailure)
             {
-                Console.WriteLine(installResult.Error);
+                Console.WriteLine(isInstalledEarlierResult.Error);
                 return;
             }
 
-            Console.Write("Determining OS name... ");
-            var osNameResult = await installer.GetOsNameAsync(ct);
-            if (osNameResult.IsFailure)
+            if (isInstalledEarlierResult.Value.IsInstalled && !string.IsNullOrEmpty(isInstalledEarlierResult.Value.Token))
             {
-                Console.WriteLine(osNameResult.Error);
-                return;
+                Console.WriteLine("Updating agent's configuration file...");
+                var settingsResult = InitAgentSettings(path, serverAddress, isInstalledEarlierResult.Value.Token);
+                if (settingsResult.IsFailure)
+                {
+                    Console.WriteLine(settingsResult.Error);
+                    return;
+                }
             }
-            Console.WriteLine($"{osNameResult.Value}");
-            
-            Console.Write("Determining OS version... ");
-            var osVersionResult = await installer.GetOsVersionAsync(ct);
-            if (osVersionResult.IsFailure)
+            else
             {
-                Console.WriteLine(osVersionResult.Error);
-                return;
-            }
-            Console.WriteLine($"{osVersionResult.Value ?? "unknown"}");
+                Console.WriteLine($"Installing to {path}...");
+                var installResult = await InstallAgentAsync(path, installer.AgentZipResourceName, ct);
+                if (installResult.IsFailure)
+                {
+                    Console.WriteLine(installResult.Error);
+                    return;
+                }
+
+                Console.Write("Determining OS name... ");
+                var osNameResult = await installer.GetOsNameAsync(ct);
+                if (osNameResult.IsFailure)
+                {
+                    Console.WriteLine(osNameResult.Error);
+                    return;
+                }
+                Console.WriteLine($"{osNameResult.Value}");
             
-            Console.WriteLine($"Registering agent on server {serverAddress}...");
-            var tokenResult = await RegisterAgentAsync(serverAddress, 
-                new RegisterAgentRequest(osNameResult.Value, osVersionResult.Value), ct);
-            if (tokenResult.IsFailure)
-            {
-                Console.WriteLine(tokenResult.Error);
-                return;
-            }
+                Console.Write("Determining OS version... ");
+                var osVersionResult = await installer.GetOsVersionAsync(ct);
+                if (osVersionResult.IsFailure)
+                {
+                    Console.WriteLine(osVersionResult.Error);
+                    return;
+                }
+                Console.WriteLine($"{osVersionResult.Value ?? "unknown"}");
             
-            Console.WriteLine("Creating agent's configuration file...");
-            var settingsResult = InitAgentSettings(path, serverAddress, tokenResult.Value.ToString());
-            if (settingsResult.IsFailure)
-            {
-                Console.WriteLine(settingsResult.Error);
-                return;
+                Console.WriteLine($"Registering agent on server {serverAddress}...");
+                var tokenResult = await RegisterAgentAsync(serverAddress, 
+                    new RegisterAgentRequest(osNameResult.Value, osVersionResult.Value), ct);
+                if (tokenResult.IsFailure)
+                {
+                    Console.WriteLine(tokenResult.Error);
+                    return;
+                }
+            
+                Console.WriteLine("Creating agent's configuration file...");
+                var settingsResult = InitAgentSettings(path, serverAddress, tokenResult.Value.ToString());
+                if (settingsResult.IsFailure)
+                {
+                    Console.WriteLine(settingsResult.Error);
+                    return;
+                }
             }
             
             Console.WriteLine("Adding agent to autostart...");
@@ -111,6 +132,26 @@ internal static class Program
         return rootCommand.Parse(args).Invoke();
     }
 
+    private static Result<(bool IsInstalled, string? Token)> IsInstalledEarlier(DirectoryInfo path)
+    {
+        try
+        {
+            var settingsPath = Path.Combine(path.FullName, AppSettingsFileName);
+            if (!File.Exists(settingsPath)) 
+                return (IsInstalled: false, Token: null);
+            
+            using var stream = File.OpenRead(settingsPath);
+            var settings = JsonSerializer.Deserialize<AgentSettings>(
+                stream, AgentSettingsContext.Default.AgentSettings);
+
+            return (IsInstalled: true, settings?.Server.Token);
+        }
+        catch (Exception)
+        {
+            return (IsInstalled: false, Token: null);
+        }
+    }
+    
     private static async Task<Result> InstallAgentAsync(DirectoryInfo path, string resourceName, CancellationToken ct = default)
     {
         try
@@ -141,7 +182,7 @@ internal static class Program
         }
     }
 
-    private static async Task<Result<Guid>> RegisterAgentAsync(Uri serverAddress, Contracts.Agents.RegisterAgentRequest request, CancellationToken ct = default)
+    private static async Task<Result<Guid>> RegisterAgentAsync(Uri serverAddress, RegisterAgentRequest request, CancellationToken ct = default)
     {
         try
         {
@@ -155,7 +196,7 @@ internal static class Program
             if (!response.IsSuccessStatusCode)
                 return Result.Failure<Guid>(response.ReasonPhrase ?? "Error");
         
-            var resp = await response.Content.ReadFromJsonAsync<Contracts.Agents.RegisterAgentResponse>(
+            var resp = await response.Content.ReadFromJsonAsync<RegisterAgentResponse>(
                 RegisterAgentResponseContext.Default.RegisterAgentResponse, 
                 cancellationToken: ct);
             return resp!.Token;

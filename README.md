@@ -3,7 +3,7 @@
 ## TODO:
 - [x] create command line agent installer with service registering on windows and linux (systemd)
   - [x] exception when installing to computer where agent already exists
-  - [ ] use existing token when reinstalling 
+  - [x] use existing token when reinstalling 
 - [x] CVE indexer microservice (opensearch)
 - [ ] ФСТЭК (на фронте добавить блок с возможными уязвимостями без привязки к версии)
 - [ ] main server api
