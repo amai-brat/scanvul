@@ -1,4 +1,8 @@
-﻿using Karambolo.Extensions.Logging.File;
+﻿using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using Karambolo.Extensions.Logging.File;
+using Karambolo.Extensions.Logging.File.Json;
 using ScanVul.Agent;
 using ScanVul.Agent.Helpers;
 using ScanVul.Agent.Options;
@@ -12,7 +16,14 @@ builder.Services.AddLogging(b =>
     
     b.SetMinimumLevel(LogLevel.Information);
     b.AddJsonConsole();
-    b.AddJsonFile(o =>
+    b.AddJsonFile(new JsonFileLogFormatOptions
+    {
+        JsonWriterOptions = new JsonWriterOptions
+        {
+            // removes \uXXXX
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        }
+    },o =>
     {
         o.RootPath = builder.Environment.ContentRootPath;
         o.BasePath = "logs";
@@ -20,6 +31,7 @@ builder.Services.AddLogging(b =>
         [
             new LogFileOptions
             {
+                FileEncoding = Encoding.UTF8,
                 MinLevel = new Dictionary<string, LogLevel>
                 {
                     { "Default", LogLevel.Debug }
