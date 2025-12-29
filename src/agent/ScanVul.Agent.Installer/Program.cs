@@ -46,6 +46,15 @@ internal static class Program
             var serverAddress = parseResult.GetRequiredValue(addressOption);
             var path = parseResult.GetRequiredValue(pathOption);
             
+            
+            Console.WriteLine("Preparing to installation...");
+            var prepareResult = await installer.PrepareInstallationAsync(ct);
+            if (prepareResult.IsFailure)
+            {
+                Console.WriteLine(prepareResult.Error);
+                return;
+            }
+            
             Console.WriteLine($"Installing to {path}...");
             var installResult = await InstallAgentAsync(path, installer.AgentZipResourceName, ct);
             if (installResult.IsFailure)
@@ -74,7 +83,7 @@ internal static class Program
             
             Console.WriteLine($"Registering agent on server {serverAddress}...");
             var tokenResult = await RegisterAgentAsync(serverAddress, 
-                new Contracts.Agents.RegisterAgentRequest(osNameResult.Value, osVersionResult.Value), ct);
+                new RegisterAgentRequest(osNameResult.Value, osVersionResult.Value), ct);
             if (tokenResult.IsFailure)
             {
                 Console.WriteLine(tokenResult.Error);
