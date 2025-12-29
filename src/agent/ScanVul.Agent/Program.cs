@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 using Karambolo.Extensions.Logging.File;
 using Karambolo.Extensions.Logging.File.Json;
 using ScanVul.Agent;
@@ -20,8 +21,8 @@ builder.Services.AddLogging(b =>
     {
         JsonWriterOptions = new JsonWriterOptions
         {
-            // removes \uXXXX
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            // should remove \uXXXX, but doesn't work ((
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
         }
     },o =>
     {
