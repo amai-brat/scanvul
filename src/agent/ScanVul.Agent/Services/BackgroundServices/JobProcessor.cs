@@ -28,7 +28,7 @@ public class JobProcessor(
                     
                     var response = await httpClient.PostAsJsonAsync(
                         "/api/v1/agents", 
-                        new AgentsResponseToCommand(command.CommandId, result), 
+                        new RespondToCommandRequest(command.CommandId, result), 
                         cancellationToken: stoppingToken);
                     response.EnsureSuccessStatusCode();
                 }

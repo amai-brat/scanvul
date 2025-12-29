@@ -5,4 +5,4 @@ namespace ScanVul.Contracts.Agents;
 /// </summary>
 /// <param name="CommandId">Command ID</param>
 /// <param name="Message">Message about command (successful or not etc)</param>
-public record AgentsResponseToCommand(Guid CommandId, string Message);
+public record RespondToCommandRequest(Guid CommandId, string Message);

@@ -38,6 +38,15 @@ public class AgentRepository(AppDbContext dbContext) : IAgentRepository
         return agent;
     }
 
+    public async Task<Agent?> GetByTokenWithCommandAsync(Guid token, Guid commandId, CancellationToken ct = default)
+    {
+        var agent = await dbContext.Agents
+            .Include(x =>  x.Commands
+                .Where(c => c.Id == commandId))
+            .FirstOrDefaultAsync(x => x.Token == token, cancellationToken: ct);
+        return agent;
+    }
+
     public async Task<Agent?> GetWithCommandsAsync(long agentId, CancellationToken ct = default)
     {
         var agent = await dbContext.Agents

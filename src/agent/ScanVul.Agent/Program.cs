@@ -51,6 +51,7 @@ builder.Services.AddWindowsService(options =>
     options.ServiceName = "ScanVul.Agent service";
 });
 builder.Services.AddHostedService<MainService>();
+builder.Services.AddHostedService<JobProcessor>();
 builder.Services.AddHostedService<HealthCheckService>();
 builder.Services.AddHostedService<ComputerInfoScraperService>();
 

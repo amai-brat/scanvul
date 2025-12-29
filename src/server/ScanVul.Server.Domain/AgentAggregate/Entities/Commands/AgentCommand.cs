@@ -9,9 +9,16 @@ public class AgentCommand
     public long AgentId { get; private set; }
     public Agent Agent { get; private set; } = null!;
 
+    public DateTime CreatedAt { get; private set; }
     public DateTime? SentAt { get; set; }
 
+    public bool IsSent => SentAt.HasValue;
+
     public AgentCommandBody Body { get; private set; } = null!;
+
+    public string? AgentResponse { get; set; }
+
+    public bool IsAgentResponded => AgentResponse != null;
     
     [UsedImplicitly]
     private AgentCommand() {}
@@ -22,5 +29,6 @@ public class AgentCommand
         Agent = agent;
 
         Body = body;
+        CreatedAt = DateTime.UtcNow;
     }
 }
