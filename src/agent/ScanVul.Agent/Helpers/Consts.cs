@@ -11,4 +11,9 @@ public static class Consts
     {
         public const string AgentToken = "X-Agent-Token";
     }
+
+    public static class KeyedServices
+    {
+        public const string CommandQueue = "CommandQueue";
+    }
 }

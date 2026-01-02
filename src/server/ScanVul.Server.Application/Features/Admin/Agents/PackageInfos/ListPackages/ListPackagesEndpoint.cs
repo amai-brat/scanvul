@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
 
-namespace ScanVul.Server.Application.Features.Agents.PackageInfos.ListPackages;
+namespace ScanVul.Server.Application.Features.Admin.Agents.PackageInfos.ListPackages;
 
 public class ListPackagesEndpoint(
     IAgentRepository agentRepository)
@@ -13,14 +13,14 @@ public class ListPackagesEndpoint(
     public override void Configure()
     {
         Version(1);
-        Get("api/{apiVersion}/agents/{agentId}/packages");
+        Get("api/{apiVersion}/admin/agents/{agentId}/packages");
         Summary(s =>
         {
             s.Summary = "Get all packages on computer of agent";
             s.Description = "Get all packages on computer of agent";
         });
         Description(x => x
-            .WithTags("Agents")
+            .WithTags("Admin")
             .Produces<ProblemDetails>(404, "application/problem+json"));
     }
     

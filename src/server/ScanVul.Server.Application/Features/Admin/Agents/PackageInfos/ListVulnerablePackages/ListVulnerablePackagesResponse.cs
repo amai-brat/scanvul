@@ -1,4 +1,4 @@
-namespace ScanVul.Server.Application.Features.Agents.PackageInfos.ListVulnerablePackages;
+namespace ScanVul.Server.Application.Features.Admin.Agents.PackageInfos.ListVulnerablePackages;
 
 /// <summary>
 /// List vulnerable packages response

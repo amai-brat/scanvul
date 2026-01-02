@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
 
-namespace ScanVul.Server.Application.Features.Agents.PackageInfos.ListVulnerablePackages;
+namespace ScanVul.Server.Application.Features.Admin.Agents.PackageInfos.ListVulnerablePackages;
 
 public class ListVulnerablePackagesEndpoint(
     IAgentRepository agentRepository)
@@ -13,14 +13,14 @@ public class ListVulnerablePackagesEndpoint(
     public override void Configure()
     {
         Version(1);
-        Get("api/{apiVersion}/agents/{agentId}/vulnerable-packages");
+        Get("api/{apiVersion}/admin/agents/{agentId}/vulnerable-packages");
         Summary(s =>
         {
             s.Summary = "Get all vulnerable packages on computer of agent";
             s.Description = "Get all vulnerable packages on computer of agent";
         });
         Description(x => x
-            .WithTags("Agents")
+            .WithTags("Admin")
             .Produces<ProblemDetails>(404, "application/problem+json"));
     }
     

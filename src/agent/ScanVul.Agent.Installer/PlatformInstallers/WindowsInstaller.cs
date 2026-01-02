@@ -14,7 +14,7 @@ public class WindowsInstaller : IPlatformInstaller
     public DirectoryInfo DefaultInstallationPath => new(@"C:\Program Files\ScanVul");
     public string AgentZipResourceName => "agent.win64.zip";
     public string ExecutableFileName => "ScanVul.Agent.exe";
-    public async Task<Result> AddAgentToAutoStartAsync(DirectoryInfo path, CancellationToken ct = default)
+    public async Task<Result> PrepareInstallationAsync(CancellationToken ct = default)
     {
         try
         {
@@ -31,6 +31,29 @@ public class WindowsInstaller : IPlatformInstaller
             ps.AddStatement()
                 .AddCommand("Remove-Service")
                 .AddParameter("Name", ServiceName);
+                
+            await ps.InvokeAsync();
+
+            return ps.Streams.Error.Count > 2 // suppose errors for stop and remove when not existed
+                ? Result.Failure("Error when preparing installation", ps.Streams.Error.Select(x => x.Exception).ToList()) 
+                : Result.Success();
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure("Error when preparing installation", ex);
+        }
+    }
+
+    public async Task<Result> AddAgentToAutoStartAsync(DirectoryInfo path, CancellationToken ct = default)
+    {
+        try
+        {
+            using var runspace = RunspaceFactory.CreateRunspace();
+            // ReSharper disable once MethodHasAsyncOverload
+            runspace.Open();
+        
+            using var ps = PowerShell.Create();
+            ps.Runspace = runspace;
             
             ps.AddStatement()
                 .AddCommand("New-Service")
@@ -45,7 +68,7 @@ public class WindowsInstaller : IPlatformInstaller
                 
             await ps.InvokeAsync();
 
-            return ps.Streams.Error.Count > 2 // suppose errors for stop and remove when not existed
+            return ps.Streams.Error.Count > 0
                 ? Result.Failure("Error when adding agent to services", ps.Streams.Error.Select(x => x.Exception).ToList()) 
                 : Result.Success();
         }

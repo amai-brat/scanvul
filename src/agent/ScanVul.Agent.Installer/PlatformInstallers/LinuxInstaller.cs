@@ -24,6 +24,24 @@ public class LinuxInstaller : IPlatformInstaller
     public DirectoryInfo DefaultInstallationPath => new("/opt/scanvul");
     public string AgentZipResourceName => "agent.linux.zip";
     public string ExecutableFileName => "ScanVul.Agent";
+    public async Task<Result> PrepareInstallationAsync(CancellationToken ct = default)
+    {
+        try
+        {
+            var stopResult = await RunSystemCommandAsync("systemctl", $"stop {SystemdUnitFileName}", ct);
+            if (stopResult.IsFailure)
+            {
+                // ignore if not found (first installation)
+            }
+
+            return Result.Success();
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure("Error when preparing installation", ex);
+        }
+    }
+
     public async Task<Result> AddAgentToAutoStartAsync(DirectoryInfo path, CancellationToken ct = default)
     {
         try

@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using ScanVul.Server.Domain.AgentAggregate.Entities.Commands;
 
 namespace ScanVul.Server.Domain.AgentAggregate.Entities;
 
@@ -12,6 +13,8 @@ public class Agent
 
     public long ComputerId { get; set; }
     public Computer Computer { get; set; } = null!;
+
+    public List<AgentCommand> Commands { get; set; } = [];
 
     [UsedImplicitly]
     private Agent(){}

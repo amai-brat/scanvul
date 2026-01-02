@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ScanVul.Server.Application.Features.Agents.PackageInfos.ListPackages;
+namespace ScanVul.Server.Application.Features.Admin.Agents.PackageInfos.ListPackages;
 
 /// <summary>
 /// List packages request

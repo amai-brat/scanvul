@@ -3,6 +3,7 @@ using System;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ScanVul.Server.Infrastructure.Data;
@@ -12,9 +13,11 @@ using ScanVul.Server.Infrastructure.Data;
 namespace ScanVul.Server.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251225143237_AddAgentCommand")]
+    partial class AddAgentCommand
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,18 +90,10 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("agent_id");
 
-                    b.Property<string>("AgentResponse")
-                        .HasColumnType("text")
-                        .HasColumnName("agent_response");
-
                     b.Property<string>("Body")
                         .IsRequired()
                         .HasColumnType("jsonb")
                         .HasColumnName("body");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
 
                     b.Property<DateTime?>("SentAt")
                         .HasColumnType("timestamp with time zone")

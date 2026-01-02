@@ -20,7 +20,7 @@ public class ComputerInfoScraperService(
         try
         {
             var result = await scraper.ScrapeComputerInfoAsync(stoppingToken);
-            logger.LogInformation("[{Time}] Computer: {ComputerName}. CPU: {CpuInfo}. RAM: {RAM}", DateTimeOffset.Now, result.ComputerName, result.CpuName, result.MemoryInMb);
+            logger.LogInformation("Computer: {ComputerName}. CPU: {CpuInfo}. RAM: {RAM}", result.ComputerName, result.CpuName, result.MemoryInMb);
                 
             var response = await httpClient.PostAsJsonAsync("api/v1/agents/computer/report", new ReportComputerInfoRequest
             {
