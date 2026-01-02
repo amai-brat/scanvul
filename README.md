@@ -22,7 +22,7 @@
   - [x] scrape packages on windows
   - [x] scrape packages on linux (alt linux)
   - [ ] task management (short pooling)
-    - [ ] task to scan
+    - [x] task to scan
     - [ ] task to upgrade package (via winget, chocolatey)
     - [ ] task to stop (remove)
 - [ ] frontend

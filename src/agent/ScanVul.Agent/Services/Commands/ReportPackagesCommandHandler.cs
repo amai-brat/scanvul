@@ -13,6 +13,8 @@ public class ReportPackagesCommandHandler(
 {
     public async Task<string> Handle(ReportPackagesCommand command, CancellationToken ct = default)
     {
+        logger.LogInformation("Processing {Command}:{CommandId}", command.GetType().Name, command.CommandId);
+
         var httpClient = httpClientFactory.CreateClient(Consts.HttpClientNames.Server);
             
         try

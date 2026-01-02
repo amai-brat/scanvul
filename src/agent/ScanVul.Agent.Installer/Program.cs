@@ -63,6 +63,14 @@ internal static class Program
                 return;
             }
 
+            Console.WriteLine($"Installing to {path}...");
+            var installResult = await InstallAgentAsync(path, installer.AgentZipResourceName, ct);
+            if (installResult.IsFailure)
+            {
+                Console.WriteLine(installResult.Error);
+                return;
+            }
+            
             if (isInstalledEarlierResult.Value.IsInstalled && !string.IsNullOrEmpty(isInstalledEarlierResult.Value.Token))
             {
                 Console.WriteLine("Updating agent's configuration file...");
@@ -75,14 +83,6 @@ internal static class Program
             }
             else
             {
-                Console.WriteLine($"Installing to {path}...");
-                var installResult = await InstallAgentAsync(path, installer.AgentZipResourceName, ct);
-                if (installResult.IsFailure)
-                {
-                    Console.WriteLine(installResult.Error);
-                    return;
-                }
-
                 Console.Write("Determining OS name... ");
                 var osNameResult = await installer.GetOsNameAsync(ct);
                 if (osNameResult.IsFailure)

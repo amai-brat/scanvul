@@ -19,10 +19,12 @@ builder.Services.AddLogging(b =>
     b.AddJsonConsole();
     b.AddJsonFile(new JsonFileLogFormatOptions
     {
+        EntrySeparator = "",
         JsonWriterOptions = new JsonWriterOptions
         {
-            // should remove \uXXXX, but doesn't work ((
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
+            // removes \uXXXX
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            Indented = true,
         }
     },o =>
     {
@@ -35,7 +37,7 @@ builder.Services.AddLogging(b =>
                 FileEncoding = Encoding.UTF8,
                 MinLevel = new Dictionary<string, LogLevel>
                 {
-                    { "Default", LogLevel.Debug }
+                    { "Default", LogLevel.Information }
                 },
                 Path = $"logs_{DateTime.Now:yyyy-MM-dd}.txt"
             }

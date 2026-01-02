@@ -24,10 +24,12 @@ public class JobProcessor(
             {
                 while (queue.TryDequeue(out var command))
                 {
+                    logger.LogInformation("Found command from server. Starting processing job {Command}:{CommandId}", command.GetType().Name, command.CommandId);
+                    
                     var result = await ProcessCommand(command, scope.ServiceProvider, stoppingToken);
                     
                     var response = await httpClient.PostAsJsonAsync(
-                        "/api/v1/agents", 
+                        "/api/v1/agents/commands:respond", 
                         new RespondToCommandRequest(command.CommandId, result), 
                         cancellationToken: stoppingToken);
                     response.EnsureSuccessStatusCode();
