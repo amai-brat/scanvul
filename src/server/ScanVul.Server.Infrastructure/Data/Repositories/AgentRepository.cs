@@ -55,9 +55,10 @@ public class AgentRepository(AppDbContext dbContext) : IAgentRepository
         return agent;
     }
 
-    public async Task<List<Agent>> GetAllWithComputerNoTrackingAsync(CancellationToken ct = default)
+    public async Task<List<Agent>> GetActiveAgentsWithComputerNoTrackingAsync(CancellationToken ct = default)
     {
         return await dbContext.Agents
+            .Where(x => x.IsActive)
             .Include(x => x.Computer)
             .AsNoTracking()
             .OrderByDescending(x => x.LastPingAt)

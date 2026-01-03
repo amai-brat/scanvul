@@ -42,6 +42,7 @@ public class PingEndpoint(
         }
         
         var commands = agent.Commands
+            .OrderBy(x => x.CreatedAt)
             .Select(x => x.MapToResponse())
             .ToList();
         

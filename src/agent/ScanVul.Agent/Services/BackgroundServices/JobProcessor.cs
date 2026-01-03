@@ -10,6 +10,13 @@ public class JobProcessor(
     IServiceScopeFactory scopeFactory,
     IHttpClientFactory httpClientFactory) : BackgroundService
 {
+    private static readonly Dictionary<Type, Func<IServiceProvider, AgentCommand, CancellationToken, Task<string>>> Handlers = new()
+    {
+        [typeof(ReportPackagesCommand)] = CreateHandler<ReportPackagesCommand>(),
+        [typeof(UpgradePackageCommand)] = CreateHandler<UpgradePackageCommand>(),
+        [typeof(DisableAgentCommand)] = CreateHandler<DisableAgentCommand>()
+    };
+    
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
@@ -44,21 +51,18 @@ public class JobProcessor(
         }
     }
 
+    private static Func<IServiceProvider, AgentCommand, CancellationToken, Task<string>> CreateHandler<TCommand>()
+        where TCommand : AgentCommand 
+        => (sp, cmd, ct) => sp.GetRequiredService<ICommandHandler<TCommand>>().Handle((TCommand)cmd, ct);
+    
     private static async Task<string> ProcessCommand(
         AgentCommand command, 
         IServiceProvider serviceProvider,
         CancellationToken ct = default)
     {
-        switch (command)
-        {
-            case ReportPackagesCommand reportPackagesCommand:
-                var reportHandler = serviceProvider.GetRequiredService<ICommandHandler<ReportPackagesCommand>>();
-                return await reportHandler.Handle(reportPackagesCommand, ct);
-            case UpgradePackageCommand upgradePackageCommand:
-                var upgradeHandler = serviceProvider.GetRequiredService<ICommandHandler<UpgradePackageCommand>>();
-                return await upgradeHandler.Handle(upgradePackageCommand, ct);
-            default:
-                throw new ArgumentOutOfRangeException(nameof(command));
-        }
+        if (Handlers.TryGetValue(command.GetType(), out var handler))
+            return await handler(serviceProvider, command, ct);
+    
+        throw new ArgumentOutOfRangeException(nameof(command), $"No handler for command type: {command.GetType()}");
     }
 }

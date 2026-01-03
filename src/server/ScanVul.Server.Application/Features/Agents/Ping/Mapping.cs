@@ -12,6 +12,7 @@ public static class Mapping
         {
             ReportPackagesCommandBody => new ReportPackagesCommand(command.Id),
             UpgradePackageCommandBody upgradePackageCommandBody => new UpgradePackageCommand(command.Id, upgradePackageCommandBody.PackageName),
+            DisableAgentCommandBody => new DisableAgentCommand(command.Id),
             _ => throw new ArgumentOutOfRangeException(nameof(command), command, null)
         };
     }

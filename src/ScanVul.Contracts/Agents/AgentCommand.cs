@@ -15,8 +15,11 @@ public record AgentCommandsResponse(List<AgentCommand> Commands);
 [JsonPolymorphic]
 [JsonDerivedType(typeof(ReportPackagesCommand), typeDiscriminator: nameof(ReportPackagesCommand))]
 [JsonDerivedType(typeof(UpgradePackageCommand), typeDiscriminator: nameof(UpgradePackageCommand))]
+[JsonDerivedType(typeof(DisableAgentCommand), typeDiscriminator: nameof(DisableAgentCommand))]
 public abstract record AgentCommand(Guid CommandId);
 
 public record ReportPackagesCommand(Guid CommandId) : AgentCommand(CommandId);
 
 public record UpgradePackageCommand(Guid CommandId, string PackageName) : AgentCommand(CommandId);
+
+public record DisableAgentCommand(Guid CommandId) : AgentCommand(CommandId);

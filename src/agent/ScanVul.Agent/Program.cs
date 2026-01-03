@@ -48,7 +48,7 @@ builder.Services.AddLogging(b =>
 builder.Services.Configure<TimeoutOptions>(builder.Configuration.GetSection("Timeout"));
 builder.Services.Configure<ServerOptions>(builder.Configuration.GetSection("Server"));
 
-builder.Services.AddScraper();
+builder.Services.AddPlatformServices();
 builder.Services.AddCommands();
 builder.Services.AddHttpClient(Consts.HttpClientNames.Server, client =>
 {

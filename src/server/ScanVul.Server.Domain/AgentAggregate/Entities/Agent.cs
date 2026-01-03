@@ -16,6 +16,8 @@ public class Agent
 
     public List<AgentCommand> Commands { get; set; } = [];
 
+    public bool IsActive { get; set; }
+
     [UsedImplicitly]
     private Agent(){}
     
@@ -23,5 +25,6 @@ public class Agent
     {
         Token = Guid.CreateVersion7();
         Computer = computer;
+        IsActive = true;
     }
 }

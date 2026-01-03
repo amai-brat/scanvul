@@ -11,7 +11,7 @@ public interface IAgentRepository
     Task<Agent?> GetByTokenWithCommandAsync(Guid token, Guid commandId, CancellationToken ct = default);
     Task<Agent?> GetWithCommandsAsync(long agentId, CancellationToken ct = default);
     
-    Task<List<Agent>> GetAllWithComputerNoTrackingAsync(CancellationToken ct = default);
+    Task<List<Agent>> GetActiveAgentsWithComputerNoTrackingAsync(CancellationToken ct = default);
     Task<Agent?> GetWithPackagesNoTrackingAsync(long agentId, CancellationToken ct = default);
     
     /// <summary>

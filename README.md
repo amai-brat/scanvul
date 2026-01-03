@@ -14,7 +14,7 @@
   - [ ] vulnerable package scanning jobs management
   - [ ] backend for frontend
   - [ ] tasks to agents
-  - [ ] remove agent (task to remove)
+  - [x] remove agent (task to remove)
   - [x] fix git 2.45.1 doesn't have [CVE](https://cti.wazuh.com/vulnerabilities/cves/CVE-2019-1003010). 
         Solution: vendor is jenkins with other version system, so I need to add feature to mark false positives   
   - [x] mark false positive vulnerabilities
@@ -24,7 +24,7 @@
   - [ ] task management (short pooling)
     - [x] task to scan
     - [ ] task to upgrade package (via winget, chocolatey)
-    - [ ] task to stop (remove)
+    - [x] task to stop (remove)
 - [ ] frontend
   - [x] agent's pc info
   - [x] vulnerable packages

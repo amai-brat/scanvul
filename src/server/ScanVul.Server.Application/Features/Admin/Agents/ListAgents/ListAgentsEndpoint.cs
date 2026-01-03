@@ -24,7 +24,7 @@ public class ListAgentsEndpoint(
     public override async Task<Ok<ListAgentsResponse>> ExecuteAsync(
         CancellationToken ct)
     {
-        var agents = await agentRepository.GetAllWithComputerNoTrackingAsync(ct);
+        var agents = await agentRepository.GetActiveAgentsWithComputerNoTrackingAsync(ct);
 
         var dtos = agents
             .Select(agent =>

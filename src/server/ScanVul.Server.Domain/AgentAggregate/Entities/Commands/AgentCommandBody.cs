@@ -8,3 +8,5 @@ public class UpgradePackageCommandBody(string packageName) : AgentCommandBody
 {
     public string PackageName { get; private set; } = packageName;
 }
+
+public class DisableAgentCommandBody : AgentCommandBody;
