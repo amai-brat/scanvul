@@ -1,9 +1,12 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Mvc;
 using ScanVul.Server.API;
 using ScanVul.Server.Application;
 using ScanVul.Server.Domain.Cve.Services;
+using ScanVul.Server.Infrastructure.Choco;
 using ScanVul.Server.Infrastructure.Data;
 using ScanVul.Server.Infrastructure.Hangfire;
 using ScanVul.Server.Infrastructure.OpenSearch;
@@ -24,6 +27,10 @@ builder.Services
             s.Version = "v1";
         };
         o.UseOneOfForPolymorphism = true;
+        o.SerializerSettings = options =>
+        {
+            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+        };
     });
 builder.Services.AddHttpClient();
 builder.Services.AddData(builder.Configuration.GetConnectionString("Postgres"));
@@ -32,6 +39,7 @@ builder.Services.AddOpenSearch(builder.Environment,
     .GetSection("OpenSearch")
     .Get<OpenSearchOptions>());
 builder.Services.AddHangfireServices(builder.Configuration);
+builder.Services.AddChocoPackageManager();
 
 builder.Services.AddProblemDetails();
 builder.Services.AddJwtAuthentication(builder.Configuration);
