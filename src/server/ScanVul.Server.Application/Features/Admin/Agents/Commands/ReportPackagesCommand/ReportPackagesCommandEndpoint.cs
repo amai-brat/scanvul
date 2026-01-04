@@ -19,8 +19,8 @@ public class ReportPackagesCommandEndpoint(
         Post("api/{apiVersion}/admin/agents/{agentId}/commands/report-packages");
         Summary(s =>
         {
-            s.Summary = "Send to agent report packages command";
-            s.Description = "Send to agent report packages command";
+            s.Summary = "Send to agent 'report packages' command";
+            s.Description = "Send to agent 'report packages' command";
         });
         Description(x => x
             .WithTags("Admin")
