@@ -1,7 +1,7 @@
 using ScanVul.Agent.Services.PlatformAgentManagers;
 using ScanVul.Contracts.Agents;
 
-namespace ScanVul.Agent.Services.Commands;
+namespace ScanVul.Agent.Services.CommandHandlers;
 
 public class DisableAgentCommandHandler(
     ILogger<ReportPackagesCommandHandler> logger,

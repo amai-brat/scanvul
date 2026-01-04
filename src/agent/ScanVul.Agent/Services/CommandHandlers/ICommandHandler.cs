@@ -1,6 +1,6 @@
 using ScanVul.Contracts.Agents;
 
-namespace ScanVul.Agent.Services.Commands;
+namespace ScanVul.Agent.Services.CommandHandlers;
 
 public interface ICommandHandler<in TCommand> 
     where TCommand : AgentCommand

@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Net.Http.Json;
 using ScanVul.Agent.Helpers;
-using ScanVul.Agent.Services.Commands;
+using ScanVul.Agent.Services.CommandHandlers;
 using ScanVul.Contracts.Agents;
 
 namespace ScanVul.Agent.Services.BackgroundServices;
