@@ -84,8 +84,10 @@ public partial class CveRepository(IOpenSearchClient client) : ICveRepository
             }
         };
         
-        var response = await client.SearchAsync<CveDocument>(searchRequest, ct);
-        return response.Documents;
+        var response = await client.SearchAsync<CveDocument>(searchRequest, ct).ConfigureAwait(false);
+        return response.IsValid
+            ? response.Documents
+            : throw new AggregateException("Error when sending request to OpenSearch", response.OriginalException);
     }
 
     private static string SanitizePackageName(string? name)
