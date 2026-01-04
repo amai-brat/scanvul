@@ -44,6 +44,7 @@ public class ReportPackagesCommandHandler(
             return $"Error when scraping and sending packages at {DateTimeOffset.Now}: {ex.Message}";
         }
 
+        logger.LogInformation("Successfully scraped packages");
         return "OK";
     }
 }

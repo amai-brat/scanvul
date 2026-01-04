@@ -10,9 +10,7 @@ public class LinuxPlatformAgentManager : IPlatformAgentManager
 
     public async Task DisableAgentAsync(CancellationToken ct = default)
     {
-        // 1. Disable and Stop the service immediately
-        // 'disable' removes auto-start symlinks. '--now' also stops it immediately
-        await RunSystemCommandAsync("systemctl", $"disable --now {SystemdUnitFileName}", ct);
+        await RunSystemCommandAsync("systemctl", $"disable --now --no-block {SystemdUnitFileName}", ct);
     }
     
     private static async Task RunSystemCommandAsync(string command, string arguments, CancellationToken ct = default)

@@ -17,6 +17,7 @@
     </ItemGroup>
     
     <ItemGroup>
+        <PackageReference Include="chocolatey.lib" Version="2.6.0" />
         <PackageReference Include="Karambolo.Extensions.Logging.File.Json" Version="3.6.3" />
         <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="9.0.11" />
         <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="9.0.11" />

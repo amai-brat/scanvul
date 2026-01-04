@@ -26,6 +26,7 @@
     - [x] task to scan
     - [ ] task to upgrade package (via winget, chocolatey)
     - [x] task to stop (remove)
+  - [ ] conditional compilation for different OSes
 - [ ] frontend
   - [x] agent's pc info
   - [x] vulnerable packages

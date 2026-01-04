@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using ScanVul.Agent.Helpers;
 using ScanVul.Agent.Services.CommandHandlers;
 using ScanVul.Agent.Services.PlatformAgentManagers;
+using ScanVul.Agent.Services.PlatformPackageManagers;
 using ScanVul.Agent.Services.PlatformScrapers;
 using ScanVul.Contracts.Agents;
 
@@ -20,6 +21,7 @@ public static class Entry
         {
             services.AddTransient<IPlatformScraper, WindowsPlatformScraper>();
             services.AddTransient<IPlatformAgentManager, WindowsPlatformAgentManager>();
+            services.AddTransient<IPlatformPackageManager, WindowsPlatformPackageManager>();
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
@@ -27,11 +29,13 @@ public static class Entry
             {
                 services.AddTransient<IPlatformScraper, ArchLinuxPlatformScraper>();
                 services.AddTransient<IPlatformAgentManager, LinuxPlatformAgentManager>();
+                services.AddTransient<IPlatformPackageManager, ArchLinuxPlatformPackageManager>();
             }
             else if (File.Exists("/etc/altlinux-release"))
             {
                 services.AddTransient<IPlatformScraper, AltLinuxPlatformScraper>();
                 services.AddTransient<IPlatformAgentManager, LinuxPlatformAgentManager>();
+                services.AddTransient<IPlatformPackageManager, AltLinuxPlatformPackageManager>();
             }
         }
 
@@ -42,6 +46,7 @@ public static class Entry
     {
         services.AddKeyedSingleton<ConcurrentQueue<AgentCommand>>(Consts.KeyedServices.CommandQueue);
         services.AddTransient<ICommandHandler<ReportPackagesCommand>, ReportPackagesCommandHandler>();
+        services.AddTransient<ICommandHandler<UpgradePackageCommand>, UpgradePackageCommandHandler>();
         services.AddTransient<ICommandHandler<DisableAgentCommand>, DisableAgentCommandHandler>();
 
         return services;

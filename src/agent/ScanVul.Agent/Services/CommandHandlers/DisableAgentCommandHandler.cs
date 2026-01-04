@@ -20,7 +20,9 @@ public class DisableAgentCommandHandler(
             logger.LogWarning(ex, "Error when disabling agent");
             return $"Error when disabling agent: {ex.Message}";
         }
-
+       
+        // unlikely that this will be logged and returned
+        logger.LogInformation("Successfully disabled agent");
         return "OK";
     }
 }
