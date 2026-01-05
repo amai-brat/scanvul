@@ -4,6 +4,6 @@ public class AltLinuxPlatformPackageManager : IPlatformPackageManager
 {
     public Task UpgradePackageAsync(string packageName, CancellationToken ct = default)
     {
-        return Task.CompletedTask;
+        throw new NotImplementedException();
     }
 }

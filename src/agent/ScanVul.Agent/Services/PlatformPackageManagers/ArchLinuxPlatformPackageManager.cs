@@ -5,6 +5,6 @@ public class ArchLinuxPlatformPackageManager : IPlatformPackageManager
     public Task UpgradePackageAsync(string packageName, CancellationToken ct = default)
     {
         // TODO: sudo pacman -Syu
-        return Task.CompletedTask;
+        throw new NotImplementedException();
     }
 }

@@ -22,9 +22,9 @@
 - [ ] agent
   - [x] scrape packages on windows
   - [x] scrape packages on linux (alt linux)
-  - [ ] task management (short pooling)
+  - [x] task management (short pooling)
     - [x] task to scan
-    - [ ] task to upgrade package (via winget, chocolatey)
+    - [x] task to upgrade package (via chocolatey)
     - [x] task to stop (remove)
   - [ ] conditional compilation for different OSes
 - [ ] frontend
