@@ -55,6 +55,12 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("computer_id");
 
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
                     b.Property<DateTime>("LastPackagesScrapingAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_packages_scraping_at");
@@ -74,6 +80,43 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                         .HasDatabaseName("ix_agents_computer_id");
 
                     b.ToTable("agents", (string)null);
+                });
+
+            modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.Commands.AgentCommand", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<long>("AgentId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("agent_id");
+
+                    b.Property<string>("AgentResponse")
+                        .HasColumnType("text")
+                        .HasColumnName("agent_response");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("body");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("SentAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("sent_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_agent_command");
+
+                    b.HasIndex("AgentId")
+                        .HasDatabaseName("ix_agent_command_agent_id");
+
+                    b.ToTable("agent_command", (string)null);
                 });
 
             modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.Computer", b =>
@@ -238,6 +281,18 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                     b.Navigation("Computer");
                 });
 
+            modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.Commands.AgentCommand", b =>
+                {
+                    b.HasOne("ScanVul.Server.Domain.AgentAggregate.Entities.Agent", "Agent")
+                        .WithMany("Commands")
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_agent_command_agents_agent_id");
+
+                    b.Navigation("Agent");
+                });
+
             modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.VulnerablePackage", b =>
                 {
                     b.HasOne("ScanVul.Server.Domain.AgentAggregate.Entities.Computer", "Computer")
@@ -257,6 +312,11 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                     b.Navigation("Computer");
 
                     b.Navigation("PackageInfo");
+                });
+
+            modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.Agent", b =>
+                {
+                    b.Navigation("Commands");
                 });
 
             modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.Computer", b =>

@@ -1,4 +1,9 @@
-﻿using Karambolo.Extensions.Logging.File;
+﻿using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
+using Karambolo.Extensions.Logging.File;
+using Karambolo.Extensions.Logging.File.Json;
 using ScanVul.Agent;
 using ScanVul.Agent.Helpers;
 using ScanVul.Agent.Options;
@@ -12,7 +17,16 @@ builder.Services.AddLogging(b =>
     
     b.SetMinimumLevel(LogLevel.Information);
     b.AddJsonConsole();
-    b.AddJsonFile(o =>
+    b.AddJsonFile(new JsonFileLogFormatOptions
+    {
+        EntrySeparator = "",
+        JsonWriterOptions = new JsonWriterOptions
+        {
+            // removes \uXXXX
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            Indented = true,
+        }
+    },o =>
     {
         o.RootPath = builder.Environment.ContentRootPath;
         o.BasePath = "logs";
@@ -20,9 +34,11 @@ builder.Services.AddLogging(b =>
         [
             new LogFileOptions
             {
+                FileEncoding = Encoding.UTF8,
                 MinLevel = new Dictionary<string, LogLevel>
                 {
-                    { "Default", LogLevel.Debug }
+                    { "Default", LogLevel.Information },
+                    { "System.Net.Http.HttpClient", LogLevel.Warning }
                 },
                 Path = $"logs_{DateTime.Now:yyyy-MM-dd}.txt"
             }
@@ -33,7 +49,8 @@ builder.Services.AddLogging(b =>
 builder.Services.Configure<TimeoutOptions>(builder.Configuration.GetSection("Timeout"));
 builder.Services.Configure<ServerOptions>(builder.Configuration.GetSection("Server"));
 
-builder.Services.AddScraper();
+builder.Services.AddPlatformServices();
+builder.Services.AddCommands();
 builder.Services.AddHttpClient(Consts.HttpClientNames.Server, client =>
 {
     var options = builder.Configuration
@@ -50,6 +67,7 @@ builder.Services.AddWindowsService(options =>
     options.ServiceName = "ScanVul.Agent service";
 });
 builder.Services.AddHostedService<MainService>();
+builder.Services.AddHostedService<JobProcessor>();
 builder.Services.AddHostedService<HealthCheckService>();
 builder.Services.AddHostedService<ComputerInfoScraperService>();
 

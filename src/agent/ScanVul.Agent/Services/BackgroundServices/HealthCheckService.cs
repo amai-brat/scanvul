@@ -1,6 +1,9 @@
+using System.Collections.Concurrent;
+using System.Net.Http.Json;
 using Microsoft.Extensions.Options;
 using ScanVul.Agent.Helpers;
 using ScanVul.Agent.Options;
+using ScanVul.Contracts.Agents;
 
 namespace ScanVul.Agent.Services.BackgroundServices;
 
@@ -17,7 +20,8 @@ public class HealthCheckService(
 
             var logger = scope.ServiceProvider.GetRequiredService<ILogger<HealthCheckService>>();
             var httpClient = httpClientFactory.CreateClient(Consts.HttpClientNames.Server);
-            
+            var queue = scope.ServiceProvider.GetRequiredKeyedService<ConcurrentQueue<AgentCommand>>(Consts.KeyedServices.CommandQueue);
+
             try
             {
                 logger.LogInformation("Ping server at {Time}", DateTimeOffset.Now);
@@ -29,6 +33,9 @@ public class HealthCheckService(
                         response.StatusCode, 
                         await response.Content.ReadAsStringAsync(stoppingToken));
                 }
+
+                var commandsResp = await response.Content.ReadFromJsonAsync<AgentCommandsResponse>(cancellationToken: stoppingToken);
+                commandsResp?.Commands.ForEach(c => queue.Enqueue(c));
             }
             catch (Exception ex)
             {

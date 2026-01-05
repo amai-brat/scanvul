@@ -11,8 +11,8 @@
         <SelfContained Condition="'$(Configuration)' == 'Release'">true</SelfContained>
         <PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
     </PropertyGroup>
-    
-    <ItemGroup Condition="$(RuntimeIdentifier.StartsWith('win'))">
+
+    <ItemGroup Condition=" ('$(RuntimeIdentifier)' != '' and $(RuntimeIdentifier.StartsWith('win'))) Or '$(Configuration)' == 'Debug' ">
         <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.6.0-preview.3" />
     </ItemGroup>
     

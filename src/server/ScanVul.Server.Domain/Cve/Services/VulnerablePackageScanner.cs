@@ -20,12 +20,25 @@ public class VulnerablePackageScanner(
 {
     public async Task ScanAsync(long computerId, CancellationToken ct = default)
     {
+        try
+        {
+            await ScanInternalAsync(computerId, ct);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error scanning vulnerable package of computer {ComputerId}", computerId);
+        }
+    }
+
+    private async Task ScanInternalAsync(long computerId, CancellationToken ct)
+    {
         var computer = await computerRepository.GetComputerWithAllPackagesAsync(computerId, ct);
         if (computer == null)
         {
             logger.LogError("Could not find computer {ComputerId}", computerId);
             throw new Exception($"Could not find computer {computerId}");
         }
+        logger.LogInformation("Scanning packages of computer {ComputerId} for vulnerabilities", computerId);
 
         List<VulnerablePackage> vulnerablePackages = [];
         foreach (var package in computer.Packages)
@@ -56,6 +69,8 @@ public class VulnerablePackageScanner(
         computer.VulnerablePackages.AddRange(toAdd);
 
         await unitOfWork.SaveChangesAsync(ct);
+        
+        logger.LogInformation("Successfully scanned packages of computer {ComputerId} for vulnerabilities", computerId);
     }
 
     private async Task<List<VulnerablePackage>> ScanPackageAsync(Computer computer, PackageInfo package, CancellationToken ct = default)
