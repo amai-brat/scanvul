@@ -1,3 +1,4 @@
+using Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing;
 using ScanVul.Agent.Services.PlatformAgentManagers;
 using ScanVul.Contracts.Agents;
 
@@ -18,7 +19,7 @@ public class DisableAgentCommandHandler(
         catch (Exception ex)
         {
             logger.LogWarning(ex, "Error when disabling agent");
-            return $"Error when disabling agent: {ex.Message}";
+            return $"Error when disabling agent: {ex.ToInvariantString()}";
         }
        
         // unlikely that this will be logged and returned

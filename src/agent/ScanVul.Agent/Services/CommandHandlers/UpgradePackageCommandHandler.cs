@@ -1,3 +1,4 @@
+using Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing;
 using ScanVul.Agent.Services.PlatformPackageManagers;
 using ScanVul.Contracts.Agents;
 
@@ -18,7 +19,7 @@ public class UpgradePackageCommandHandler(
         catch (Exception ex)
         {
             logger.LogWarning(ex, "Error when upgrading package {PackageName}", command.PackageName);
-            return $"Error when upgrading package {command.PackageName}: {ex.Message}";
+            return $"Error when upgrading package {command.PackageName}: {ex.ToInvariantString()}";
         }
         
         logger.LogInformation("Successfully upgraded package {PackageName}", command.PackageName);

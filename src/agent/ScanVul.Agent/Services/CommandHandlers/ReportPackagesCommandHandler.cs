@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing;
 using ScanVul.Agent.Helpers;
 using ScanVul.Agent.Services.PlatformScrapers;
 using ScanVul.Contracts.Agents;
@@ -41,7 +42,7 @@ public class ReportPackagesCommandHandler(
         catch (Exception ex)
         {
             logger.LogWarning(ex, "Error when scraping and sending packages at {Time}", DateTimeOffset.Now);
-            return $"Error when scraping and sending packages at {DateTimeOffset.Now}: {ex.Message}";
+            return $"Error when scraping and sending packages at {DateTimeOffset.Now}: {ex.ToInvariantString()}";
         }
 
         logger.LogInformation("Successfully scraped packages");
