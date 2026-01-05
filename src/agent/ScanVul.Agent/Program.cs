@@ -37,7 +37,8 @@ builder.Services.AddLogging(b =>
                 FileEncoding = Encoding.UTF8,
                 MinLevel = new Dictionary<string, LogLevel>
                 {
-                    { "Default", LogLevel.Information }
+                    { "Default", LogLevel.Information },
+                    { "System.Net.Http.HttpClient", LogLevel.Warning }
                 },
                 Path = $"logs_{DateTime.Now:yyyy-MM-dd}.txt"
             }

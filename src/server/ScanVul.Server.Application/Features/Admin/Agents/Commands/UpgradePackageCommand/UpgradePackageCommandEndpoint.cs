@@ -20,7 +20,8 @@ public class UpgradePackageCommandEndpoint(
         Summary(s =>
         {
             s.Summary = "Send to agent 'upgrade package' command";
-            s.Description = "Send to agent 'upgrade package' command.";
+            s.Description = "Send to agent 'upgrade package' command";
+            s.ExampleRequest = new UpgradePackageCommandRequest(-1, "7zip");
         });
         Description(x => x
             .WithTags("Admin")
