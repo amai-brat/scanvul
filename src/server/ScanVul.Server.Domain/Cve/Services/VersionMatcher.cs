@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
-using ScanVul.Server.Domain.Cve.Entities.Versions;
 using ScanVul.Server.Domain.Cve.Enums;
+using ScanVul.Server.Domain.Cve.ValueObjects.Versions;
 
 namespace ScanVul.Server.Domain.Cve.Services;
 

@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using ScanVul.Server.Domain.Cve.Enums;
 
-namespace ScanVul.Server.Domain.Cve.Entities.Versions;
+namespace ScanVul.Server.Domain.Cve.ValueObjects.Versions;
 
 public sealed class Dpkg : IVersion
 {

@@ -3,10 +3,10 @@ using Microsoft.Extensions.Options;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
 using ScanVul.Server.Domain.Common;
-using ScanVul.Server.Domain.Cve.Entities;
 using ScanVul.Server.Domain.Cve.Enums;
 using ScanVul.Server.Domain.Cve.Options;
 using ScanVul.Server.Domain.Cve.Repositories;
+using ScanVul.Server.Domain.Cve.ValueObjects.Versions;
 
 namespace ScanVul.Server.Domain.Cve.Services;
 
@@ -75,7 +75,7 @@ public class VulnerablePackageScanner(
 
     private async Task<List<VulnerablePackage>> ScanPackageAsync(Computer computer, PackageInfo package, CancellationToken ct = default)
     {
-        var possibleCves = await cveRepository.GetMatchedCveDocumentsAsync(package, ct);
+        var possibleCves = await cveRepository.GetMatchedCveVersionDocumentsAsync(package, ct);
 
         List<VulnerablePackage> vulnerablePackages = [];
         
