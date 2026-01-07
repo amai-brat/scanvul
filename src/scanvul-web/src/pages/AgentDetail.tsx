@@ -1,12 +1,21 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { agentsApi } from "../api/endpoints";
 import { Card } from "../components/Card";
-import { Cpu, MemoryStick, Activity, Package } from "lucide-react";
+import {
+  Cpu,
+  MemoryStick,
+  Activity,
+  Package,
+  ChevronDown,
+  ChevronUp,
+  Loader2,
+} from "lucide-react";
 
 export const AgentDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const [isPackagesOpen, setIsPackagesOpen] = useState(false);
 
   // 1. Fetch Agent Info
   const { data: agentsData } = useQuery({
@@ -20,7 +29,7 @@ export const AgentDetail = () => {
   const { data: pkgData, isLoading: pkgLoading } = useQuery({
     queryKey: ["packages", id],
     queryFn: () => agentsApi.getPackages(id!),
-    enabled: !!id,
+    enabled: !!id && isPackagesOpen,
   });
 
   // 3. Fetch Vulnerabilities
@@ -40,7 +49,6 @@ export const AgentDetail = () => {
     >();
 
     vulnData.packages.forEach((v) => {
-      // Use packageId as the unique key for the installed package
       if (!groups.has(v.packageId)) {
         groups.set(v.packageId, {
           name: v.packageName,
@@ -97,7 +105,7 @@ export const AgentDetail = () => {
           </div>
         </Card>
 
-        {/* Block 2: Vulnerable Packages (Grouped) */}
+        {/* Block 2: Vulnerable Packages */}
         <Card
           title={`Vulnerable packages (${groupedVulns.length})`}
           className="md:col-span-2 lg:col-span-1 h-90"
@@ -142,46 +150,69 @@ export const AgentDetail = () => {
           )}
         </Card>
 
-        {/* Block 3: All Packages */}
-        <Card
-          title={`Installed Packages (${pkgData?.packages.length ?? 0})`}
-          className="md:col-span-2 lg:col-span-3 h-125"
-        >
-          {pkgLoading ? (
-            <p>Loading...</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs uppercase bg-gray-50 dark:bg-gray-800/50 text-gray-500">
-                  <tr>
-                    <th className="px-4 py-3">Package Name</th>
-                    <th className="px-4 py-3">Version</th>
-                    <th className="px-4 py-3 text-right">ID</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pkgData?.packages.map((pkg) => (
-                    <tr
-                      key={pkg.id}
-                      className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/30"
-                    >
-                      <td className="px-4 py-3 font-medium flex items-center gap-2">
-                        <Package className="w-4 h-4 text-gray-400" />
-                        {pkg.name}
-                      </td>
-                      <td className="px-4 py-3 font-mono text-gray-600 dark:text-gray-400">
-                        {pkg.version}
-                      </td>
-                      <td className="px-4 py-3 text-right text-gray-400">
-                        #{pkg.id}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+        {/* Block 3: All Packages Accordion */}
+        <div className="md:col-span-2 lg:col-span-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-sm">
+          <button
+            onClick={() => setIsPackagesOpen(!isPackagesOpen)}
+            className="w-full flex items-center justify-between p-6 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left"
+          >
+            <div className="space-y-1">
+              <h3 className="font-bold text-lg">Installed Packages</h3>
+              <p className="text-sm text-gray-500">
+                {pkgData
+                  ? `${pkgData.packages.length} packages found`
+                  : "Click to load packages"}
+              </p>
+            </div>
+            {isPackagesOpen ? (
+              <ChevronUp className="w-5 h-5 text-gray-400" />
+            ) : (
+              <ChevronDown className="w-5 h-5 text-gray-400" />
+            )}
+          </button>
+
+          {isPackagesOpen && (
+            <div className="border-t border-gray-100 dark:border-gray-800">
+              {pkgLoading ? (
+                <div className="p-8 flex justify-center items-center text-gray-500 gap-2">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Fetching package list...</span>
+                </div>
+              ) : (
+                <div className="overflow-x-auto max-h-125 overflow-y-auto">
+                  <table className="w-full text-sm text-left">
+                    <thead className="text-xs uppercase bg-gray-50 dark:bg-gray-800/50 text-gray-500 sticky top-0 backdrop-blur-sm">
+                      <tr>
+                        <th className="px-6 py-3">Package Name</th>
+                        <th className="px-6 py-3">Version</th>
+                        <th className="px-6 py-3 text-right">ID</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pkgData?.packages.map((pkg) => (
+                        <tr
+                          key={pkg.id}
+                          className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/30"
+                        >
+                          <td className="px-6 py-3 font-medium flex items-center gap-2">
+                            <Package className="w-4 h-4 text-gray-400" />
+                            {pkg.name}
+                          </td>
+                          <td className="px-6 py-3 font-mono text-gray-600 dark:text-gray-400">
+                            {pkg.version}
+                          </td>
+                          <td className="px-6 py-3 text-right text-gray-400">
+                            #{pkg.id}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           )}
-        </Card>
+        </div>
       </div>
     </div>
   );
