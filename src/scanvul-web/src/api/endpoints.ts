@@ -15,17 +15,22 @@ export const authApi = {
 
 export const agentsApi = {
   list: () =>
-    api.get<ListAgentsResponse>("/api/v1/agents").then((res) => res.data),
+    api
+      .get<ListAgentsResponse>("/api/v1/admin/agents")
+      .then((res) => res.data),
 
   getPackages: (id: string) =>
     api
-      .get<ListPackagesResponse>(`/api/v1/agents/${id}/packages`)
+      .get<ListPackagesResponse>(`/api/v1/admin/agents/${id}/packages`)
       .then((res) => res.data),
 
   getVulnPackages: (id: string) =>
     api
-      .get<ListVulnerablePackagesResponse>(
-        `/api/v1/agents/${id}/vulnerable-packages`
-      )
+      .get<ListVulnerablePackagesResponse>(`/api/v1/admin/agents/${id}/vulnerable-packages`)
+      .then((res) => res.data),
+
+  disableAgent: (id: string) =>
+    api
+      .post(`/api/v1/admin/agents/${id}/commands/disable-agent`)
       .then((res) => res.data),
 };
