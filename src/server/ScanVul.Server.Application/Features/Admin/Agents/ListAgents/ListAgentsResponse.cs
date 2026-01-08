@@ -1,9 +1,12 @@
+using JetBrains.Annotations;
+
 namespace ScanVul.Server.Application.Features.Admin.Agents.ListAgents;
 
 /// <summary>
 /// List agents response
 /// </summary>
 /// <param name="Agents">Agents</param>
+[PublicAPI]
 public record ListAgentsResponse(List<AgentResponse> Agents);
 
 /// <summary>
@@ -17,6 +20,7 @@ public record ListAgentsResponse(List<AgentResponse> Agents);
 /// <param name="ComputerName">Computer name</param>
 /// <param name="MemoryInMb">RAM in megabytes</param>
 /// <param name="CpuName">CPU name</param>
+[PublicAPI]
 public record AgentResponse(
     long Id,
     DateTime LastPingAt,
