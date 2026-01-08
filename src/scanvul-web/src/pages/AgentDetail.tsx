@@ -16,6 +16,7 @@ import {
   Ban,
 } from "lucide-react";
 import type { VulnerablePackageResponse } from "../types/api";
+import { ConfirmationModal } from "../components/ConfimationModal";
 
 
 type SeverityLevel = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
@@ -130,17 +131,17 @@ export const AgentDetail = () => {
     enabled: !!id,
   });
 
-  // 4. Mutation to Mark False Positive
+  const [vulnIdToMark, setVulnIdToMark] = useState<number | null>(null);
   const mutation = useMutation({
     mutationFn: (vulnerablePackageId: number) => 
       agentsApi.markFalsePositive(vulnerablePackageId),
     onSuccess: () => {
-      // Refresh the vulnerability list
       queryClient.invalidateQueries({ queryKey: ["vulns", id] });
       setExpandedCveId(null);
+      setVulnIdToMark(null);
     },
   });
-
+  
   // 5. Data Processing: Group by Package -> Then by Severity -> Sort Packages by Max Score
   const organizedVulns = useMemo(() => {
     if (!vulnData?.packages) return [];
@@ -381,23 +382,11 @@ export const AgentDetail = () => {
                                             <button
                                               onClick={(e) => {
                                                 e.stopPropagation();
-                                                if (
-                                                  confirm(
-                                                    "Are you sure this is a false positive?"
-                                                  )
-                                                ) {
-                                                  mutation.mutate(vuln.id);
-                                                }
+                                                setVulnIdToMark(vuln.id);
                                               }}
-                                              disabled={mutation.isPending}
-                                              className="flex items-center gap-1.5 text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded transition-colors disabled:opacity-50"
+                                              className="flex items-center gap-1.5 text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded transition-colors"
                                             >
-                                              {mutation.isPending &&
-                                              mutation.variables === vuln.id ? (
-                                                <Loader2 className="w-3 h-3 animate-spin" />
-                                              ) : (
-                                                <Ban className="w-3 h-3" />
-                                              )}
+                                              <Ban className="w-3 h-3" />
                                               Mark False Positive
                                             </button>
                                           </div>
@@ -483,6 +472,20 @@ export const AgentDetail = () => {
           )}
         </div>
       </div>
+      <ConfirmationModal
+        isOpen={!!vulnIdToMark}
+        onClose={() => setVulnIdToMark(null)}
+        onConfirm={() => vulnIdToMark && mutation.mutate(vulnIdToMark)}
+        title="Mark as False Positive?"
+        confirmLabel="Yes, Mark False Positive"
+        isLoading={mutation.isPending}
+        message={
+          <p>
+            Are you sure you want to mark this package as a <b>False Positive</b>? 
+            It will be hidden from the vulnerability report.
+          </p>
+        }
+      />
     </div>
   );
 };

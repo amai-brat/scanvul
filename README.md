@@ -30,8 +30,8 @@
 - [ ] frontend
   - [x] agent's pc info
   - [x] vulnerable packages
-  - [ ] severity viewer (query opensearch?)
+  - [x] severity viewer
     - [ ] block on main page with most important severities
   - [ ] task to upgrade package
   - [ ] i18n
-  - [ ] mark false positive vulnerabilities
+  - [x] mark false positive vulnerabilities
