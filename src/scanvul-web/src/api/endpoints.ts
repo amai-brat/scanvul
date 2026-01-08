@@ -36,6 +36,6 @@ export const agentsApi = {
 
   markFalsePositive: (vulnerablePackageId: number) =>
     api
-      .post(`/api/v1/admin/agents/vulnerable-packages/${vulnerablePackageId}/false-positive`)
+      .patch(`/api/v1/admin/agents/vulnerable-packages/${vulnerablePackageId}/false-positive`)
       .then((res) => res.data),
 };

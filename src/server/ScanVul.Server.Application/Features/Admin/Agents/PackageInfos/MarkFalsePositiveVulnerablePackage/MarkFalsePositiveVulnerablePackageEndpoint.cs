@@ -27,6 +27,7 @@ public class MarkFalsePositiveVulnerablePackageEndpoint(
         });
         Description(x => x
             .WithTags("Admin")
+            .Accepts<MarkFalsePositiveVulnerablePackageRequest>()
             .Produces<ProblemDetails>(404, "application/problem+json"));
     }
     
