@@ -33,4 +33,9 @@ export const agentsApi = {
     api
       .post(`/api/v1/admin/agents/${id}/commands/disable-agent`)
       .then((res) => res.data),
+
+  markFalsePositive: (vulnerablePackageId: number) =>
+    api
+      .post(`/api/v1/admin/agents/vulnerable-packages/${vulnerablePackageId}/false-positive`)
+      .then((res) => res.data),
 };

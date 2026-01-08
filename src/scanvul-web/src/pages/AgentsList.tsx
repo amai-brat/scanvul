@@ -131,7 +131,7 @@ export const AgentsList = () => {
                 server.
               </p>
 
-              <div className="flex justify-end -3">
+              <div className="flex justify-end gap-3">
                 <button
                   onClick={handleCancel}
                   disabled={disableMutation.isPending}

@@ -30,6 +30,10 @@ export interface VulnerablePackageResponse {
   packageId: number;
   packageName: string;
   packageVersion: string;
+  cvssV3_1: number | null;
+  cvssV3_0: number | null;
+  cvssV2_0: number | null;
+  description: string | null;
 }
 
 export interface ListAgentsResponse {
