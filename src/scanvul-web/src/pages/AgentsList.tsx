@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { agentsApi } from "../api/endpoints";
 import { useNavigate } from "react-router-dom";
 import { Monitor, Ban } from "lucide-react";
 import { Card } from "../components/Card";
 import { ConnectivityIndicator } from "../components/ConnectivityIndicator";
 import { ConfirmationModal } from "../components/ConfimationModal";
+import { agentsApi } from "../api/agentsApi";
 
 export const AgentsList = () => {
   const navigate = useNavigate();

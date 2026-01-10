@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { agentsApi } from "../api/endpoints"; // Ensure paths are correct
 import { Card } from "../components/Card";
 import {
   Cpu,
@@ -22,8 +21,8 @@ import {
   Clock,
   Power,
 } from "lucide-react";
-import type { VulnerablePackageResponse } from "../types/api";
 import { ConfirmationModal } from "../components/ConfimationModal";
+import { agentsApi, type VulnerablePackageResponse } from "../api/agentsApi";
 
 
 type SeverityLevel = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
