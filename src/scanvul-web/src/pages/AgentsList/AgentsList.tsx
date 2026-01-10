@@ -2,10 +2,10 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Monitor, Ban } from "lucide-react";
-import { Card } from "../components/Card";
-import { ConnectivityIndicator } from "../components/ConnectivityIndicator";
-import { ConfirmationModal } from "../components/ConfimationModal";
-import { agentsApi } from "../api/agentsApi";
+import { Card } from "../../components/Card";
+import { ConnectivityIndicator } from "../../components/ConnectivityIndicator";
+import { ConfirmationModal } from "../../components/ConfimationModal";
+import { agentsApi } from "../../api/agentsApi";
 
 export const AgentsList = () => {
   const navigate = useNavigate();
@@ -20,7 +20,6 @@ export const AgentsList = () => {
     refetchInterval: 30000,
   });
 
-  // Mutation to disable the agent
   const disableMutation = useMutation({
     mutationFn: (id: number) => agentsApi.disableAgent(`${id}`),
     onSuccess: () => {
