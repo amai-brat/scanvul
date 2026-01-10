@@ -13,6 +13,7 @@ public record ListAgentsResponse(List<AgentResponse> Agents);
 /// Agent
 /// </summary>
 /// <param name="Id">Agent ID</param>
+/// <param name="IsActive">Is agent not disabled</param>
 /// <param name="LastPingAt">Timestamp of last ping to server</param>
 /// <param name="LastPackagesScrapingAt">Timestamp of last computer packages sending to server</param>
 /// <param name="IpAddress">IP address</param>
@@ -23,6 +24,7 @@ public record ListAgentsResponse(List<AgentResponse> Agents);
 [PublicAPI]
 public record AgentResponse(
     long Id,
+    bool IsActive,
     DateTime LastPingAt,
     DateTime LastPackagesScrapingAt,
     string IpAddress,
