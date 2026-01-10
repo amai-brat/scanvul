@@ -13,6 +13,7 @@ public interface IAgentRepository
     
     Task<List<Agent>> GetActiveAgentsWithComputerNoTrackingAsync(CancellationToken ct = default);
     Task<Agent?> GetWithPackagesNoTrackingAsync(long agentId, CancellationToken ct = default);
+    Task<Agent?> GetWithCommandsNoTrackingAsync(long agentId, CancellationToken ct = default);
     
     /// <summary>
     /// Get agent with vulnerable packages excluding false positives

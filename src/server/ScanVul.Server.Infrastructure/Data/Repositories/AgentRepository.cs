@@ -75,6 +75,16 @@ public class AgentRepository(AppDbContext dbContext) : IAgentRepository
         return agent;
     }
 
+    public async Task<Agent?> GetWithCommandsNoTrackingAsync(long agentId, CancellationToken ct = default)
+    {
+        var agent = await dbContext.Agents
+            .Include(x => x.Commands
+                .OrderByDescending(cmd => cmd.CreatedAt))
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == agentId, cancellationToken: ct);
+        return agent;
+    }
+
     public async Task<Agent?> GetWithVulnerablePackagesNoTrackingAsync(long agentId, CancellationToken ct = default)
     {
         var agent = await dbContext.Agents

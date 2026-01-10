@@ -3,11 +3,13 @@ using FastEndpoints;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
+using ScanVul.Server.Domain.Cve.Repositories;
 
 namespace ScanVul.Server.Application.Features.Admin.Agents.PackageInfos.ListVulnerablePackages;
 
 public class ListVulnerablePackagesEndpoint(
-    IAgentRepository agentRepository)
+    IAgentRepository agentRepository,
+    ICveRepository cveRepository)
     : Endpoint<ListVulnerablePackagesRequest, Results<Ok<ListVulnerablePackagesResponse>, ProblemDetails>>
 {
     public override void Configure()
@@ -35,8 +37,17 @@ public class ListVulnerablePackagesEndpoint(
             return new ProblemDetails(ValidationFailures, (int) HttpStatusCode.NotFound);
         }
 
+        var cveDescriptions = await cveRepository.GetCveDescriptionDocumentsAsync(
+            agent.Computer
+                .VulnerablePackages
+                .Select(x => x.CveId), 
+            ct);
+
+        var descriptionDic = cveDescriptions
+            .ToDictionary(x => x.Payload.CveMetadata.CveId);
+        
         var packages = agent.Computer.VulnerablePackages
-            .Select(p => p.MapToResponse())
+            .Select(p => p.MapToResponse(descriptionDic[p.CveId]))
             .OrderBy(x => x.PackageName)
             .ToList();
         

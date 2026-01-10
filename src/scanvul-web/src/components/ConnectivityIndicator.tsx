@@ -50,7 +50,6 @@ export const ConnectivityIndicator = ({
     );
   }
 
-  // Custom SVG to match Lucide style (24x24, stroke 2, round caps)
   return (
     <div
       title={title}

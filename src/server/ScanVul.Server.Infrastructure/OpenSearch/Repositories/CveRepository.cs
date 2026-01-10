@@ -1,8 +1,9 @@
 using System.Text.RegularExpressions;
 using OpenSearch.Client;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
-using ScanVul.Server.Domain.Cve.Entities;
 using ScanVul.Server.Domain.Cve.Repositories;
+using ScanVul.Server.Domain.Cve.ValueObjects.Descriptions;
+using ScanVul.Server.Domain.Cve.ValueObjects.Versions;
 
 namespace ScanVul.Server.Infrastructure.OpenSearch.Repositories;
 
@@ -19,7 +20,7 @@ public partial class CveRepository(IOpenSearchClient client) : ICveRepository
     [GeneratedRegex(@"\s+v?\d+(?:\.\d+)*$")]
     private static partial Regex VersionLikeRegex { get; }
     
-    public async Task<IReadOnlyCollection<CveDocument>> GetMatchedCveDocumentsAsync(
+    public async Task<IReadOnlyCollection<CveVersionDocument>> GetMatchedCveVersionDocumentsAsync(
         PackageInfo packageInfo,
         CancellationToken ct = default)
     {
@@ -84,7 +85,42 @@ public partial class CveRepository(IOpenSearchClient client) : ICveRepository
             }
         };
         
-        var response = await client.SearchAsync<CveDocument>(searchRequest, ct).ConfigureAwait(false);
+        var response = await client.SearchAsync<CveVersionDocument>(searchRequest, ct).ConfigureAwait(false);
+        return response.IsValid
+            ? response.Documents
+            : throw new AggregateException("Error when sending request to OpenSearch", response.OriginalException);
+    }
+
+    public async Task<IEnumerable<CveDescriptionDocument>> GetCveDescriptionDocumentsAsync(
+        IEnumerable<string> cveIds,
+        CancellationToken ct = default)
+    {
+        var searchRequest = new SearchRequest("cve-index")
+        {
+            Size = MaxResults,
+            Query = new TermsQuery
+            {
+                Field = "payload.cveMetadata.cveId.keyword",
+                Terms = cveIds
+            },
+            Source = new SourceFilter
+            {
+                Includes = new[] 
+                {
+                    "payload.cveMetadata.cveId",
+                    "payload.containers.cna.descriptions",
+                    "payload.containers.adp.descriptions",
+                    "payload.containers.cna.metrics.cvssV3_1.baseScore",
+                    "payload.containers.cna.metrics.cvssV3_0.baseScore",
+                    "payload.containers.cna.metrics.cvssV2_0.baseScore",
+                    "payload.containers.adp.metrics.cvssV3_1.baseScore",
+                    "payload.containers.adp.metrics.cvssV3_0.baseScore",
+                    "payload.containers.adp.metrics.cvssV2_0.baseScore"
+                }
+            }
+        };
+        
+        var response = await client.SearchAsync<CveDescriptionDocument>(searchRequest, ct).ConfigureAwait(false);
         return response.IsValid
             ? response.Documents
             : throw new AggregateException("Error when sending request to OpenSearch", response.OriginalException);
