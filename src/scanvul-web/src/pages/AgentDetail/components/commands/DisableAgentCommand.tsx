@@ -25,19 +25,17 @@ export const DisableAgentCommand = ({agent, isCommandsOpen} : {agent: AgentRespo
         isOpen={showDisableConfirm}
         onClose={() => setShowDisableConfirm(false)}
         onConfirm={() => disableAgentMutation.mutate()}
-        title="Disable Agent?"
-        confirmLabel="Yes, Disable Agent"
+        title="Disable agent?"
+        confirmLabel="Yes, Disable agent"
         isLoading={disableAgentMutation.isPending}
         message={
-          <div className="space-y-2">
-            <p>
-              Are you sure you want to disable <b>{agent.computerName}</b>?
-            </p>
-            <p className="text-sm text-red-600 bg-red-50 p-3 rounded border border-red-200">
-              ⚠️ The agent will be stopped and removed from services. This
-              action may interrupt active scans.
-            </p>
-          </div>
+          <p>
+            Are you sure you want to disable{" "}
+            <span className="font-semibold text-gray-900 dark:text-white">
+              {agent.computerName ?? "Unknown Host"}
+            </span>
+            ? This will prevent the agent from communicating with the server.
+          </p>
         }
       />
       <button

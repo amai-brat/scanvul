@@ -36,4 +36,4 @@
     - [ ] search from package manager
   - [ ] i18n
   - [x] mark false positive vulnerabilities
-  - [ ] refactor
+  - [x] refactor (extract components)
