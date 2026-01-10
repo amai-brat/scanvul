@@ -33,5 +33,7 @@
   - [x] severity viewer
     - [ ] block on main page with most important severities
   - [ ] task to upgrade package
+    - [ ] search from package manager
   - [ ] i18n
   - [x] mark false positive vulnerabilities
+  - [ ] refactor
