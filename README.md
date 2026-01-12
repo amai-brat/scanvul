@@ -37,3 +37,6 @@
   - [ ] i18n
   - [x] mark false positive vulnerabilities
   - [x] refactor (extract components)
+  - [ ] toastify
+    - [ ] command creation
+    - [ ] searching package
