@@ -1,8 +1,8 @@
 using JetBrains.Annotations;
 
-namespace ScanVul.Server.Domain.Cve.Entities;
+namespace ScanVul.Server.Domain.Cve.ValueObjects.Versions;
 
-public class CveDocument
+public class CveVersionDocument
 {
     public Payload Payload { get; set; } = null!;
 }

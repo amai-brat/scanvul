@@ -15,8 +15,8 @@ public class ListAgentsEndpoint(
         Get("api/{apiVersion}/admin/agents");
         Summary(s =>
         {
-            s.Summary = "Get all agents";
-            s.Description = "Get all agents";
+            s.Summary = "Get agents";
+            s.Description = "Get all active agents";
         });
         Description(x => x.WithTags("Admin"));
     }
@@ -30,8 +30,9 @@ public class ListAgentsEndpoint(
             .Select(agent =>
                 new AgentResponse(
                     Id: agent.Id,
-                    LastPingAt:  agent.LastPingAt,
-                    LastPackagesScrapingAt:  agent.LastPackagesScrapingAt,
+                    IsActive: agent.IsActive,
+                    LastPingAt: agent.LastPingAt,
+                    LastPackagesScrapingAt: agent.LastPackagesScrapingAt,
                     IpAddress: agent.Computer.IpAddress.ToString(),
                     OperatingSystem: agent.Computer.OperatingSystem.ToString(),
                     ComputerName: agent.Computer.Name,

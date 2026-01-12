@@ -27,6 +27,7 @@ public class PackageInfoRepository(AppDbContext dbContext) : IPackageInfoReposit
     public async Task<VulnerablePackage?> GetVulnerableByIdAsync(long vulnerablePackageId, CancellationToken ct = default)
     {
         var package = await dbContext.VulnerablePackages
+            .Include(x => x.PackageInfo)
             .FirstOrDefaultAsync(x => x.Id == vulnerablePackageId, ct);
         
         return package;

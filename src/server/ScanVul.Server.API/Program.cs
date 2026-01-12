@@ -5,6 +5,7 @@ using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Mvc;
 using ScanVul.Server.API;
 using ScanVul.Server.Application;
+using ScanVul.Server.Domain.Cve.Repositories;
 using ScanVul.Server.Domain.Cve.Services;
 using ScanVul.Server.Infrastructure.Choco;
 using ScanVul.Server.Infrastructure.Data;
@@ -73,5 +74,11 @@ app.MapPost("/{computerId:long}", async (
 {
     await packageScanner.ScanAsync(computerId, ct);
 });
+
+app.MapGet("/cve", async (
+    ICveRepository cveRepository,
+    CancellationToken ct,
+    [Microsoft.AspNetCore.Mvc.FromQuery] string cveId) => 
+    await cveRepository.GetCveDescriptionDocumentsAsync([cveId], ct));
 
 app.Run();

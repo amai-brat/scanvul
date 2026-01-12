@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { authApi } from "../api/endpoints";
-import { useAuthStore } from "../store/authStore";
+import { useAuthStore } from "../../store/authStore";
 import { useNavigate } from "react-router-dom";
 import { ShieldCheck } from "lucide-react";
+import { authApi } from "../../api/authApi";
 
 export const LoginPage = () => {
   const [creds, setCreds] = useState({ name: "", password: "" });
