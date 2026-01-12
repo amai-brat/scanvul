@@ -1,21 +1,25 @@
+using System.Text.Json.Serialization;
+
 namespace ScanVul.Contracts.Agents;
 
-public enum AgentCommandType
-{
-    Unknown = 0,
-    ReportPackages = 1,
-    UpgradePackage = 2
-}
+/// <summary>
+/// Commands to agent
+/// </summary>
+/// <param name="Commands">Commands</param>
+public record AgentCommandsResponse(List<AgentCommand> Commands);
 
 /// <summary>
 /// Command for agent
 /// </summary>
-/// <param name="Type">Type of command</param>
-/// <param name="Body">Body of command (serialized as JSON)</param>
-public record AgentCommand(
-    AgentCommandType Type,
-    string? Body);
+/// <param name="CommandId">Command ID</param>
+[JsonPolymorphic]
+[JsonDerivedType(typeof(ReportPackagesCommand), typeDiscriminator: nameof(ReportPackagesCommand))]
+[JsonDerivedType(typeof(UpgradePackageCommand), typeDiscriminator: nameof(UpgradePackageCommand))]
+[JsonDerivedType(typeof(DisableAgentCommand), typeDiscriminator: nameof(DisableAgentCommand))]
+public abstract record AgentCommand(Guid CommandId);
 
+public record ReportPackagesCommand(Guid CommandId) : AgentCommand(CommandId);
 
-// TODO: choco
-public record UpgradePackageCommand(string PackageName);
+public record UpgradePackageCommand(Guid CommandId, string PackageName) : AgentCommand(CommandId);
+
+public record DisableAgentCommand(Guid CommandId) : AgentCommand(CommandId);

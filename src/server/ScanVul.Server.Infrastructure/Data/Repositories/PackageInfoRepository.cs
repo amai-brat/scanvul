@@ -15,4 +15,21 @@ public class PackageInfoRepository(AppDbContext dbContext) : IPackageInfoReposit
 
         return entities;
     }
+
+    public async Task<PackageInfo?> GetByIdAsync(long packageId, CancellationToken ct = default)
+    {
+        var package = await dbContext.PackageInfos
+            .FirstOrDefaultAsync(x => x.Id == packageId, ct);
+        
+        return package;
+    }
+
+    public async Task<VulnerablePackage?> GetVulnerableByIdAsync(long vulnerablePackageId, CancellationToken ct = default)
+    {
+        var package = await dbContext.VulnerablePackages
+            .Include(x => x.PackageInfo)
+            .FirstOrDefaultAsync(x => x.Id == vulnerablePackageId, ct);
+        
+        return package;
+    }
 }

@@ -2,21 +2,41 @@
 
 ## TODO:
 - [x] create command line agent installer with service registering on windows and linux (systemd)
+  - [x] exception when installing to computer where agent already exists
+  - [x] use existing token when reinstalling 
 - [x] CVE indexer microservice (opensearch)
+- [ ] ФСТЭК (на фронте добавить блок с возможными уязвимостями без привязки к версии)
 - [ ] main server api
   - [x] register agent
   - [x] version matching
     - [x] add BaseVersion (with segments split by \[.,-~:\]) that can be compared with all other version types 
   - [x] update CVEs snapshot
-  - [ ] vulnerable package scanning jobs management
-  - [ ] backend for frontend
-  - [ ] tasks to agents
+  - [x] vulnerable package scanning jobs management
+  - [x] backend for frontend
+  - [x] tasks to agents
+  - [x] remove agent (task to remove)
+  - [x] fix git 2.45.1 doesn't have [CVE](https://cti.wazuh.com/vulnerabilities/cves/CVE-2019-1003010). 
+        Solution: vendor is jenkins with other version system, so I need to add feature to mark false positives   
+  - [x] mark false positive vulnerabilities
+  - [ ] admin notification
 - [ ] agent
   - [x] scrape packages on windows
   - [x] scrape packages on linux (alt linux)
-  - [ ] task to scan
-  - [ ] task to upgrade package (via winget, chocolatey)
+  - [x] task management (short pooling)
+    - [x] task to scan
+    - [x] task to upgrade package (via chocolatey)
+    - [x] task to stop (remove)
+  - [ ] conditional compilation for different OSes
 - [ ] frontend
-  - [ ] agent's pc info
-  - [ ] vulnerable packages
-  - [ ] task to upgrade package
+  - [x] agent's pc info
+  - [x] vulnerable packages
+  - [x] severity viewer
+    - [ ] block on main page with most important severities
+  - [x] task to upgrade package
+    - [x] search from package manager
+  - [ ] i18n
+  - [x] mark false positive vulnerabilities
+  - [x] refactor (extract components)
+  - [ ] toastify
+    - [ ] command creation
+    - [ ] searching package

@@ -26,6 +26,9 @@ public class PlatformInstaller : IPlatformInstaller
     public string AgentZipResourceName => _implementation.AgentZipResourceName;
     public string ExecutableFileName => _implementation.ExecutableFileName;
 
+    public Task<Result> PrepareInstallationAsync(CancellationToken ct = default)
+        => _implementation.PrepareInstallationAsync(ct);
+
     public Task<Result> AddAgentToAutoStartAsync(DirectoryInfo path, CancellationToken ct = default)
         => _implementation.AddAgentToAutoStartAsync(path, ct);
 

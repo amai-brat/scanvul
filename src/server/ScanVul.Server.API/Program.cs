@@ -1,8 +1,13 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Mvc;
+using ScanVul.Server.API;
 using ScanVul.Server.Application;
+using ScanVul.Server.Domain.Cve.Repositories;
 using ScanVul.Server.Domain.Cve.Services;
+using ScanVul.Server.Infrastructure.Choco;
 using ScanVul.Server.Infrastructure.Data;
 using ScanVul.Server.Infrastructure.Hangfire;
 using ScanVul.Server.Infrastructure.OpenSearch;
@@ -22,6 +27,11 @@ builder.Services
             s.Title = "ScanVul Server API";
             s.Version = "v1";
         };
+        o.UseOneOfForPolymorphism = true;
+        o.SerializerSettings = options =>
+        {
+            options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+        };
     });
 builder.Services.AddHttpClient();
 builder.Services.AddData(builder.Configuration.GetConnectionString("Postgres"));
@@ -30,14 +40,20 @@ builder.Services.AddOpenSearch(builder.Environment,
     .GetSection("OpenSearch")
     .Get<OpenSearchOptions>());
 builder.Services.AddHangfireServices(builder.Configuration);
+builder.Services.AddChocoPackageManager();
 
 builder.Services.AddProblemDetails();
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
 await Migrator.MigrateAsync(app.Services);
 
 app.UseHangfire();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseFastEndpoints(c =>
 {
@@ -58,5 +74,11 @@ app.MapPost("/{computerId:long}", async (
 {
     await packageScanner.ScanAsync(computerId, ct);
 });
+
+app.MapGet("/cve", async (
+    ICveRepository cveRepository,
+    CancellationToken ct,
+    [Microsoft.AspNetCore.Mvc.FromQuery] string cveId) => 
+    await cveRepository.GetCveDescriptionDocumentsAsync([cveId], ct));
 
 app.Run();

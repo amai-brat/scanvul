@@ -6,6 +6,8 @@ public interface IPlatformInstaller
     string AgentZipResourceName { get; }
     string ExecutableFileName { get; }
 
+    Task<Result> PrepareInstallationAsync(CancellationToken ct = default);
+    
     /// <summary>
     /// Add agent to autostart
     /// </summary>

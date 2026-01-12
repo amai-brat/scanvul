@@ -42,7 +42,7 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                     b.ToTable("computer_package_info", (string)null);
                 });
 
-            modelBuilder.Entity("ScanVul.Server.Domain.Entities.Agent", b =>
+            modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.Agent", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -54,6 +54,12 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                     b.Property<long>("ComputerId")
                         .HasColumnType("bigint")
                         .HasColumnName("computer_id");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
 
                     b.Property<DateTime>("LastPackagesScrapingAt")
                         .HasColumnType("timestamp with time zone")
@@ -76,7 +82,44 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                     b.ToTable("agents", (string)null);
                 });
 
-            modelBuilder.Entity("ScanVul.Server.Domain.Entities.Computer", b =>
+            modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.Commands.AgentCommand", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<long>("AgentId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("agent_id");
+
+                    b.Property<string>("AgentResponse")
+                        .HasColumnType("text")
+                        .HasColumnName("agent_response");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("body");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("SentAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("sent_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_agent_command");
+
+                    b.HasIndex("AgentId")
+                        .HasDatabaseName("ix_agent_command_agent_id");
+
+                    b.ToTable("agent_command", (string)null);
+                });
+
+            modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.Computer", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -112,7 +155,7 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                     b.ToTable("computers", (string)null);
                 });
 
-            modelBuilder.Entity("ScanVul.Server.Domain.Entities.PackageInfo", b =>
+            modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.PackageInfo", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -141,7 +184,7 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                     b.ToTable("package_infos", (string)null);
                 });
 
-            modelBuilder.Entity("ScanVul.Server.Domain.Entities.VulnerablePackage", b =>
+            modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.VulnerablePackage", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -159,32 +202,66 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("cve_id");
 
+                    b.Property<bool>("IsFalsePositive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_false_positive");
+
                     b.Property<long>("PackageInfoId")
                         .HasColumnType("bigint")
                         .HasColumnName("package_info_id");
 
                     b.HasKey("Id")
-                        .HasName("pk_vulnerable_package");
+                        .HasName("pk_vulnerable_packages");
 
                     b.HasIndex("ComputerId")
-                        .HasDatabaseName("ix_vulnerable_package_computer_id");
+                        .HasDatabaseName("ix_vulnerable_packages_computer_id");
 
-                    b.HasIndex("PackageInfoId")
-                        .HasDatabaseName("ix_vulnerable_package_package_info_id");
+                    b.HasIndex("PackageInfoId", "CveId", "ComputerId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_vulnerable_packages_package_info_id_cve_id_computer_id");
 
-                    b.ToTable("vulnerable_package", (string)null);
+                    b.ToTable("vulnerable_packages", (string)null);
+                });
+
+            modelBuilder.Entity("ScanVul.Server.Domain.UserAggregate.Entities.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("password");
+
+                    b.HasKey("Id")
+                        .HasName("pk_users");
+
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("ComputerPackageInfo", b =>
                 {
-                    b.HasOne("ScanVul.Server.Domain.Entities.Computer", null)
+                    b.HasOne("ScanVul.Server.Domain.AgentAggregate.Entities.Computer", null)
                         .WithMany()
                         .HasForeignKey("ComputerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_computer_package_info_computers_computer_id");
 
-                    b.HasOne("ScanVul.Server.Domain.Entities.PackageInfo", null)
+                    b.HasOne("ScanVul.Server.Domain.AgentAggregate.Entities.PackageInfo", null)
                         .WithMany()
                         .HasForeignKey("PackagesId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -192,9 +269,9 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                         .HasConstraintName("fk_computer_package_info_package_infos_packages_id");
                 });
 
-            modelBuilder.Entity("ScanVul.Server.Domain.Entities.Agent", b =>
+            modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.Agent", b =>
                 {
-                    b.HasOne("ScanVul.Server.Domain.Entities.Computer", "Computer")
+                    b.HasOne("ScanVul.Server.Domain.AgentAggregate.Entities.Computer", "Computer")
                         .WithMany()
                         .HasForeignKey("ComputerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -204,28 +281,45 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                     b.Navigation("Computer");
                 });
 
-            modelBuilder.Entity("ScanVul.Server.Domain.Entities.VulnerablePackage", b =>
+            modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.Commands.AgentCommand", b =>
                 {
-                    b.HasOne("ScanVul.Server.Domain.Entities.Computer", "Computer")
+                    b.HasOne("ScanVul.Server.Domain.AgentAggregate.Entities.Agent", "Agent")
+                        .WithMany("Commands")
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_agent_command_agents_agent_id");
+
+                    b.Navigation("Agent");
+                });
+
+            modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.VulnerablePackage", b =>
+                {
+                    b.HasOne("ScanVul.Server.Domain.AgentAggregate.Entities.Computer", "Computer")
                         .WithMany("VulnerablePackages")
                         .HasForeignKey("ComputerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_vulnerable_package_computers_computer_id");
+                        .HasConstraintName("fk_vulnerable_packages_computers_computer_id");
 
-                    b.HasOne("ScanVul.Server.Domain.Entities.PackageInfo", "PackageInfo")
+                    b.HasOne("ScanVul.Server.Domain.AgentAggregate.Entities.PackageInfo", "PackageInfo")
                         .WithMany()
                         .HasForeignKey("PackageInfoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_vulnerable_package_package_infos_package_info_id");
+                        .HasConstraintName("fk_vulnerable_packages_package_infos_package_info_id");
 
                     b.Navigation("Computer");
 
                     b.Navigation("PackageInfo");
                 });
 
-            modelBuilder.Entity("ScanVul.Server.Domain.Entities.Computer", b =>
+            modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.Agent", b =>
+                {
+                    b.Navigation("Commands");
+                });
+
+            modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.Computer", b =>
                 {
                     b.Navigation("VulnerablePackages");
                 });

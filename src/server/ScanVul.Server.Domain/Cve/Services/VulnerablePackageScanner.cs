@@ -3,10 +3,10 @@ using Microsoft.Extensions.Options;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
 using ScanVul.Server.Domain.Common;
-using ScanVul.Server.Domain.Cve.Entities;
 using ScanVul.Server.Domain.Cve.Enums;
 using ScanVul.Server.Domain.Cve.Options;
 using ScanVul.Server.Domain.Cve.Repositories;
+using ScanVul.Server.Domain.Cve.ValueObjects.Versions;
 
 namespace ScanVul.Server.Domain.Cve.Services;
 
@@ -20,20 +20,37 @@ public class VulnerablePackageScanner(
 {
     public async Task ScanAsync(long computerId, CancellationToken ct = default)
     {
+        try
+        {
+            await ScanInternalAsync(computerId, ct);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error scanning vulnerable package of computer {ComputerId}", computerId);
+        }
+    }
+
+    private async Task ScanInternalAsync(long computerId, CancellationToken ct)
+    {
         var computer = await computerRepository.GetComputerWithAllPackagesAsync(computerId, ct);
         if (computer == null)
         {
             logger.LogError("Could not find computer {ComputerId}", computerId);
             throw new Exception($"Could not find computer {computerId}");
         }
+        logger.LogInformation("Scanning packages of computer {ComputerId} for vulnerabilities", computerId);
 
         List<VulnerablePackage> vulnerablePackages = [];
         foreach (var package in computer.Packages)
         {
             vulnerablePackages.AddRange(await ScanPackageAsync(computer, package, ct));
         }
+
+        var uniqueVulnerablePackages = vulnerablePackages
+            .DistinctBy(x => (x.PackageInfoId, x.CveId))
+            .ToList();
         
-        var incomingIds = new HashSet<(long PackageInfoId, string CveId)>(vulnerablePackages
+        var incomingIds = new HashSet<(long PackageInfoId, string CveId)>(uniqueVulnerablePackages
             .Select(x => (x.PackageInfoId, x.CveId)));
         var existingIds = new HashSet<(long PackageInfoId, string CveId)>(computer.VulnerablePackages
             .Select(x => (x.PackageInfoId, x.CveId)));
@@ -46,17 +63,19 @@ public class VulnerablePackageScanner(
             computer.VulnerablePackages.Remove(item);
         
         // Add new ones
-        var toAdd = vulnerablePackages
+        var toAdd = uniqueVulnerablePackages
             .Where(x => !existingIds.Contains((x.PackageInfoId, x.CveId)))
             .ToList();
         computer.VulnerablePackages.AddRange(toAdd);
 
         await unitOfWork.SaveChangesAsync(ct);
+        
+        logger.LogInformation("Successfully scanned packages of computer {ComputerId} for vulnerabilities", computerId);
     }
 
     private async Task<List<VulnerablePackage>> ScanPackageAsync(Computer computer, PackageInfo package, CancellationToken ct = default)
     {
-        var possibleCves = await cveRepository.GetMatchedCveDocumentsAsync(package, ct);
+        var possibleCves = await cveRepository.GetMatchedCveVersionDocumentsAsync(package, ct);
 
         List<VulnerablePackage> vulnerablePackages = [];
         
@@ -65,6 +84,8 @@ public class VulnerablePackageScanner(
         {
             foreach (var affectedItem in cve.Payload.Containers.Cna?.Affected ?? [])
             {
+                if (!IsPackageAffectedItem(package.Name, affectedItem)) continue;
+                
                 foreach (var versionInfo in affectedItem.Versions)
                 {
                     if (!IsPackageVersionAffected(package.Version, versionInfo)) continue;
@@ -84,6 +105,8 @@ public class VulnerablePackageScanner(
                 {
                     foreach (var affectedItem in adp.Affected)
                     {
+                        if (!IsPackageAffectedItem(package.Name, affectedItem)) continue;
+
                         foreach (var versionInfo in affectedItem.Versions)
                         {
                             if (!IsPackageVersionAffected(package.Version, versionInfo)) continue;
@@ -99,6 +122,11 @@ public class VulnerablePackageScanner(
         return vulnerablePackages;
     }
 
+    private static bool IsPackageAffectedItem(string packageName, AffectedItem affectedItem)
+    {
+        return affectedItem.Product.StartsWith(packageName, StringComparison.OrdinalIgnoreCase);
+    }
+    
     private bool IsPackageVersionAffected(string packageVersion, VersionInfo versionInfo)
     {
         try

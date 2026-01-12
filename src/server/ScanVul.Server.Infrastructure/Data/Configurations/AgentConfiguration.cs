@@ -13,6 +13,9 @@ public class AgentConfiguration : IEntityTypeConfiguration<Agent>
         builder.HasOne(x => x.Computer)
             .WithMany()
             .HasForeignKey(x => x.ComputerId)
-            .OnDelete(DeleteBehavior.Cascade);;
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Property(x => x.IsActive)
+            .HasDefaultValue(true);
     }
 }
