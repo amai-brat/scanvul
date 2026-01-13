@@ -1,0 +1,24 @@
+{
+  "app": {
+    "title": "ScanVul",
+    "welcome": "Welcome to ScanVul"
+  },
+  "auth": {
+    "login": "Login",
+    "username": "Username",
+    "password": "Password",
+    "logging_in": "Logging in...",
+    "admin_init_success": "Initial Admin Created!",
+    "save_creds": "Please save these credentials.",
+    "invalid_creds": "Invalid credentials"
+  },
+  "agents": {
+    "title": "Agents",
+    "total": "Total",
+    "no_agents": "No agents have registered yet.",
+    "last_ping": "Last ping: {{time}}",
+    "computer_info": "Computer Info",
+    "vulnerabilities": "Vulnerabilities",
+    "installed_packages": "Installed Packages"
+  }
+}

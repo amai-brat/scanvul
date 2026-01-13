@@ -1,0 +1,24 @@
+{
+  "app": {
+    "title": "ScanVul",
+    "welcome": "Добро пожаловать в ScanVul"
+  },
+  "auth": {
+    "login": "Войти",
+    "username": "Имя пользователя",
+    "password": "Пароль",
+    "logging_in": "Вход...",
+    "admin_init_success": "Администратор создан!",
+    "save_creds": "Пожалуйста, сохраните эти данные.",
+    "invalid_creds": "Некорректные учётные данные"
+  },
+  "agents": {
+    "title": "Агенты",
+    "total": "Всего",
+    "no_agents": "Агентов пока нет.",
+    "last_ping": "Последний пинг: {{time}}",
+    "computer_info": "Инфо о компьютере",
+    "vulnerabilities": "Уязвимости",
+    "installed_packages": "Установленные пакеты"
+  }
+}

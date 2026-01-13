@@ -4,6 +4,7 @@ import { useAuthStore } from "../../store/authStore";
 import { useNavigate } from "react-router-dom";
 import { ShieldCheck } from "lucide-react";
 import { authApi } from "../../api/authApi";
+import { useTranslation } from "react-i18next";
 
 export const LoginPage = () => {
   const [creds, setCreds] = useState({ name: "", password: "" });
@@ -13,6 +14,7 @@ export const LoginPage = () => {
   } | null>(null);
   const setToken = useAuthStore((s) => s.setToken);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const initMutation = useMutation({
     mutationFn: authApi.init,
@@ -48,29 +50,29 @@ export const LoginPage = () => {
       <div className="w-full max-w-md bg-card border border-gray-200 dark:border-gray-800 rounded-xl shadow-lg p-8">
         <div className="text-center mb-8">
           <ShieldCheck className="mx-auto h-12 w-12 text-primary mb-2" />
-          <h1 className="text-2xl font-bold">ScanVul</h1>
+          <h1 className="text-2xl font-bold">{t("app.welcome")}</h1>
         </div>
 
         {initData && (
           <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
             <p className="text-green-800 dark:text-green-200 font-semibold mb-2">
-              Initial Admin Created!
+              {t("auth.admin_init_success")}
             </p>
             <p className="text-sm">
-              Username: <strong>{initData.name}</strong>
+              {t("auth.username")}: <strong>{initData.name}</strong>
             </p>
             <p className="text-sm">
-              Password: <strong>{initData.password}</strong>
+              {t("auth.password")}: <strong>{initData.password}</strong>
             </p>
-            <p className="text-xs mt-2 opacity-75">
-              Please save these credentials.
-            </p>
+            <p className="text-xs mt-2 opacity-75">{t("auth.save_creds")}</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Username</label>
+            <label className="block text-sm font-medium mb-1">
+              {t("auth.username")}
+            </label>
             <input
               type="text"
               value={creds.name}
@@ -79,7 +81,9 @@ export const LoginPage = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Password</label>
+            <label className="block text-sm font-medium mb-1">
+              {t("auth.password")}
+            </label>
             <input
               type="password"
               value={creds.password}
@@ -90,7 +94,7 @@ export const LoginPage = () => {
 
           {loginMutation.isError && (
             <div className="text-red-500 text-sm text-center">
-              Invalid credentials
+              {t("auth.invalid_creds")}
             </div>
           )}
 
@@ -99,7 +103,7 @@ export const LoginPage = () => {
             disabled={loginMutation.isPending}
             className="w-full bg-primary text-white py-2 rounded-md bg-blue-800 hover:bg-blue-600 transition disabled:opacity-50"
           >
-            {loginMutation.isPending ? "Logging in..." : "Login"}
+            {loginMutation.isPending ? t("auth.logging_in") : t("auth.login")}
           </button>
         </form>
       </div>
