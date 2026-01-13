@@ -15,10 +15,26 @@
   "agents": {
     "title": "Agents",
     "total": "Total",
+    "unkown_host": "Unknown Host",
+    "loading_agents": "Loading agents...",
+    "loading_agents_error": "Error loading agents.",
     "no_agents": "No agents have registered yet.",
+    "disable_agent_title": "Disable Agent?",
+    "disable_agent_confirm": "Yes, disable agent",
+    "disable_agent_message": "Are you sure you want to disable <bold>{{host}}</bold>? This will prevent the agent from communicating with the server.",
     "last_ping": "Last ping: {{time}}",
     "computer_info": "Computer Info",
     "vulnerabilities": "Vulnerabilities",
     "installed_packages": "Installed Packages"
+  },
+  "components": {
+    "connectivity_indicator": {
+      "title": "Last ping: {{time}} ({{minutes}} mins ago)"
+    },
+    "confirmation_modal": {
+      "confirm": "Confirm",
+      "processing": "Processing...",
+      "cancel": "Cancel"
+    }
   }
 }

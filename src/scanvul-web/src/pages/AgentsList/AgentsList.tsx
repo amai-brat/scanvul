@@ -6,10 +6,12 @@ import { Card } from "../../components/Card";
 import { ConnectivityIndicator } from "../../components/ConnectivityIndicator";
 import { ConfirmationModal } from "../../components/ConfimationModal";
 import { agentsApi } from "../../api/agentsApi";
+import { Trans, useTranslation } from "react-i18next";
 
 export const AgentsList = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   // State for the confirmation modal
   const [selectedAgentId, setSelectedAgentId] = useState<number | null>(null);
@@ -37,10 +39,10 @@ export const AgentsList = () => {
   };
 
   if (isLoading)
-    return <div className="p-8 text-center">Loading agents...</div>;
+    return <div className="p-8 text-center">{t("agents.loading_agents")}</div>;
   if (error)
     return (
-      <div className="p-8 text-center text-red-500">Error loading agents</div>
+      <div className="p-8 text-center text-red-500">{t("agents.loading_agents_error")}</div>
     );
 
   const selectedAgent = data?.agents.find((a) => a.id === selectedAgentId);
@@ -48,9 +50,9 @@ export const AgentsList = () => {
   return (
     <div className="space-y-6 relative">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold">Agents</h2>
+        <h2 className="text-3xl font-bold">{t("agents.title")}</h2>
         <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
-          Total: {data?.agents.length ?? 0}
+          {t("agents.total")}: {data?.agents.length ?? 0}
         </span>
       </div>
 
@@ -68,7 +70,7 @@ export const AgentsList = () => {
               </div>
               <div>
                 <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
-                  {agent.computerName ?? "Unknown Host"}
+                  {agent.computerName ?? t("agents.unkown_host")}
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   {agent.ipAddress} • {agent.operatingSystem}
@@ -85,7 +87,7 @@ export const AgentsList = () => {
               <button
                 onClick={(e) => handleDisableClick(e, agent.id)}
                 className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
-                title="Disable agent"
+                title={t("agents.disable_agent_title")}
               >
                 <Ban className="h-5 w-5" />
               </button>
@@ -95,7 +97,7 @@ export const AgentsList = () => {
 
         {data?.agents.length === 0 && (
           <Card title="No Agents" className="text-center py-10">
-            <p className="text-gray-500">No agents have registered yet.</p>
+            <p className="text-gray-500">{t("agents.no_agents")}</p>
           </Card>
         )}
       </div>
@@ -106,16 +108,22 @@ export const AgentsList = () => {
         onConfirm={() =>
           selectedAgentId && disableMutation.mutate(selectedAgentId)
         }
-        title="Disable agent?"
-        confirmLabel="Yes, Disable agent"
+        title={t("agents.disable_agent_title")}
+        confirmLabel={t("agents.disable_agent_confirm")}
         isLoading={disableMutation.isPending}
         message={
           <p>
-            Are you sure you want to disable{" "}
-            <span className="font-semibold text-gray-900 dark:text-white">
-              {selectedAgent?.computerName ?? "Unknown Host"}
-            </span>
-            ? This will prevent the agent from communicating with the server.
+            <Trans
+              i18nKey="agents.disable_agent_message"
+              values={{
+                host: selectedAgent?.computerName ?? t("agents.unkown_host"),
+              }}
+              components={{
+                bold: (
+                  <span className="font-semibold text-gray-900 dark:text-white" />
+                ),
+              }}
+            />
           </p>
         }
       />

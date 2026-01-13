@@ -15,10 +15,26 @@
   "agents": {
     "title": "Агенты",
     "total": "Всего",
+    "unkown_host": "Неизвестный хост",
+    "loading_agents": "Загрузка агентов...",
+    "loading_agents_error": "Ошибка загрузки агентов.",
     "no_agents": "Агентов пока нет.",
+    "disable_agent_title": "Отключить агента?",
+    "disable_agent_confirm": "Да, отключить агента",
+    "disable_agent_message": "Вы уверены, что хотите отключить <bold>{{host}}</bold>? Это предотвратит связь агента с сервером.",
     "last_ping": "Последний пинг: {{time}}",
     "computer_info": "Инфо о компьютере",
     "vulnerabilities": "Уязвимости",
     "installed_packages": "Установленные пакеты"
+  },
+  "components": {
+    "connectivity_indicator": {
+      "title": "Последний пинг: {{time}} ({{minutes}} мин. назад)"
+    },
+    "confirmation_modal": {
+      "confirm": "Подтвердить",
+      "processing": "Обработка...",
+      "cancel": "Отмена"
+    }
   }
 }
