@@ -34,7 +34,7 @@
     - [ ] block on main page with most important severities
   - [x] task to upgrade package
     - [x] search from package manager
-  - [ ] i18n
+  - [x] i18n
   - [x] mark false positive vulnerabilities
   - [x] refactor (extract components)
   - [ ] toastify

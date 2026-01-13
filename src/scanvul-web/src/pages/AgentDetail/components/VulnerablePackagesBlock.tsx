@@ -5,10 +5,12 @@ import { getCvssScore, getSeverityLevel, SEVERITY_CONFIG, type SeverityLevel } f
 import { Ban, ChevronDown, ChevronUp, ExternalLink, Loader2, Package, ShieldAlert, ShieldCheck } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ConfirmationModal } from "../../../components/ConfimationModal";
+import { Trans, useTranslation } from "react-i18next";
 
 
 export const VulnerablePackagesBlock = ({ agentId }: { agentId: string }) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   const [expandedCveId, setExpandedCveId] = useState<number | null>(null);
   const [expandedPackageId, setExpandedPackageId] = useState<number | null>(null);
@@ -86,20 +88,27 @@ export const VulnerablePackagesBlock = ({ agentId }: { agentId: string }) => {
         onConfirm={() =>
           vulnIdToMark && markFalsePositiveMutation.mutate(vulnIdToMark)
         }
-        title="Mark as False Positive?"
-        confirmLabel="Yes, Mark False Positive"
+        title={t("agent_details.mark_false_positive")}
+        confirmLabel={t("agent_details.mark_false_positive_confirm")}
         isLoading={markFalsePositiveMutation.isPending}
         message={
           <p>
-            Are you sure you want to mark this package as a{" "}
-            <b>False Positive</b>? It will be hidden from the vulnerability
-            report.
+            <Trans
+              i18nKey="agent_details.mark_false_positive_desc"
+              components={{
+                bold: (
+                  <span className="font-semibold text-gray-900 dark:text-white" />
+                ),
+              }}
+            />
           </p>
         }
       />
 
       <Card
-        title={`Security Findings (${vulnData?.packages.length ?? 0})`}
+        title={t("agent_details.vulns", {
+          amount: vulnData?.packages.length ?? 0,
+        })}
         className="md:col-span-2 lg:col-span-1 h-100 flex flex-col"
       >
         {vulnLoading ? (
@@ -111,7 +120,7 @@ export const VulnerablePackagesBlock = ({ agentId }: { agentId: string }) => {
             {organizedVulns.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-green-500">
                 <ShieldCheck className="w-12 h-12 mb-2" />
-                <p>No vulnerabilities found.</p>
+                <p>{t("agent_details.no_vulns")}</p>
               </div>
             ) : (
               organizedVulns.map((pkg) => (
@@ -140,7 +149,9 @@ export const VulnerablePackagesBlock = ({ agentId }: { agentId: string }) => {
                       </div>
                     </div>
                     <span className="text-xs font-bold text-gray-400">
-                      Max CVSS: {pkg.maxScore.toFixed(1)}
+                      {t("agent_details.max_cvss", {
+                        score: pkg.maxScore.toFixed(1),
+                      })}
                     </span>
                   </div>
 
@@ -249,7 +260,9 @@ export const VulnerablePackagesBlock = ({ agentId }: { agentId: string }) => {
                                             className="flex items-center gap-1.5 text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded transition-colors"
                                           >
                                             <Ban className="w-3 h-3" />
-                                            Mark False Positive
+                                            {t(
+                                              "agent_details.mark_false_positive"
+                                            )}
                                           </button>
                                         </div>
                                       </div>

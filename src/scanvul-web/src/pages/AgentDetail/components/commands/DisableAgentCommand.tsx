@@ -3,10 +3,12 @@ import { agentsApi, type AgentResponse } from "../../../../api/agentsApi";
 import { ConfirmationModal } from "../../../../components/ConfimationModal";
 import { useState } from "react";
 import { Play, Power } from "lucide-react";
+import { Trans, useTranslation } from "react-i18next";
 
 
 export const DisableAgentCommand = ({agent, isCommandsOpen} : {agent: AgentResponse, isCommandsOpen: boolean}) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const [showDisableConfirm, setShowDisableConfirm] = useState(false);
   
   const disableAgentMutation = useMutation({
@@ -25,16 +27,22 @@ export const DisableAgentCommand = ({agent, isCommandsOpen} : {agent: AgentRespo
         isOpen={showDisableConfirm}
         onClose={() => setShowDisableConfirm(false)}
         onConfirm={() => disableAgentMutation.mutate()}
-        title="Disable agent?"
-        confirmLabel="Yes, Disable agent"
+        title={t("agents.disable_agent_title")}
+        confirmLabel={t("agents.disable_agent_confirm")}
         isLoading={disableAgentMutation.isPending}
         message={
           <p>
-            Are you sure you want to disable{" "}
-            <span className="font-semibold text-gray-900 dark:text-white">
-              {agent.computerName ?? "Unknown Host"}
-            </span>
-            ? This will prevent the agent from communicating with the server.
+            <Trans
+              i18nKey="agents.disable_agent_message"
+              values={{
+                host: agent?.computerName ?? t("agents.unkown_host"),
+              }}
+              components={{
+                bold: (
+                  <span className="font-semibold text-gray-900 dark:text-white" />
+                ),
+              }}
+            />
           </p>
         }
       />
@@ -48,10 +56,10 @@ export const DisableAgentCommand = ({agent, isCommandsOpen} : {agent: AgentRespo
           </div>
           <div className="text-left">
             <div className="text-sm font-semibold text-red-700 dark:text-red-400">
-              Disable Agent
+              {t("agents.disable_agent_title")}
             </div>
             <div className="text-xs text-red-500/80">
-              Stop and remove from services
+              {t("agents.disable_agent_desc")}
             </div>
           </div>
         </div>
