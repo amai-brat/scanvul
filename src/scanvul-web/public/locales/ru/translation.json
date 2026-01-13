@@ -21,11 +21,42 @@
     "no_agents": "Агентов пока нет.",
     "disable_agent_title": "Отключить агента?",
     "disable_agent_confirm": "Да, отключить агента",
-    "disable_agent_message": "Вы уверены, что хотите отключить <bold>{{host}}</bold>? Это предотвратит связь агента с сервером.",
+    "disable_agent_message": "Вы уверены, что хотите отключить <bold>{{host}}</bold>? Это предотвратит связь агента с сервером."
+  },
+  "agent_details": {
+    "computer_info": "Данные о компьютере",
     "last_ping": "Последний пинг: {{time}}",
-    "computer_info": "Инфо о компьютере",
-    "vulnerabilities": "Уязвимости",
-    "installed_packages": "Установленные пакеты"
+    "os": "ОС",
+    "cpu": "ЦП",
+    "memory": "ПАМЯТЬ",
+
+    "commands": "Команды",
+    "command_block_desc": "Отправить агенту команды",
+    "command_report_packages_title": "Сканировать ПО",
+    "command_report_packages_desc": "Обновить список установленного ПО",
+
+    "installed_packages": "Установленные ПО",
+    "installed_packages_total": "Всего: {{amount}}",
+    "installed_packages_click": "Нажмите, чтобы прогрузить установленнные ПО",
+    "installed_packages_fetching": "Получение списка ПО...",
+    "package_name": "Название",
+    "version": "Версия",
+    "id": "Идентификатор",
+
+    "command_history": "История команд",
+    "command_history_total": "Всего: {{amount}}",
+    "command_history_click": "Нажмите, чтобы прогрузить команды",
+    "command_history_fetching": "Получение списка команд...",
+    "command_type": "Тип команды",
+    "command_status": "Статус / Ответ",
+    "command_parameters": "Параметры",
+    "command_timestamps": "Время",
+    "no_commands": "Нет команд",
+    "command_full_resp": "Посмотреть полный ответ",
+    "command_sent": "Отправлено агенту",
+    "command_pending": "Ожидание обработки",
+    "command_created_at": "Создана: {{time}}",
+    "command_sent_at": "Отправлена: {{time}}"
   },
   "components": {
     "connectivity_indicator": {

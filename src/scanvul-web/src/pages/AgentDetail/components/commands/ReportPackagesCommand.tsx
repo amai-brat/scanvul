@@ -1,10 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { agentsApi, type AgentResponse } from "../../../../api/agentsApi";
 import { Loader2, Play, RefreshCw } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 
 export const ReportPackagesCommand = ({agent, isCommandsOpen} : {agent: AgentResponse, isCommandsOpen: boolean}) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   const reportPackagesMutation = useMutation({
     mutationFn: () => agentsApi.sendReportPackages(agent.id.toString()),
@@ -29,9 +31,11 @@ export const ReportPackagesCommand = ({agent, isCommandsOpen} : {agent: AgentRes
           )}
         </div>
         <div className="text-left">
-          <div className="text-sm font-semibold">Scan Packages</div>
+          <div className="text-sm font-semibold">
+            {t("agent_details.command_report_packages_title")}
+          </div>
           <div className="text-xs text-gray-500">
-            Request package list update
+            {t("agent_details.command_report_packages_desc")}
           </div>
         </div>
       </div>

@@ -21,11 +21,42 @@
     "no_agents": "No agents have registered yet.",
     "disable_agent_title": "Disable Agent?",
     "disable_agent_confirm": "Yes, disable agent",
-    "disable_agent_message": "Are you sure you want to disable <bold>{{host}}</bold>? This will prevent the agent from communicating with the server.",
-    "last_ping": "Last ping: {{time}}",
+    "disable_agent_message": "Are you sure you want to disable <bold>{{host}}</bold>? This will prevent the agent from communicating with the server."
+  },
+  "agent_details": {
     "computer_info": "Computer Info",
-    "vulnerabilities": "Vulnerabilities",
-    "installed_packages": "Installed Packages"
+    "last_ping": "Last ping: {{time}}",
+    "os": "OS",
+    "cpu": "CPU",
+    "memory": "MEMORY",
+
+    "commands": "Commands",
+    "command_block_desc": "Send remote commands to the agent.",
+    "command_report_packages_title": "Scan Packages",
+    "command_report_packages_desc": "Request package list update",
+
+    "installed_packages": "Installed Packages",
+    "installed_packages_total": "{{amount}} packages found",
+    "installed_packages_click": "Click to load packages",
+    "installed_packages_fetching": "Fetching package list...",
+    "package_name": "Package Name",
+    "version": "Version",
+    "id": "ID",
+
+    "command_history": "Command History",
+    "command_history_total": "{{amount}} commands created",
+    "command_history_click": "Click to load command history",
+    "command_history_fetching": "Fetching commands...",
+    "command_type": "Command Type",
+    "command_status": "Status / Response",
+    "command_parameters": "Parameters",
+    "command_timestamps": "Timestamps",
+    "no_commands": "No commands found.",
+    "command_full_resp": "View Full Response",
+    "command_sent": "Sent to agent",
+    "command_pending": "Pending pickup",
+    "command_created_at": "Created: {{time}}",
+    "command_sent_at": "Sent: {{time}}"
   },
   "components": {
     "connectivity_indicator": {
