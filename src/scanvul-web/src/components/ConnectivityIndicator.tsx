@@ -1,5 +1,6 @@
 import { differenceInMinutes, parseISO } from "date-fns";
 import { WifiOff } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface ConnectivityIndicatorProps {
   lastPingAt: string;
@@ -8,6 +9,7 @@ interface ConnectivityIndicatorProps {
 export const ConnectivityIndicator = ({
   lastPingAt,
 }: ConnectivityIndicatorProps) => {
+  const { t } = useTranslation();
   const date = parseISO(lastPingAt);
   const now = new Date();
   const diffMinutes = differenceInMinutes(now, date);
@@ -40,7 +42,10 @@ export const ConnectivityIndicator = ({
     colorClass = "text-red-600 dark:text-red-500";
   }
 
-  const title = `Last ping: ${date.toLocaleString()} (${diffMinutes} mins ago)`;
+  const title = t("components.connectivity_indicator.title", {
+    time: date.toLocaleString(),
+    minutes: diffMinutes,
+  });
 
   if (signalLevel === 0) {
     return (

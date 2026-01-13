@@ -10,10 +10,12 @@ import { CommandHistoryBlock } from "./components/CommandHistoryBlock";
 import { ReportPackagesCommand } from "./components/commands/ReportPackagesCommand";
 import { DisableAgentCommand } from "./components/commands/DisableAgentCommand";
 import { UpgradePackageCommand } from "./components/commands/UpgradePackageCommand";
+import { useTranslation } from "react-i18next";
 
 
 export const AgentDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const { t  } = useTranslation();
 
   const [isCommandsOpen, setIsCommandsOpen] = useState(false);
 
@@ -46,10 +48,10 @@ export const AgentDetail = () => {
         <ComputerInfoBlock agent={agent} />
         <VulnerablePackagesBlock agentId={id!} />
 
-        <Card title="Actions" className="h-full">
+        <Card title={t("agent_details.commands")} className="h-full">
           <div className="space-y-3">
             <p className="text-sm text-gray-500 mb-2">
-              Send remote commands to the agent.
+              {t("agent_details.command_block_desc")}
             </p>
             <ReportPackagesCommand agent={agent} isCommandsOpen={isCommandsOpen} />
             <UpgradePackageCommand agent={agent} isCommandsOpen={isCommandsOpen} />

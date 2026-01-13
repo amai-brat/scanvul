@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { packageManagerApi, type PackageMetadata } from "../../../../api/packageManagerApi";
 import { getPackageManager } from "../../../../utils/packageManager";
+import { useTranslation } from "react-i18next";
 
 
 export const UpgradePackageCommand = ({
@@ -24,6 +25,7 @@ export const UpgradePackageCommand = ({
   isCommandsOpen: boolean;
 }) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [upgradePackageName, setUpgradePackageName] = useState("");
   const [searchResults, setSearchResults] = useState<PackageMetadata[]>([]);
@@ -83,9 +85,11 @@ export const UpgradePackageCommand = ({
             <DownloadCloud className="w-4 h-4" />
           </div>
           <div className="text-left">
-            <div className="text-sm font-semibold">Upgrade Package</div>
+            <div className="text-sm font-semibold">
+              {t("agent_details.command_upgrade_package_title")}
+            </div>
             <div className="text-xs text-gray-500">
-              Update specific software
+              {t("agent_details.command_upgrade_package_desc")}
             </div>
           </div>
         </div>
@@ -100,7 +104,9 @@ export const UpgradePackageCommand = ({
           <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl w-full max-w-lg border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col max-h-[90vh]">
             {/* Header */}
             <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center shrink-0">
-              <h3 className="font-semibold text-lg">Upgrade Package</h3>
+              <h3 className="font-semibold text-lg">
+                {t("agent_details.command_upgrade_package_title")}
+              </h3>
               <button onClick={() => setShowUpgradeModal(false)}>
                 <XCircle className="w-5 h-5 text-gray-400 hover:text-gray-600" />
               </button>
@@ -109,8 +115,7 @@ export const UpgradePackageCommand = ({
             {/* Scrollable Content */}
             <div className="p-6 space-y-6 overflow-y-auto">
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                Search for a package to upgrade or select from detected
-                vulnerabilities.
+                {t("agent_details.search_package_desc")}
               </p>
 
               {/* 1. Vulnerable Packages Section */}
@@ -118,7 +123,7 @@ export const UpgradePackageCommand = ({
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-xs font-semibold text-amber-600 dark:text-amber-500">
                     <AlertTriangle className="w-3 h-3" />
-                    <span>Detected Vulnerable Packages</span>
+                    <span>{t("agent_details.detected_vuln_pkgs")}</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {uniqueVulnPackages.map((pkg) => (
@@ -137,7 +142,7 @@ export const UpgradePackageCommand = ({
               {/* 2. Search Input */}
               <div className="space-y-2">
                 <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">
-                  Package Name
+                  {t("agent_details.package_name")}
                 </label>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
@@ -174,7 +179,7 @@ export const UpgradePackageCommand = ({
               {searchResults.length > 0 && (
                 <div className="space-y-2">
                   <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Search Results
+                    {t("agent_details.search_results")}
                   </h4>
                   <div className="space-y-2 max-h-60 pr-1">
                     {searchResults.map((pkg) => (
@@ -222,10 +227,12 @@ export const UpgradePackageCommand = ({
 
               {/* No Results State */}
               {searchPackageMutation.isSuccess &&
-                searchResults.length === 0 && 
+                searchResults.length === 0 &&
                 upgradePackageName && (
                   <p className="text-xs text-center text-gray-500 py-2">
-                    No packages found matching "{upgradePackageName}"
+                    {t("agent_details.no_packages_matching", {
+                      pattern: upgradePackageName,
+                    })}
                   </p>
                 )}
             </div>
@@ -236,7 +243,7 @@ export const UpgradePackageCommand = ({
                 onClick={() => setShowUpgradeModal(false)}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
               >
-                Cancel
+                {t("components.confirmation_modal.cancel")}
               </button>
               <button
                 onClick={() =>
@@ -250,7 +257,7 @@ export const UpgradePackageCommand = ({
                 {upgradePackageMutation.isPending && (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 )}
-                Send Command
+                {t("agent_details.send_command")}
               </button>
             </div>
           </div>

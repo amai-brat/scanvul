@@ -1,0 +1,86 @@
+{
+  "app": {
+    "title": "ScanVul",
+    "welcome": "Добро пожаловать в ScanVul"
+  },
+  "auth": {
+    "login": "Войти",
+    "username": "Имя пользователя",
+    "password": "Пароль",
+    "logging_in": "Вход...",
+    "admin_init_success": "Администратор создан!",
+    "save_creds": "Пожалуйста, сохраните эти данные.",
+    "invalid_creds": "Некорректные учётные данные"
+  },
+  "agents": {
+    "title": "Агенты",
+    "total": "Всего",
+    "unkown_host": "Неизвестный хост",
+    "loading_agents": "Загрузка агентов...",
+    "loading_agents_error": "Ошибка загрузки агентов.",
+    "no_agents": "Агентов пока нет.",
+    "disable_agent_title": "Отключить агента",
+    "disable_agent_confirm": "Да, отключить агента",
+    "disable_agent_desc": "Остановить и удалить со служб",
+    "disable_agent_message": "Вы уверены, что хотите отключить <bold>{{host}}</bold>? Это предотвратит связь агента с сервером."
+  },
+  "agent_details": {
+    "computer_info": "Данные о компьютере",
+    "last_ping": "Последний пинг: {{time}}",
+    "os": "ОС",
+    "cpu": "ЦП",
+    "memory": "ПАМЯТЬ",
+
+    "commands": "Команды",
+    "command_block_desc": "Отправить агенту команды",
+    "command_report_packages_title": "Сканировать ПО",
+    "command_report_packages_desc": "Обновить список установленного ПО",
+    "command_upgrade_package_title": "Обновить ПО",
+    "command_upgrade_package_desc": "Обновить ПО с помощью пакетного менеджера",
+    "send_command": "Отправить команду",
+    "search_package_desc": "Найти ПО по названию или выбрать из уязвимых (если есть)",
+    "detected_vuln_pkgs": "Уязвимые ПО",
+    "search_results": "Результаты поиска",
+    "no_packages_matching": "Не найдены ПО по запросу '{{pattern}}'",
+
+    "vulns": "Уязвимости ПО ({{amount}})",
+    "no_vulns": "Нет уязвимостей",
+    "max_cvss": "Макс. CVSS: {{score}}",
+    "mark_false_positive": "Пометить, как ложное срабатывание",
+    "mark_false_positive_desc": "Вы уверены, что хотите отметить данную уязвимость как <bold>ложное срабатывание</bold>? Она будет скрыта с отчёта об уязвимостях",
+    "mark_false_positive_confirm": "Да, пометить как ложное срабатывание",
+
+    "installed_packages": "Установленные ПО",
+    "installed_packages_total": "Всего: {{amount}}",
+    "installed_packages_click": "Нажмите, чтобы прогрузить установленнные ПО",
+    "installed_packages_fetching": "Получение списка ПО...",
+    "package_name": "Название",
+    "version": "Версия",
+    "id": "Идентификатор",
+
+    "command_history": "История команд",
+    "command_history_total": "Всего: {{amount}}",
+    "command_history_click": "Нажмите, чтобы прогрузить команды",
+    "command_history_fetching": "Получение списка команд...",
+    "command_type": "Тип команды",
+    "command_status": "Статус / Ответ",
+    "command_parameters": "Параметры",
+    "command_timestamps": "Время",
+    "no_commands": "Нет команд",
+    "command_full_resp": "Посмотреть полный ответ",
+    "command_sent": "Отправлено агенту",
+    "command_pending": "Ожидание обработки",
+    "command_created_at": "Создана: {{time}}",
+    "command_sent_at": "Отправлена: {{time}}"
+  },
+  "components": {
+    "connectivity_indicator": {
+      "title": "Последний пинг: {{time}} ({{minutes}} мин. назад)"
+    },
+    "confirmation_modal": {
+      "confirm": "Подтвердить",
+      "processing": "Обработка...",
+      "cancel": "Отмена"
+    }
+  }
+}

@@ -18,9 +18,12 @@
     "date-fns": "^4.1.0",
     "eslint-plugin-react-dom": "^2.3.13",
     "eslint-plugin-react-x": "^2.3.13",
+    "i18next": "^25.7.4",
+    "i18next-http-backend": "^3.0.2",
     "lucide-react": "^0.562.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-i18next": "^16.5.2",
     "react-router-dom": "^7.11.0",
     "tailwind-merge": "^3.4.0",
     "zustand": "^5.0.9"

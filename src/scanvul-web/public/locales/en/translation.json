@@ -1,0 +1,86 @@
+{
+  "app": {
+    "title": "ScanVul",
+    "welcome": "Welcome to ScanVul"
+  },
+  "auth": {
+    "login": "Login",
+    "username": "Username",
+    "password": "Password",
+    "logging_in": "Logging in...",
+    "admin_init_success": "Initial Admin Created!",
+    "save_creds": "Please save these credentials.",
+    "invalid_creds": "Invalid credentials"
+  },
+  "agents": {
+    "title": "Agents",
+    "total": "Total",
+    "unkown_host": "Unknown Host",
+    "loading_agents": "Loading agents...",
+    "loading_agents_error": "Error loading agents.",
+    "no_agents": "No agents have registered yet.",
+    "disable_agent_title": "Disable Agent",
+    "disable_agent_confirm": "Yes, disable agent",
+    "disable_agent_desc": "Stop and remove from services",
+    "disable_agent_message": "Are you sure you want to disable <bold>{{host}}</bold>? This will prevent the agent from communicating with the server."
+  },
+  "agent_details": {
+    "computer_info": "Computer Info",
+    "last_ping": "Last ping: {{time}}",
+    "os": "OS",
+    "cpu": "CPU",
+    "memory": "MEMORY",
+
+    "commands": "Commands",
+    "command_block_desc": "Send remote commands to the agent",
+    "command_report_packages_title": "Scan Packages",
+    "command_report_packages_desc": "Request package list update",
+    "command_upgrade_package_title": "Upgrade Package",
+    "command_upgrade_package_desc": "Upgrade specific software",
+    "send_command": "Send command",
+    "search_package_desc": "Search for a package to upgrade or select from detected vulnerabilities.",
+    "detected_vuln_pkgs": "Detected Vulnerable Packages",
+    "search_results": "Search Results",
+    "no_packages_matching": "No packages found matching '{{pattern}}'",
+
+    "vulns": "Vulnerabilities ({{amount}})",
+    "no_vulns": "No vulnerabilities found",
+    "max_cvss": "Max CVSS: {{score}}",
+    "mark_false_positive": "Mark False Positive",
+    "mark_false_positive_desc": "Are you sure you want to mark this package as a <bold>False Positive</bold>? It will be hidden from the vulnerability report",
+    "mark_false_positive_confirm": "Yes, Mark False Positive",
+
+    "installed_packages": "Installed Packages",
+    "installed_packages_total": "{{amount}} packages found",
+    "installed_packages_click": "Click to load packages",
+    "installed_packages_fetching": "Fetching package list...",
+    "package_name": "Package Name",
+    "version": "Version",
+    "id": "ID",
+
+    "command_history": "Command History",
+    "command_history_total": "{{amount}} commands created",
+    "command_history_click": "Click to load command history",
+    "command_history_fetching": "Fetching commands...",
+    "command_type": "Command Type",
+    "command_status": "Status / Response",
+    "command_parameters": "Parameters",
+    "command_timestamps": "Timestamps",
+    "no_commands": "No commands found.",
+    "command_full_resp": "View Full Response",
+    "command_sent": "Sent to agent",
+    "command_pending": "Pending pickup",
+    "command_created_at": "Created: {{time}}",
+    "command_sent_at": "Sent: {{time}}"
+  },
+  "components": {
+    "connectivity_indicator": {
+      "title": "Last ping: {{time}} ({{minutes}} mins ago)"
+    },
+    "confirmation_modal": {
+      "confirm": "Confirm",
+      "processing": "Processing...",
+      "cancel": "Cancel"
+    }
+  }
+}
