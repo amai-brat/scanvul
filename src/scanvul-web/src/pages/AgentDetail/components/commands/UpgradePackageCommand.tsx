@@ -80,7 +80,7 @@ export const UpgradePackageCommand = ({
         disabled={!agent.isActive}
         className="w-full flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 max-w-[90%]">
           <div className="bg-emerald-50 text-emerald-600 p-2 rounded-md">
             <DownloadCloud className="w-4 h-4" />
           </div>

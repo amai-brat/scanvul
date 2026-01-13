@@ -50,7 +50,7 @@ export const DisableAgentCommand = ({agent, isCommandsOpen} : {agent: AgentRespo
         disabled={disableAgentMutation.isPending || !agent.isActive}
         className="w-full flex items-center justify-between p-3 rounded-lg border border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 max-w-[90%]">
           <div className="bg-red-50 text-red-600 p-2 rounded-md">
             <Power className="w-4 h-4" />
           </div>
