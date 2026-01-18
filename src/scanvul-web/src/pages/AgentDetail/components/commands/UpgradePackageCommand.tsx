@@ -15,6 +15,7 @@ import {
 import { packageManagerApi, type PackageMetadata } from "../../../../api/packageManagerApi";
 import { getPackageManager } from "../../../../utils/packageManager";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 
 
 export const UpgradePackageCommand = ({
@@ -50,6 +51,9 @@ export const UpgradePackageCommand = ({
     },
     onError: (err) => {
       console.error("Failed to search packages", err);
+      toast.error(t("app.err", {
+        msg: err.message
+      }))
     },
   });
 
@@ -62,6 +66,8 @@ export const UpgradePackageCommand = ({
       setShowUpgradeModal(false);
       setUpgradePackageName("");
       setSearchResults([]);
+
+      toast.info(t("agent_details.command_upgrade_package_toast_msg"));
     },
   });
 

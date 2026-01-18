@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { agentsApi, type AgentResponse } from "../../../../api/agentsApi";
 import { Loader2, Play, RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 
 
 export const ReportPackagesCommand = ({agent, isCommandsOpen} : {agent: AgentResponse, isCommandsOpen: boolean}) => {
@@ -12,8 +13,8 @@ export const ReportPackagesCommand = ({agent, isCommandsOpen} : {agent: AgentRes
     mutationFn: () => agentsApi.sendReportPackages(agent.id.toString()),
     onSuccess: () => {
       if (isCommandsOpen)
-        queryClient.invalidateQueries({ queryKey: ["commands", agent.id] });
-      // TODO: Add toast notification "Scan command sent"
+        queryClient.invalidateQueries({ queryKey: ["commands", agent.id.toString()] });
+      toast.info(t("agent_details.command_report_packages_toast_msg"));
     },
   });
 

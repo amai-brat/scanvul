@@ -1,7 +1,7 @@
 export type PackageManager = "unknown" | "choco" | "pacman" | "rpm";
 
-export const getPackageManager = (operationSystem: string) : PackageManager => {
-  const os = operationSystem.trim().toLowerCase()
+export const getPackageManager = (operatingSystem: string) : PackageManager => {
+  const os = operatingSystem.trim().toLowerCase()
 
   if (os.startsWith("win")) return "choco";
   if (os.startsWith("arch")) return "pacman";
