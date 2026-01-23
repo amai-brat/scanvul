@@ -2,6 +2,7 @@ using System.IO.Compression;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using Hangfire;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -21,25 +22,26 @@ public class CveSnapshotDownloadWorker(
     IHttpClientFactory httpClientFactory) : IWorker
 {
     private const string LastSyncFile = "cve_snapshot_last_sync.json";
-    private const string CveSnapshotCheckLink = "https://cti.wazuh.com/api/v1/catalog/contexts/vd_1.0.0/consumers/vd_4.8.0";
+    private const string CveSnapshotCheckUrl = "api/v1/catalog/contexts/vd_1.0.0/consumers/vd_4.8.0";
     private const string IndexName = "cve-index";
     private const int BulkBatchSize = 250; // найдено эмпирически
     
+    [JobDisplayName("Download CVE snapshot from Wazuh CTI")]
     public async Task RunAsync(CancellationToken ct = default)
     {
         await using var scope = scopeFactory.CreateAsyncScope();
         var searchClient = scope.ServiceProvider.GetRequiredService<IOpenSearchClient>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<CveSnapshotDownloadWorker>>();
         var hostEnvironment = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
-        var httpClient = httpClientFactory.CreateClient();
+        var httpClient = httpClientFactory.CreateClient(HttpClientNames.Wazuh);
         
         var syncFile = Path.Combine(hostEnvironment.ContentRootPath, LastSyncFile);
         var lastDownloadInfo = await GetLastDownloadInfoAsync(syncFile);
-        var checkResponse = await httpClient.GetFromJsonAsync<CveSnapshotCheckResponse>(CveSnapshotCheckLink, ct);
+        var checkResponse = await httpClient.GetFromJsonAsync<CveSnapshotCheckResponse>(CveSnapshotCheckUrl, ct);
 
         if (checkResponse?.Data == null)
         {
-            logger.LogError("Failed to retrieve snapshot metadata from {Url}", CveSnapshotCheckLink);
+            logger.LogError("Failed to retrieve snapshot metadata from {Url}", CveSnapshotCheckUrl);
             return;
         }
 
@@ -165,7 +167,6 @@ public class CveSnapshotDownloadWorker(
         await foreach (var line in File.ReadLinesAsync(jsonFilePath, ct))
         {
             lineNumber++;
-            if (lineNumber < 240000) continue;
             if (string.IsNullOrWhiteSpace(line)) 
                 continue;
 

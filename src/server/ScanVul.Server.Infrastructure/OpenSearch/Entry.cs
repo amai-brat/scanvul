@@ -6,6 +6,7 @@ using OpenSearch.Client.JsonNetSerializer;
 using OpenSearch.Net;
 using ScanVul.Server.Domain.Cve.Repositories;
 using ScanVul.Server.Infrastructure.OpenSearch.Repositories;
+using ScanVul.Server.Infrastructure.OpenSearch.Services;
 
 namespace ScanVul.Server.Infrastructure.OpenSearch;
 
@@ -31,6 +32,7 @@ public static class Entry
         }
         
         services.AddSingleton<IOpenSearchClient>(_ => new OpenSearchClient(settings));
+        services.AddScoped<IOpenSearchFiller, OpenSearchFiller>();
         services.AddScoped<ICveRepository, CveRepository>();
         
         return services;
