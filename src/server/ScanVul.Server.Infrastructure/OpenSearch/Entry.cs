@@ -34,6 +34,7 @@ public static class Entry
         services.AddSingleton<IOpenSearchClient>(_ => new OpenSearchClient(settings));
         services.AddScoped<IOpenSearchFiller, OpenSearchFiller>();
         services.AddScoped<ICveRepository, CveRepository>();
+        services.AddScoped<IBduRepository, BduRepository>();
         
         return services;
     }

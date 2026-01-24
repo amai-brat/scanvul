@@ -17,6 +17,7 @@ public static class Entry
         
         services.Configure<ScanSettings>(configuration.GetSection("Scan"));
         services.AddScoped<IVulnerablePackageScanner, VulnerablePackageScanner>();
+        services.AddScoped<IVulnerablePackageScanner, BduVulnerablePackageScanner>();
         services.AddScoped<VersionMatcher>();
 
         services.Configure<JwtOptions>(options =>

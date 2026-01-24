@@ -1,30 +1,21 @@
-using System.Text.RegularExpressions;
 using OpenSearch.Client;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
 using ScanVul.Server.Domain.Cve.Repositories;
 using ScanVul.Server.Domain.Cve.ValueObjects.Descriptions;
 using ScanVul.Server.Domain.Cve.ValueObjects.Versions;
+using ScanVul.Server.Infrastructure.OpenSearch.Helpers;
 
 namespace ScanVul.Server.Infrastructure.OpenSearch.Repositories;
 
-public partial class CveRepository(IOpenSearchClient client) : ICveRepository
+public class CveRepository(IOpenSearchClient client) : ICveRepository
 {
     private const int MaxResults = 10000;
-    
-    [GeneratedRegex(@"\s*\([^)]*\)")]
-    private static partial Regex ParenthesesWithContentRegex { get; }
-    
-    [GeneratedRegex(@"\s+\d{1,4}(?:[.-]\d{1,4}){1,3}(?:[.-]\d+)?$")]
-    private static partial Regex VersionRegex { get; }
-    
-    [GeneratedRegex(@"\s+v?\d+(?:\.\d+)*$")]
-    private static partial Regex VersionLikeRegex { get; }
     
     public async Task<IReadOnlyCollection<CveVersionDocument>> GetMatchedCveVersionDocumentsAsync(
         PackageInfo packageInfo,
         CancellationToken ct = default)
     {
-        var sanitizedPackageName = SanitizePackageName(packageInfo.Name);
+        var sanitizedPackageName = SearchTermSanitizer.SanitizePackageName(packageInfo.Name);
         if (string.IsNullOrWhiteSpace(sanitizedPackageName))
             return [];
         
@@ -124,23 +115,5 @@ public partial class CveRepository(IOpenSearchClient client) : ICveRepository
         return response.IsValid
             ? response.Documents
             : throw new AggregateException("Error when sending request to OpenSearch", response.OriginalException);
-    }
-
-    private static string SanitizePackageName(string? name)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-            return name?.Trim() ?? string.Empty;
-
-        // Remove parentheses and their content
-        var result = ParenthesesWithContentRegex.Replace(name, "");
-        
-        // Remove semantic versions and other version patterns
-        // This handles versions like: 24.09, 20250730-1, 7.2.2, etc.
-        result = VersionRegex.Replace(result, "");
-        
-        // Remove any remaining version-like patterns not at the end
-        result = VersionLikeRegex.Replace(result, "");
-        
-        return result.Trim();
     }
 }

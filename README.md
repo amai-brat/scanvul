@@ -5,7 +5,6 @@
   - [x] exception when installing to computer where agent already exists
   - [x] use existing token when reinstalling 
 - [x] CVE indexer microservice (opensearch)
-- [ ] ФСТЭК (на фронте добавить блок с возможными уязвимостями без привязки к версии)
 - [ ] main server api
   - [x] register agent
   - [x] version matching
@@ -40,3 +39,10 @@
   - [x] toastify
     - [x] command creation
     - [x] searching package
+- [ ] ФСТЭК
+  - [x] convert xml to json
+  - [x] recurring job to export to opensearch
+  - [x] entity for BDU vulnerable package
+  - [ ] endpoint like for CVE
+  - [ ] block on frontend with BDU
+- [ ] find more appropriate package searching method [link](https://docs.opensearch.org/latest/query-dsl/term/index/)
