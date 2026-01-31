@@ -43,6 +43,6 @@
   - [x] convert xml to json
   - [x] recurring job to export to opensearch
   - [x] entity for BDU vulnerable package
-  - [ ] endpoint like for CVE
+  - [x] endpoint like for CVE
   - [ ] block on frontend with BDU
 - [ ] find more appropriate package searching method [link](https://docs.opensearch.org/latest/query-dsl/term/index/)

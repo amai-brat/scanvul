@@ -95,4 +95,15 @@ public class AgentRepository(AppDbContext dbContext) : IAgentRepository
             .FirstOrDefaultAsync(x => x.Id == agentId, cancellationToken: ct);
         return agent;
     }
+
+    public async Task<Agent?> GetWithBduVulnerablePackagesNoTrackingAsync(long agentId, CancellationToken ct = default)
+    {
+        var agent = await dbContext.Agents
+            .Include(x => x.Computer)
+                .ThenInclude(x => x.BduVulnerablePackages.Where(vp => !vp.IsFalsePositive))
+                    .ThenInclude(x => x.PackageInfo)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == agentId, cancellationToken: ct);
+        return agent;
+    }
 }

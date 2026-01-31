@@ -1,9 +1,9 @@
 using OpenSearch.Client;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
 using ScanVul.Server.Domain.Cve.Repositories;
+using ScanVul.Server.Domain.Cve.Services;
 using ScanVul.Server.Domain.Cve.ValueObjects.Descriptions;
 using ScanVul.Server.Domain.Cve.ValueObjects.Versions;
-using ScanVul.Server.Infrastructure.OpenSearch.Helpers;
 
 namespace ScanVul.Server.Infrastructure.OpenSearch.Repositories;
 

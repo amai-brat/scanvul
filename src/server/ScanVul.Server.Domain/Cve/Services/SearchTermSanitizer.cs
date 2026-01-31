@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace ScanVul.Server.Infrastructure.OpenSearch.Helpers;
+namespace ScanVul.Server.Domain.Cve.Services;
 
 public partial class SearchTermSanitizer
 {
@@ -19,14 +19,14 @@ public partial class SearchTermSanitizer
             return name?.Trim() ?? string.Empty;
 
         // Remove parentheses and their content
-        var result = ParenthesesWithContentRegex.Replace(name, "");
+        var result = ParenthesesWithContentRegex.Replace(name, string.Empty);
         
         // Remove semantic versions and other version patterns
         // This handles versions like: 24.09, 20250730-1, 7.2.2, etc.
-        result = VersionRegex.Replace(result, "");
+        result = VersionRegex.Replace(result, string.Empty);
         
         // Remove any remaining version-like patterns not at the end
-        result = VersionLikeRegex.Replace(result, "");
+        result = VersionLikeRegex.Replace(result, string.Empty);
         
         return result.Trim();
     }
