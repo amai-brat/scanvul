@@ -1,3 +1,4 @@
+using System.Globalization;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
 using ScanVul.Server.Domain.Cve.Services;
 using ScanVul.Server.Domain.Cve.ValueObjects.Descriptions;
@@ -8,15 +9,15 @@ public static class Mapping
 {
     public static BduVulnerablePackageResponse MapToResponse(this BduVulnerablePackage p, BduDescriptionDocument doc)
     {
-        double? cvssScore = double.TryParse(doc.Cvss?.Vector.Score, out var score) 
+        double? cvssScore = double.TryParse(doc.Cvss?.Vector.Score, NumberStyles.Any, CultureInfo.InvariantCulture, out var score) 
             ? score 
             : null;
         
-        double? cvss3Score = double.TryParse(doc.Cvss3?.Vector.Score, out var score3) 
+        double? cvss3Score = double.TryParse(doc.Cvss3?.Vector.Score, NumberStyles.Any, CultureInfo.InvariantCulture, out var score3) 
             ? score3 
             : null;
         
-        double? cvss4Score = double.TryParse(doc.Cvss4?.Vector.Score, out var score4) 
+        double? cvss4Score = double.TryParse(doc.Cvss4?.Vector.Score, NumberStyles.Any, CultureInfo.InvariantCulture, out var score4) 
             ? score4 
             : null;
         

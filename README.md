@@ -46,3 +46,6 @@
   - [x] endpoint like for CVE
   - [ ] block on frontend with BDU
 - [ ] find more appropriate package searching method [link](https://docs.opensearch.org/latest/query-dsl/term/index/)
+- [ ] deploy
+  - [ ] docker compose
+  - [ ] readme

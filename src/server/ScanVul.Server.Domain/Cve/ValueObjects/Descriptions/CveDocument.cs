@@ -1,4 +1,4 @@
-using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using JetBrains.Annotations;
 
 namespace ScanVul.Server.Domain.Cve.ValueObjects.Descriptions;
@@ -11,7 +11,7 @@ public class CveDescriptionDocument
 public class Payload
 {
     public required CveMetadata CveMetadata { get; set; }
-    public required Containers Containers { get; set; }
+    public Containers Containers { get; set; } = null!;
 }
 
 public class CveMetadata
@@ -39,13 +39,13 @@ public class Container
 
 public class Metrics
 {
-    [DataMember(Name = "cvssV3_1")]
+    [JsonPropertyName("cvssV3_1")]
     public Cvss? CvssV31 { get; set; }
     
-    [DataMember(Name = "cvssV3_0")]
+    [JsonPropertyName("cvssV3_0")]
     public Cvss? CvssV30 { get; set; }
     
-    [DataMember(Name = "cvssV2_0")]
+    [JsonPropertyName("cvssV2_0")]
     public Cvss? CvssV20 { get; set; }
 }
 
