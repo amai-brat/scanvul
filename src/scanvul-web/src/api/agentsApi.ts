@@ -30,6 +30,44 @@ export interface VulnerablePackageResponse {
   description: string | null;
 }
 
+export interface Identifier {
+  type: string;
+  link: string;
+  value: string;
+}
+
+export interface Cwe {
+  id: string;
+  name: string;
+}
+
+export interface VulnerableSoftware {
+  name: string;
+  platform: string;
+  vendor: string;
+  version: string;
+}
+
+export interface BduVulnerablePackageResponse {
+  id: number;
+  bduId: string;
+  packageId: number;
+  packageName: string;
+  packageVersion: string;
+  description: string;
+  severity: string;
+  identifiers: Identifier[];
+  cwes: Cwe[];
+  cvss: number | null; // v2
+  cvss3: number | null; // v3.0 / v3.1
+  cvss4: number | null; // v4.0
+  software: VulnerableSoftware[];
+}
+
+export interface ListBduVulnerablePackagesResponse {
+  packages: BduVulnerablePackageResponse[];
+}
+
 export interface ListAgentsResponse {
   agents: AgentResponse[];
 }
@@ -67,14 +105,21 @@ export const agentsApi = {
   getVulnPackages: (id: string) =>
     api
       .get<ListVulnerablePackagesResponse>(
-        `/api/v1/admin/agents/${id}/vulnerable-packages`
+        `/api/v1/admin/agents/${id}/vulnerable-packages`,
+      )
+      .then((res) => res.data),
+      
+  getBduVulnPackages: (id: string) =>
+    api
+      .get<ListBduVulnerablePackagesResponse>(
+        `/api/v1/admin/agents/${id}/vulnerable-packages/bdu`,
       )
       .then((res) => res.data),
 
   markFalsePositive: (vulnerablePackageId: number) =>
     api
       .patch(
-        `/api/v1/admin/agents/vulnerable-packages/${vulnerablePackageId}/false-positive`
+        `/api/v1/admin/agents/vulnerable-packages/${vulnerablePackageId}/false-positive`,
       )
       .then((res) => res.data),
 

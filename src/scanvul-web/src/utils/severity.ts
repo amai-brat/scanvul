@@ -1,10 +1,24 @@
-import type { VulnerablePackageResponse } from "../api/agentsApi";
+import type { BduVulnerablePackageResponse, VulnerablePackageResponse } from "../api/agentsApi";
 
 
 export type SeverityLevel = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
 export const getCvssScore = (v: VulnerablePackageResponse): number => {
   return v.cvssV3_1 ?? v.cvssV3_0 ?? v.cvssV2_0 ?? 0;
 };
+export const getBduScore = (pkg: BduVulnerablePackageResponse): number => {
+  if (pkg.cvss4 && pkg.cvss4 > 0) {
+    return pkg.cvss4;
+  }
+  if (pkg.cvss3 && pkg.cvss3 > 0) {
+    return pkg.cvss3;
+  }
+  if (pkg.cvss && pkg.cvss > 0) {
+    return pkg.cvss;
+  }
+
+  return 0;
+};
+
 export const getSeverityLevel = (score: number): SeverityLevel => {
   if (score >= 9.0) return "CRITICAL";
   if (score >= 7.0) return "HIGH";

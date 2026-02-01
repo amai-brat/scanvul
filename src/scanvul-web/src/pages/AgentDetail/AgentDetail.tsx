@@ -11,6 +11,7 @@ import { ReportPackagesCommand } from "./components/commands/ReportPackagesComma
 import { DisableAgentCommand } from "./components/commands/DisableAgentCommand";
 import { UpgradePackageCommand } from "./components/commands/UpgradePackageCommand";
 import { useTranslation } from "react-i18next";
+import { BduVulnerablePackagesBlock } from "./components/BduVulnerablePackagesBlock";
 
 
 export const AgentDetail = () => {
@@ -59,6 +60,7 @@ export const AgentDetail = () => {
           </div>
         </Card>
 
+        <BduVulnerablePackagesBlock agentId={id!} />
         <CommandHistoryBlock agentId={id!} isCommandsOpen={isCommandsOpen} setIsCommandsOpen={setIsCommandsOpen} />
         <InstalledPackagesBlock agentId={id!} />
       </div>
