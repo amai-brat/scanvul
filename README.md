@@ -39,13 +39,15 @@
   - [x] toastify
     - [x] command creation
     - [x] searching package
-- [ ] ФСТЭК
+- [x] ФСТЭК
   - [x] convert xml to json
   - [x] recurring job to export to opensearch
   - [x] entity for BDU vulnerable package
   - [x] endpoint like for CVE
-  - [ ] block on frontend with BDU
+  - [x] block on frontend with BDU
 - [ ] find more appropriate package searching method [link](https://docs.opensearch.org/latest/query-dsl/term/index/)
+- [ ] test
+  - [ ] has vulnerability → update → no vulnerability
 - [ ] deploy
   - [ ] docker compose
   - [ ] readme

@@ -3,7 +3,6 @@ import {
   agentsApi,
   type BduVulnerablePackageResponse,
 } from "../../../api/agentsApi";
-import { Card } from "../../../components/Card";
 import {
   getSeverityLevel,
   getBduScore,
@@ -24,7 +23,6 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-
 
 export const BduVulnerablePackagesBlock = ({
   agentId,
@@ -94,37 +92,44 @@ export const BduVulnerablePackagesBlock = ({
   };
 
   return (
-    <Card
-      title={t("agent_details.bdu_vulns", {
-        amount: vulnData?.packages.length ?? 0,
-        defaultValue: `Vulnerabilities (BDU)`,
-      })}
-      className="md:col-span-2 lg:col-span-1 h-100 flex flex-col"
-    >
+    <div className="md:col-span-2 lg:col-span-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-sm p-2 flex flex-col h-full">
+      <div className="w-full flex items-center justify-between p-4 transition-colors text-left border-b border-transparent">
+        <h3 className="font-bold text-lg">
+          {t("agent_details.bdu_vulns", {
+            defaultValue: `Vulnerabilities (BDU)`,
+          })}
+        </h3>
+      </div>
+
       {vulnLoading ? (
         <div className="flex justify-center items-center h-40">
           <Loader2 className="animate-spin text-gray-400" />
         </div>
       ) : (
-        <div className="space-y-4 overflow-y-auto pr-2 flex-1 custom-scrollbar">
+        <div className="space-y-4 overflow-y-auto pl-4 pr-4 flex-1 custom-scrollbar pt-2 pb-4">
           {organizedVulns.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-green-500">
+            <div className="flex flex-col items-center justify-center h-40 text-green-500">
               <ShieldCheck className="w-12 h-12 mb-2" />
               <p>{t("agent_details.no_vulns", "No vulnerabilities found")}</p>
             </div>
           ) : (
             <>
-              <div className="bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-900 rounded-md p-1 w-min">
+              <div className="bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-900 rounded-md p-2 w-full">
                 <span
-                  className="text-yellow-700 dark:text-yellow-300 font-bold"
+                  className="text-yellow-700 dark:text-yellow-300 font-bold text-sm flex items-center gap-2"
                   title={t(
                     "agent_details.bdu_vulns_warning_title",
                     "Package versions are not checked automatically against vulnerabilities from BDU. Please verify according to affected software listed in each vulnerability",
                   )}
                 >
-                  {t("app.attention", "Attention")}
+                  <ShieldCheck className="w-4 h-4" />
+                  {t(
+                    "app.attention",
+                    "Attention: Verify version matches manually",
+                  )}
                 </span>
               </div>
+
               {organizedVulns.map((pkg) => (
                 <div
                   key={pkg.packageId}
@@ -132,25 +137,25 @@ export const BduVulnerablePackagesBlock = ({
                 >
                   {/* Package Header */}
                   <div
-                    className="bg-gray-50 dark:bg-gray-900/50 p-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center cursor-pointer"
+                    className="bg-gray-50 dark:bg-gray-900/50 p-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                     onClick={() =>
                       setExpandedPackageId((prev) =>
-                        prev === null ? pkg.packageId : null,
+                        prev === pkg.packageId ? null : pkg.packageId,
                       )
                     }
                   >
-                    <div className="flex items-center gap-2">
-                      <Package className="w-4 h-4 text-gray-400" />
-                      <div>
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      <Package className="w-4 h-4 text-gray-400 shrink-0" />
+                      <div className="truncate">
                         <span className="font-bold text-gray-700 dark:text-gray-200 mr-2">
                           {pkg.name}
                         </span>
-                        <span className="text-xs font-mono text-gray-500">
+                        <span className="text-xs font-mono text-gray-500 bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded">
                           v{pkg.version}
                         </span>
                       </div>
                     </div>
-                    <span className="text-xs font-bold text-gray-400">
+                    <span className="text-xs font-bold text-gray-500 whitespace-nowrap ml-2">
                       {t("agent_details.max_cvss", {
                         score: pkg.maxScore.toFixed(1),
                         defaultValue: `Max CVSS: ${pkg.maxScore.toFixed(1)}`,
@@ -160,7 +165,7 @@ export const BduVulnerablePackagesBlock = ({
 
                   {/* Severity Intervals */}
                   {expandedPackageId === pkg.packageId && (
-                    <div className="p-3 space-y-3">
+                    <div className="p-3 space-y-3 bg-gray-50/50 dark:bg-black/10">
                       {(
                         ["CRITICAL", "HIGH", "MEDIUM", "LOW"] as SeverityLevel[]
                       ).map((severity) => {
@@ -170,12 +175,12 @@ export const BduVulnerablePackagesBlock = ({
                         const style = SEVERITY_CONFIG[severity];
 
                         return (
-                          <div key={severity} className="space-y-1">
+                          <div key={severity} className="space-y-1.5">
                             <h5
-                              className={`text-[10px] font-bold tracking-wider ${style.text} mb-1 flex items-center gap-1`}
+                              className={`text-[10px] font-bold tracking-wider ${style.text} flex items-center gap-1.5 px-1`}
                             >
                               <div
-                                className={`w-1.5 h-1.5 rounded-full ${style.badge}`}
+                                className={`w-2 h-2 rounded-full ${style.badge}`}
                               />
                               {severity}
                             </h5>
@@ -192,8 +197,8 @@ export const BduVulnerablePackagesBlock = ({
                                     border rounded-md transition-all duration-200
                                     ${
                                       isExpanded
-                                        ? "shadow-md ring-1 ring-gray-200 dark:ring-gray-700"
-                                        : "hover:bg-gray-50 dark:hover:bg-gray-700/30 cursor-pointer"
+                                        ? "shadow-sm ring-1 ring-gray-200 dark:ring-gray-600"
+                                        : "hover:bg-white dark:hover:bg-gray-700 cursor-pointer"
                                     }
                                     ${style.bg} ${style.border}
                                   `}
@@ -203,7 +208,7 @@ export const BduVulnerablePackagesBlock = ({
                                   >
                                     {/* BDU ID Header Line */}
                                     <div
-                                      className="flex items-center justify-between p-2 cursor-pointer"
+                                      className="flex items-center justify-between p-2.5 cursor-pointer"
                                       onClick={(e) => {
                                         if (!isExpanded) return;
                                         e.stopPropagation();
@@ -222,23 +227,23 @@ export const BduVulnerablePackagesBlock = ({
                                       </div>
                                       <div className="flex items-center gap-2">
                                         <span
-                                          className={`text-xs font-mono font-bold px-1.5 py-0.5 rounded ${style.badge} bg-opacity-90`}
+                                          className={`text-xs font-mono font-bold px-1.5 py-0.5 rounded ${style.badge} bg-opacity-90 min-w-8 text-center`}
                                         >
                                           {score.toFixed(1)}
                                         </span>
                                         {isExpanded ? (
-                                          <ChevronUp className="w-4 h-4 opacity-50" />
+                                          <ChevronUp className="w-4 h-4 text-gray-400" />
                                         ) : (
-                                          <ChevronDown className="w-4 h-4 opacity-50" />
+                                          <ChevronDown className="w-4 h-4 text-gray-400" />
                                         )}
                                       </div>
                                     </div>
 
                                     {/* Expanded Details */}
                                     {isExpanded && (
-                                      <div className="px-3 pb-3 pt-1 border-t border-gray-200/50 dark:border-gray-700/50 bg-white/50 dark:bg-black/20">
+                                      <div className="px-3 pb-3 pt-1 border-t border-gray-100 dark:border-gray-700/50">
                                         {/* Description */}
-                                        <p className="text-xs text-gray-600 dark:text-gray-300 mt-2 leading-relaxed">
+                                        <p className="text-sm text-gray-600 dark:text-gray-300 mt-2 leading-relaxed">
                                           {vuln.description ||
                                             t(
                                               "no_description",
@@ -246,38 +251,43 @@ export const BduVulnerablePackagesBlock = ({
                                             )}
                                         </p>
 
-                                        <div className="mt-3 space-y-2">
+                                        <div className="mt-4 space-y-3">
                                           {/* CWEs */}
                                           {vuln.cwes &&
                                             vuln.cwes.length > 0 && (
-                                              <div className="flex flex-wrap gap-1 items-center">
-                                                <Tag className="w-3 h-3 text-gray-400" />
-                                                {vuln.cwes.map((cwe) => (
-                                                  <span
-                                                    key={cwe.id}
-                                                    className="text-[10px] bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600"
-                                                    title={cwe.name}
-                                                  >
-                                                    {cwe.id}
-                                                  </span>
-                                                ))}
+                                              <div className="flex flex-wrap gap-2 items-center">
+                                                <div className="flex items-center gap-1 text-xs text-gray-400 uppercase tracking-wider font-semibold">
+                                                  <Tag className="w-3 h-3" />
+                                                </div>
+                                                <div className="flex flex-wrap gap-1">
+                                                  {vuln.cwes.map((cwe) => (
+                                                    <span
+                                                      key={cwe.id}
+                                                      className="text-[10px] bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600"
+                                                      title={cwe.name}
+                                                    >
+                                                      {cwe.id}
+                                                    </span>
+                                                  ))}
+                                                </div>
                                               </div>
                                             )}
 
-                                          {/* Identifiers (Other Links) */}
+                                          {/* Identifiers */}
                                           {vuln.identifiers &&
                                             vuln.identifiers.length > 0 && (
-                                              <div className="grid grid-cols-[1fr_20fr] gap-2 items-center text-xs">
+                                              <div className="grid grid-cols-[min-content_1fr] gap-x-2 gap-y-1.5 items-start text-xs">
                                                 {vuln.identifiers.map(
                                                   (ident) => (
                                                     <Fragment key={ident.value}>
-                                                      <Hash className="w-3 h-3 text-gray-400" />
+                                                      <div className="pt-0.5">
+                                                        <Hash className="w-3 h-3 text-gray-400" />
+                                                      </div>
                                                       <a
-                                                        key={ident.value}
                                                         href={ident.link}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="text-blue-500 hover:underline"
+                                                        className="text-blue-500 hover:text-blue-600 hover:underline break-all"
                                                       >
                                                         {ident.value}
                                                       </a>
@@ -287,33 +297,31 @@ export const BduVulnerablePackagesBlock = ({
                                               </div>
                                             )}
 
-                                          {/* Affected Software (Summary) */}
+                                          {/* Affected Software */}
                                           {vuln.software &&
                                             vuln.software.length > 0 && (
-                                              <div className="text-xs text-gray-500 mt-1 flex-col items-start gap-1.5">
-                                                <div className="flex flex-row gap-1.5 items-center pb-1">
-                                                  <Layers className="w-3 h-3 mt-0.5 text-gray-400" />
-                                                  <span className="opacity-80">
+                                              <div className="text-xs text-gray-500 flex flex-col items-start gap-2 pt-2">
+                                                <div className="flex flex-row gap-1.5 items-center">
+                                                  <Layers className="w-3 h-3 text-gray-500" />
+                                                  <span className="font-semibold opacity-90">
                                                     {t(
                                                       "agent_details.affected_software",
                                                       "Affected Software",
                                                     )}
-                                                    :{" "}
                                                   </span>
                                                 </div>
-                                                <div className="flex flex-col">
+                                                <div className="flex flex-col gap-2 w-full pl-4 border-l-2 border-gray-100 dark:border-gray-700 ml-1.5">
                                                   {vuln.software.map((s) => (
                                                     <div
-                                                      key={
-                                                        s.name +
-                                                        s.version +
-                                                        s.platform +
-                                                        s.vendor
-                                                      }
-                                                      className="p-2 rounded-sm text-xs bg-blue-800 text-amber-50 flex flex-col gap-0.5 mb-0.5"
+                                                      key={`${s.name}-${s.version}-${s.vendor}-${s.platform}`}
+                                                      className="p-2.5 rounded-md text-sm bg-blue-400 dark:bg-blue-500 text-white shadow-sm flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1.5"
                                                     >
-                                                      <p>{s.name}</p>
-                                                      <p>{s.version}</p>
+                                                      <span className="font-bold tracking-wide">
+                                                        {s.name}
+                                                      </span>
+                                                      <span className="font-mono text-xs bg-blue-800/50 px-2 py-0.5 rounded text-blue-50">
+                                                        {s.version}
+                                                      </span>
                                                     </div>
                                                   ))}
                                                 </div>
@@ -354,6 +362,6 @@ export const BduVulnerablePackagesBlock = ({
           )}
         </div>
       )}
-    </Card>
+    </div>
   );
 };
