@@ -29,7 +29,6 @@
   - [x] agent's pc info
   - [x] vulnerable packages
   - [x] severity viewer
-    - [ ] block on main page with most important severities
   - [x] task to upgrade package
     - [x] search from package manager
   - [x] i18n
