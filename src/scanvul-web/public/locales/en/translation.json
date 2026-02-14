@@ -28,6 +28,8 @@
     "disable_agent_toast_msg": "Disable agent command will be sent to agent"
   },
   "agent_details": {
+    "click_to_load": "Click to load commands",
+
     "computer_info": "Computer Info",
     "last_ping": "Last ping: {{time}}",
     "os": "OS",
@@ -56,6 +58,7 @@
     "mark_false_positive_confirm": "Yes, Mark False Positive",
 
     "bdu_vulns": "Vulnerabilities from BDU",
+    "bdu_vulns_total": "{{amount}} BDU vulnerabilities found",
     "bdu_vulns_warning_title": "Package versions are not checked automatically against vulnerabilities from BDU. Please verify according to affected software listed in each vulnerability",
     "no_bdu_vulns": "No vulnerabilities from BDU",
     "affected_software": "Affected software",
@@ -63,7 +66,6 @@
 
     "installed_packages": "Installed Packages",
     "installed_packages_total": "{{amount}} packages found",
-    "installed_packages_click": "Click to load packages",
     "installed_packages_fetching": "Fetching package list...",
     "package_name": "Package Name",
     "version": "Version",
@@ -71,7 +73,6 @@
 
     "command_history": "Command History",
     "command_history_total": "{{amount}} commands created",
-    "command_history_click": "Click to load command history",
     "command_history_fetching": "Fetching commands...",
     "command_type": "Command Type",
     "command_status": "Status / Response",

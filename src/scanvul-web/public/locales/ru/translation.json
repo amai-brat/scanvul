@@ -3,7 +3,7 @@
     "title": "ScanVul",
     "welcome": "Добро пожаловать в ScanVul",
     "err": "Ошибка: {{msg}}",
-    "attention": "Внимание!"
+    "attention": "Внимание!"  
   },
   "auth": {
     "login": "Войти",
@@ -28,6 +28,8 @@
     "disable_agent_toast_msg": "Команда на отключение агента будет отправлена агенту"
   },
   "agent_details": {
+    "click_to_load": "Нажмите, чтобы прогрузить",
+
     "computer_info": "Данные о компьютере",
     "last_ping": "Последний пинг: {{time}}",
     "os": "ОС",
@@ -56,6 +58,7 @@
     "mark_false_positive_confirm": "Да, пометить как ложное срабатывание",
 
     "bdu_vulns": "Уязвимости ПО из БДУ",
+    "bdu_vulns_total": "Всего: {{amount}}",
     "bdu_vulns_warning_title": "Версии ПО не проверяются автоматически на уязвимости из БДУ. Пожалуйста, сверяйтесь с затронутым ПО, указанным в каждой уязвимости",
     "no_bdu_vulns": "Нет уязвимостей из БДУ",
     "affected_software": "Затронутое ПО",
@@ -63,7 +66,6 @@
 
     "installed_packages": "Установленные ПО",
     "installed_packages_total": "Всего: {{amount}}",
-    "installed_packages_click": "Нажмите, чтобы прогрузить установленнные ПО",
     "installed_packages_fetching": "Получение списка ПО...",
     "package_name": "Название",
     "version": "Версия",
@@ -71,7 +73,6 @@
 
     "command_history": "История команд",
     "command_history_total": "Всего: {{amount}}",
-    "command_history_click": "Нажмите, чтобы прогрузить команды",
     "command_history_fetching": "Получение списка команд...",
     "command_type": "Тип команды",
     "command_status": "Статус / Ответ",

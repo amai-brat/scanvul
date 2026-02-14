@@ -47,7 +47,6 @@ export const AgentDetail = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-min">
         <ComputerInfoBlock agent={agent} />
-        <VulnerablePackagesBlock agentId={id!} />
 
         <Card title={t("agent_details.commands")} className="h-full">
           <div className="space-y-3">
@@ -60,6 +59,7 @@ export const AgentDetail = () => {
           </div>
         </Card>
 
+        <VulnerablePackagesBlock agentId={id!} />
         <BduVulnerablePackagesBlock agentId={id!} />
         <CommandHistoryBlock agentId={id!} isCommandsOpen={isCommandsOpen} setIsCommandsOpen={setIsCommandsOpen} />
         <InstalledPackagesBlock agentId={id!} />
