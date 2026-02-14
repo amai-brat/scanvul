@@ -5,7 +5,7 @@
   - [x] exception when installing to computer where agent already exists
   - [x] use existing token when reinstalling 
 - [x] CVE indexer microservice (opensearch)
-- [ ] main server api
+- [x] main server api
   - [x] register agent
   - [x] version matching
     - [x] add BaseVersion (with segments split by \[.,-~:\]) that can be compared with all other version types 
@@ -17,7 +17,6 @@
   - [x] fix git 2.45.1 doesn't have [CVE](https://cti.wazuh.com/vulnerabilities/cves/CVE-2019-1003010). 
         Solution: vendor is jenkins with other version system, so I need to add feature to mark false positives   
   - [x] mark false positive vulnerabilities
-  - [ ] admin notification
 - [ ] agent
   - [x] scrape packages on windows
   - [x] scrape packages on linux (alt linux)
@@ -26,7 +25,7 @@
     - [x] task to upgrade package (via chocolatey)
     - [x] task to stop (remove)
   - [ ] conditional compilation for different OSes
-- [ ] frontend
+- [x] frontend
   - [x] agent's pc info
   - [x] vulnerable packages
   - [x] severity viewer
@@ -51,3 +50,6 @@
 - [ ] deploy
   - [ ] docker compose
   - [ ] readme
+- [ ] vulnerability report on organization every morning in pdf (s3) 
+  - [ ] hangfire job to generate report
+  - [ ] block on frontend on main page (accordion? make agent also as accordion?)
