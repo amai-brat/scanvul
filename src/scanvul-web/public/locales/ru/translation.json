@@ -50,7 +50,8 @@
     "search_results": "Результаты поиска",
     "no_packages_matching": "Не найдены ПО по запросу '{{pattern}}'",
 
-    "vulns": "Уязвимости ПО ({{amount}})",
+    "vulns": "Уязвимости ПО из CVE",
+    "vulns_total": "Всего уязвимых ПО: {{amount}}",
     "no_vulns": "Нет уязвимостей",
     "max_cvss": "Макс. CVSS: {{score}}",
     "mark_false_positive": "Пометить, как ложное срабатывание",

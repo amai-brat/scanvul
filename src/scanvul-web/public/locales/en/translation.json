@@ -50,7 +50,8 @@
     "search_results": "Search Results",
     "no_packages_matching": "No packages found matching '{{pattern}}'",
 
-    "vulns": "Vulnerabilities ({{amount}})",
+    "vulns": "Vulnerabilities from CVE",
+    "vulns_total": "Total vulnerable software: {{amount}}",
     "no_vulns": "No vulnerabilities found",
     "max_cvss": "Max CVSS: {{score}}",
     "mark_false_positive": "Mark False Positive",
