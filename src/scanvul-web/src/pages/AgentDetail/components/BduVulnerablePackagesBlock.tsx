@@ -284,7 +284,7 @@ export const BduVulnerablePackagesBlock = ({
                                                         <Hash className="w-3 h-3 text-gray-400" />
                                                       </div>
                                                       <a
-                                                        href={ident.link}
+                                                        href={ident.link ?? "#"}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="text-blue-500 hover:text-blue-600 hover:underline break-all"

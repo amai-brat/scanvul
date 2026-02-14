@@ -29,10 +29,10 @@ public static class Mapping
             PackageVersion: p.PackageInfo.Version,
             Description: doc.Description,
             Severity: doc.Severity,
-            Identifiers: doc.Identifiers.Identifier
-                .Select(x => new Identifier(x.Type, x.Link, x.Value)),
-            Cwes: doc.Cwes.Cwe
-                .Select(x => new Cwe(x.Identifier.First(), x.Name)),
+            Identifiers: doc.Identifiers?.Identifier
+                .Select(x => new Identifier(x.Type, x.Link, x.Value)) ?? [],
+            Cwes: doc.Cwes?.Cwe
+                .Select(x => new Cwe(x.Identifier.First(), x.Name)) ?? [],
             Cvss: cvssScore,
             Cvss3: cvss3Score,
             Cvss4: cvss4Score,

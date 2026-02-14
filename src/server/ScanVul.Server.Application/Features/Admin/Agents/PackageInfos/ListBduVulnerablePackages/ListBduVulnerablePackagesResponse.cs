@@ -53,7 +53,7 @@ public record BduVulnerablePackageResponse
 public record Identifier
 (
     string Type,
-    string Link,
+    string? Link,
     string Value
 );
 

@@ -17,10 +17,10 @@ public class BduDescriptionDocument
     public required string Severity { get; set; }
 
     [JsonPropertyName("identifiers")]
-    public required IdentifiersWrapper Identifiers { get; set; }
+    public IdentifiersWrapper? Identifiers { get; set; }
 
     [JsonPropertyName("cwes")]
-    public required CwesWrapper Cwes { get; set; }
+    public CwesWrapper? Cwes { get; set; }
 
     [JsonPropertyName("cvss")]
     public CvssWrapper? Cvss { get; set; }
@@ -50,7 +50,7 @@ public class IdentifierItem
     public required string Value { get; set; }
 
     [JsonPropertyName("link")]
-    public required string Link { get; set; }
+    public string? Link { get; set; }
 }
 
 public class CwesWrapper

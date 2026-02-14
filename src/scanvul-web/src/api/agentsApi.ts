@@ -32,7 +32,7 @@ export interface VulnerablePackageResponse {
 
 export interface Identifier {
   type: string;
-  link: string;
+  link: string | null;
   value: string;
 }
 
