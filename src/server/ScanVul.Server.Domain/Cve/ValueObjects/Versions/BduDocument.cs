@@ -24,4 +24,22 @@ public class BduSoft
     public required string Platform { get; set; }
     public required string Vendor { get; set; }
     public required string Version { get; set; }
+    
+    [JsonPropertyName("version_")]
+    public BduSoftVersionInfo? VersionInfo { get; set; }
+}
+
+public class BduSoftVersionInfo
+{
+    [JsonPropertyName("version")]
+    public required string Version { get; set; }
+    
+    [JsonPropertyName("lt")]
+    public string? LessThan { get; set; }
+    
+    [JsonPropertyName("lt_or_eq")]
+    public string? LessThanOrEqual { get; set; }
+    
+    [JsonPropertyName("gt_or_eq")]
+    public string? GreaterThanOrEqual { get; set; }
 }

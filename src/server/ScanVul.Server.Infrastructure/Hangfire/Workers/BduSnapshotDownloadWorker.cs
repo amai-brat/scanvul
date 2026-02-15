@@ -2,6 +2,7 @@ using System.Dynamic;
 using System.IO.Compression;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using Hangfire;
@@ -16,7 +17,7 @@ public record BduSyncInfo(
     DateTimeOffset LastSyncAt,
     long ContentLength);
 
-public class BduSnapshotDownloadWorker(
+public partial class BduSnapshotDownloadWorker(
     IServiceScopeFactory scopeFactory,
     IHttpClientFactory httpClientFactory) : IWorker
 {
@@ -24,6 +25,22 @@ public class BduSnapshotDownloadWorker(
     private const string RemoteFileUrl = "files/documents/vulxml.zip";
     private const string OutputFileName = "fstec_vulnerabilities.json";
     private const string IndexName = "bdu-index";
+    private const string VersionInfoField = "version_";
+    
+    [GeneratedRegex(@"^от (?<min>\S+) (?:до|по) (?<max>\S+) включительно$", RegexOptions.Compiled)]
+    private static partial Regex RangeInclusiveRegex();
+    
+    [GeneratedRegex(@"^от (?<min>\S+) (?:до|по) (?<max>\S+)$", RegexOptions.Compiled)]
+    private static partial Regex RangeRegex();
+    
+    [GeneratedRegex(@"^до (?<max>\S+) включительно$", RegexOptions.Compiled)]
+    private static partial Regex MaxInclusiveRegex();
+    
+    [GeneratedRegex(@"^до (?<max>\S+)$", RegexOptions.Compiled)]
+    private static partial Regex MaxRegex();
+    
+    [GeneratedRegex(@"^от (?<min>\S+)$", RegexOptions.Compiled)]
+    private static partial Regex MinRegex();
 
     [JobDisplayName("Download БДУ snapshot from ФСТЭК")]
     public async Task RunAsync(CancellationToken ct = default)
@@ -163,8 +180,9 @@ public class BduSnapshotDownloadWorker(
             
             var element = (XElement)await XNode.ReadFromAsync(xmlReader, ct);
             var dynamicVul = ParseGenericXml(element);
-
-            await JsonSerializer.SerializeAsync(fsOut, dynamicVul, jsonOptions, ct);
+            var versionAttached = AttachVersionInfo((ExpandoObject)dynamicVul);
+            
+            await JsonSerializer.SerializeAsync(fsOut, versionAttached, jsonOptions, ct);
             await fsOut.WriteAsync(newline, ct);
         }
     }
@@ -226,6 +244,98 @@ public class BduSnapshotDownloadWorker(
                 // Single object
                 obj[key] = ParseGenericXml(group.First());
             }
+        }
+
+        return obj;
+    }
+
+    private static ExpandoObject AttachVersionInfo(ExpandoObject obj)
+    {
+        IDictionary<string, object?> root = obj;
+
+        if (!root.TryGetValue("vulnerable_software", out var vsObj) ||
+            vsObj is not IDictionary<string, object?> vsDict ||
+            !vsDict.TryGetValue("soft", out var softObj) ||
+            softObj is not List<object> softList) return obj;
+        
+        foreach (var item in softList)
+        {
+            if (item is not IDictionary<string, object?> softItem ||
+                !softItem.TryGetValue("version", out var verObj) ||
+                verObj is not string versionStr) continue;
+            
+            IDictionary<string, object?> versionInfo = new ExpandoObject();
+
+            var matched = false;
+
+            // 1. Check: ^от <ver> до|по <ver> включительно$
+            // Maps to: gt_or_eq, lt_or_eq
+            if (!matched)
+            {
+                var m = RangeInclusiveRegex().Match(versionStr);
+                if (m.Success)
+                {
+                    versionInfo["gt_or_eq"] = m.Groups["min"].Value;
+                    versionInfo["lt_or_eq"] = m.Groups["max"].Value;
+                    matched = true;
+                }
+            }
+
+            // 2. Check: ^до <ver> включительно$
+            // Maps to: lt_or_eq
+            if (!matched)
+            {
+                var m = MaxInclusiveRegex().Match(versionStr);
+                if (m.Success)
+                {
+                    versionInfo["lt_or_eq"] = m.Groups["max"].Value;
+                    matched = true;
+                }
+            }
+
+            // 3. Check: ^от <ver> до|по <ver>$
+            // Maps to: gt_or_eq, lt
+            if (!matched)
+            {
+                var m = RangeRegex().Match(versionStr);
+                if (m.Success)
+                {
+                    versionInfo["gt_or_eq"] = m.Groups["min"].Value;
+                    versionInfo["lt"] = m.Groups["max"].Value;
+                    matched = true;
+                }
+            }
+
+            // 4. Check: ^до <ver>$
+            // Maps to: lt
+            if (!matched)
+            {
+                var m = MaxRegex().Match(versionStr);
+                if (m.Success)
+                {
+                    versionInfo["lt"] = m.Groups["max"].Value;
+                    matched = true;
+                }
+            }
+
+            // 5. Check: ^от <ver>$
+            // Maps to: gt_or_eq
+            if (!matched)
+            {
+                var m = MinRegex().Match(versionStr);
+                if (m.Success)
+                {
+                    versionInfo["gt_or_eq"] = m.Groups["min"].Value;
+                    matched = true;
+                }
+            }
+
+            
+            versionInfo["version"] = matched 
+                ? "<ok>" 
+                : versionStr;
+            
+            softItem[VersionInfoField] = versionInfo;
         }
 
         return obj;
