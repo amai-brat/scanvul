@@ -42,4 +42,14 @@ public class BduSoftVersionInfo
     
     [JsonPropertyName("gt_or_eq")]
     public string? GreaterThanOrEqual { get; set; }
+    
+    public override string ToString()
+    {
+        var ltOrEq = LessThanOrEqual != null ? $"<= {LessThanOrEqual}" : string.Empty;
+        var lt = LessThan != null ? $"< {LessThan}" : string.Empty;
+        var gtOrEq = GreaterThanOrEqual != null ? $">= {GreaterThanOrEqual}" : string.Empty;
+        var ver = Version != "<ok>" ? $"= {Version}" : string.Empty;
+        
+        return string.Join(" | ", ltOrEq, lt, gtOrEq, ver);
+    }
 }

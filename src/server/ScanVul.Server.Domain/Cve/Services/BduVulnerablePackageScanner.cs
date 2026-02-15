@@ -2,7 +2,9 @@ using Microsoft.Extensions.Logging;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
 using ScanVul.Server.Domain.Common;
+using ScanVul.Server.Domain.Cve.Enums;
 using ScanVul.Server.Domain.Cve.Repositories;
+using ScanVul.Server.Domain.Cve.ValueObjects.Versions;
 
 namespace ScanVul.Server.Domain.Cve.Services;
 
@@ -10,7 +12,8 @@ public class BduVulnerablePackageScanner(
     IBduRepository bduRepository,
     IComputerRepository computerRepository,
     ILogger<BduVulnerablePackageScanner> logger,
-    IUnitOfWork unitOfWork) : IVulnerablePackageScanner
+    IUnitOfWork unitOfWork,
+    VersionMatcher versionMatcher) : IVulnerablePackageScanner
 {
     public async Task ScanAsync(long computerId, CancellationToken ct = default)
     {
@@ -71,15 +74,80 @@ public class BduVulnerablePackageScanner(
     {
         var possibleBduDocuments = await bduRepository.GetMatchedBduVersionDocumentsAsync(package, ct);
 
-        // saves all matched by package name,
-        // to match by version i need to change 'version' field in bdu-index like in cve-index
         List<BduVulnerablePackage> vulnerablePackages = [];
         foreach (var bdu in possibleBduDocuments)
         {
-            var vulnerablePackage = new BduVulnerablePackage(bdu.Identifier.First(), package, computer);
-            vulnerablePackages.Add(vulnerablePackage);
+            foreach (var bduSoft in bdu.VulnerableSoftware.Soft)
+            {
+                if (!IsPackageVersionAffected(package.Version, bduSoft)) continue;
+            
+                var vulnerablePackage = new BduVulnerablePackage(bdu.Identifier.First(), package, computer);
+                vulnerablePackages.Add(vulnerablePackage);
+            }
         }
 
         return vulnerablePackages;
+    }
+    
+    /// <summary>
+    /// Check if package version is affected
+    /// </summary>
+    /// <remarks>Returns true also if couldn't check. Admin should check himself, mark as false-positive if needed</remarks>
+    /// <param name="packageVersion">Version of package to check</param>
+    /// <param name="soft">BduSoft document from bdu-index</param>
+    /// <returns></returns>
+    private bool IsPackageVersionAffected(string packageVersion, BduSoft soft)
+    {
+        try
+        {
+            if (soft.VersionInfo?.Version is not "<ok>") return true;
+            
+            if (!versionMatcher.TryCreateVersionObject(packageVersion, VersionMatchType.Base, out var version))
+                return true;
+
+            var versionInfo = soft.VersionInfo;
+
+            bool? lessThanOrEqual = null;
+            if (versionInfo.LessThanOrEqual != null)
+            {
+                lessThanOrEqual = versionMatcher.Compare(version, versionInfo.LessThanOrEqual, 
+                    type: version.Type.ToVersionMatchType()) <= 0;
+            }
+            
+            bool? lessThan = null;
+            if (versionInfo.LessThan != null)
+            {
+                lessThan = versionMatcher.Compare(version, versionInfo.LessThan,
+                    type: version.Type.ToVersionMatchType()) < 0;
+            }
+            
+            bool? greaterThanOrEqual = null;
+            if (versionInfo.GreaterThanOrEqual != null)
+            {
+                greaterThanOrEqual = versionMatcher.Compare(version, versionInfo.GreaterThanOrEqual, 
+                    type: version.Type.ToVersionMatchType()) >= 0;
+            }
+            
+            if (lessThanOrEqual is not null && greaterThanOrEqual is not null)
+                return lessThanOrEqual.Value && greaterThanOrEqual.Value;
+                
+            if (lessThan is not null && greaterThanOrEqual is not null)
+                return lessThan.Value && greaterThanOrEqual.Value;
+            
+            if (lessThanOrEqual is not null)
+                return lessThanOrEqual.Value;
+            
+            if (lessThan is not null)
+                return lessThan.Value;
+
+            if (greaterThanOrEqual is not null)
+                return greaterThanOrEqual.Value;
+        }
+        catch (ArgumentException)
+        {
+            logger.LogDebug("Couldn't match versions: {PackageVersion} <=> {AffectedVersion}", packageVersion, soft.VersionInfo);
+        }
+
+        return true;
     }
 }

@@ -52,7 +52,7 @@
 - [ ] vulnerability report on organization every morning in pdf (s3) 
   - [ ] hangfire job to generate report
   - [ ] block on frontend on main page (accordion? make agent also as accordion?)
-- [ ] change format of BDU documents' soft version info to like CVE documents'
+- [x] change format of BDU documents' soft version info to like CVE documents'
   - алгоритм добавления в opensearch:
     1. проверка на один из шаблонов (<версия> - это строка без пробелов):
        - ^от <версия>$
