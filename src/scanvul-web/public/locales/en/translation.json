@@ -59,7 +59,7 @@
     "mark_false_positive_confirm": "Yes, Mark False Positive",
 
     "bdu_vulns": "Vulnerabilities from BDU",
-    "bdu_vulns_total": "{{amount}} BDU vulnerabilities found",
+    "bdu_vulns_total": "Total vulnerable software: {{amount}}",
     "bdu_vulns_warning_title": "Package versions are not checked automatically against vulnerabilities from BDU. Please verify according to affected software listed in each vulnerability",
     "no_bdu_vulns": "No vulnerabilities from BDU",
     "affected_software": "Affected software",

@@ -108,11 +108,11 @@ export const agentsApi = {
         `/api/v1/admin/agents/${id}/vulnerable-packages`,
       )
       .then((res) => res.data),
-      
+
   getBduVulnPackages: (id: string) =>
     api
       .get<ListBduVulnerablePackagesResponse>(
-        `/api/v1/admin/agents/${id}/vulnerable-packages/bdu`,
+        `/api/v1/admin/agents/${id}/bdu-vulnerable-packages`,
       )
       .then((res) => res.data),
 
@@ -120,6 +120,13 @@ export const agentsApi = {
     api
       .patch(
         `/api/v1/admin/agents/vulnerable-packages/${vulnerablePackageId}/false-positive`,
+      )
+      .then((res) => res.data),
+
+  markFalsePositiveBdu: (bduVulnerablePackageId: number) =>
+    api
+      .patch(
+        `/api/v1/admin/agents/bdu-vulnerable-packages/${bduVulnerablePackageId}/false-positive`,
       )
       .then((res) => res.data),
 
