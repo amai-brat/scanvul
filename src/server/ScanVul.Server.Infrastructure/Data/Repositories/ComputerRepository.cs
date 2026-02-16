@@ -16,4 +16,15 @@ public class ComputerRepository(AppDbContext dbContext) : IComputerRepository
 
         return computer;
     }
+
+    public async Task<Computer?> GetComputerWithBduPackagesAsync(long computerId, CancellationToken ct = default)
+    {
+        var computer = await dbContext.Computers
+            .Include(x => x.Packages)
+            .Include(x => x.BduVulnerablePackages)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(x => x.Id == computerId, ct);
+
+        return computer;
+    }
 }

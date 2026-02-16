@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { agentsApi, type AgentResponse } from "../../../../api/agentsApi";
 import { Loader2, Play, RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 
 
 export const ReportPackagesCommand = ({agent, isCommandsOpen} : {agent: AgentResponse, isCommandsOpen: boolean}) => {
@@ -12,8 +13,8 @@ export const ReportPackagesCommand = ({agent, isCommandsOpen} : {agent: AgentRes
     mutationFn: () => agentsApi.sendReportPackages(agent.id.toString()),
     onSuccess: () => {
       if (isCommandsOpen)
-        queryClient.invalidateQueries({ queryKey: ["commands", agent.id] });
-      // TODO: Add toast notification "Scan command sent"
+        queryClient.invalidateQueries({ queryKey: ["commands", agent.id.toString()] });
+      toast.info(t("agent_details.command_report_packages_toast_msg"));
     },
   });
 
@@ -22,7 +23,7 @@ export const ReportPackagesCommand = ({agent, isCommandsOpen} : {agent: AgentRes
       disabled={reportPackagesMutation.isPending || !agent.isActive}
       className="w-full flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 max-w-[90%]">
         <div className="bg-blue-50 text-blue-600 p-2 rounded-md">
           {reportPackagesMutation.isPending ? (
             <Loader2 className="w-4 h-4 animate-spin" />

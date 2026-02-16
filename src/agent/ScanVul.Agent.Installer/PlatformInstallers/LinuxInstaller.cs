@@ -14,7 +14,8 @@ public class LinuxInstaller : IPlatformInstaller
 
                                                [Service]
                                                Type=notify
-                                               ExecStart={0}
+                                               WorkingDirectory={0}
+                                               ExecStart={1}
 
                                                [Install]
                                                WantedBy=multi-user.target
@@ -47,7 +48,7 @@ public class LinuxInstaller : IPlatformInstaller
         try
         {
             var executablePath = Path.Combine(path.FullName, ExecutableFileName);
-            var unitFileContent = string.Format(SystemdUnitTemplate, executablePath);
+            var unitFileContent = string.Format(SystemdUnitTemplate, path.FullName, executablePath);
             
             if (!File.Exists(executablePath))
             {
@@ -79,12 +80,12 @@ public class LinuxInstaller : IPlatformInstaller
         try
         {
             var values = await ParseOsReleaseAsync(ct);
-            if (values.TryGetValue("NAME", out var name) && !string.IsNullOrWhiteSpace(name))
+            if (values.TryGetValue("ID", out var id) && !string.IsNullOrWhiteSpace(id))
             {
-                return Result.Success(name);
+                return Result.Success(id);
             }
 
-            return Result.Failure<string>("NAME key not found in /etc/os-release");
+            return Result.Failure<string>("ID key not found in /etc/os-release");
         }
         catch (Exception ex)
         {

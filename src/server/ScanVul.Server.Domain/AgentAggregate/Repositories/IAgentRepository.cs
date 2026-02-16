@@ -22,4 +22,12 @@ public interface IAgentRepository
     /// <param name="ct"></param>
     /// <returns></returns>
     Task<Agent?> GetWithVulnerablePackagesNoTrackingAsync(long agentId, CancellationToken ct = default);
+    
+    /// <summary>
+    /// Get agent with BDU vulnerable packages excluding false positives
+    /// </summary>
+    /// <param name="agentId"></param>
+    /// <param name="ct"></param>
+    /// <returns></returns>
+    Task<Agent?> GetWithBduVulnerablePackagesNoTrackingAsync(long agentId, CancellationToken ct = default);
 }

@@ -7,6 +7,7 @@ import { ConnectivityIndicator } from "../../components/ConnectivityIndicator";
 import { ConfirmationModal } from "../../components/ConfimationModal";
 import { agentsApi } from "../../api/agentsApi";
 import { Trans, useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 
 export const AgentsList = () => {
   const navigate = useNavigate();
@@ -27,6 +28,8 @@ export const AgentsList = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["agents"] });
       setSelectedAgentId(null);
+
+      toast.info(t("agents.disable_agent_toast_msg"));
     },
     onError: (err) => {
       console.error("Failed to disable agent:", err);

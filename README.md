@@ -5,8 +5,7 @@
   - [x] exception when installing to computer where agent already exists
   - [x] use existing token when reinstalling 
 - [x] CVE indexer microservice (opensearch)
-- [ ] ФСТЭК (на фронте добавить блок с возможными уязвимостями без привязки к версии)
-- [ ] main server api
+- [x] main server api
   - [x] register agent
   - [x] version matching
     - [x] add BaseVersion (with segments split by \[.,-~:\]) that can be compared with all other version types 
@@ -18,7 +17,6 @@
   - [x] fix git 2.45.1 doesn't have [CVE](https://cti.wazuh.com/vulnerabilities/cves/CVE-2019-1003010). 
         Solution: vendor is jenkins with other version system, so I need to add feature to mark false positives   
   - [x] mark false positive vulnerabilities
-  - [ ] admin notification
 - [ ] agent
   - [x] scrape packages on windows
   - [x] scrape packages on linux (alt linux)
@@ -27,16 +25,33 @@
     - [x] task to upgrade package (via chocolatey)
     - [x] task to stop (remove)
   - [ ] conditional compilation for different OSes
-- [ ] frontend
+- [x] frontend
   - [x] agent's pc info
   - [x] vulnerable packages
   - [x] severity viewer
-    - [ ] block on main page with most important severities
   - [x] task to upgrade package
     - [x] search from package manager
   - [x] i18n
   - [x] mark false positive vulnerabilities
   - [x] refactor (extract components)
-  - [ ] toastify
-    - [ ] command creation
-    - [ ] searching package
+  - [x] toastify
+    - [x] command creation
+    - [x] searching package
+- [x] ФСТЭК
+  - [x] convert xml to json
+  - [x] recurring job to export to opensearch
+  - [x] entity for BDU vulnerable package
+  - [x] endpoint like for CVE
+  - [x] block on frontend with BDU
+- [x] change format of BDU documents' soft version info to like CVE documents'
+- [ ] find more appropriate package searching method [link](https://docs.opensearch.org/latest/query-dsl/term/index/)
+- [ ] rework version matching and comparing
+- [ ] test
+  - [ ] has vulnerability → update → no vulnerability
+  - [ ] version matching and comparing (unit tests)
+- [ ] deploy
+  - [ ] docker compose
+  - [ ] readme
+- [ ] vulnerability report on organization every morning in pdf (s3) 
+  - [ ] hangfire job to generate report
+  - [ ] block on frontend on main page (accordion? make agent also as accordion?)

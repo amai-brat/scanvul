@@ -1,7 +1,9 @@
 {
   "app": {
     "title": "ScanVul",
-    "welcome": "Добро пожаловать в ScanVul"
+    "welcome": "Добро пожаловать в ScanVul",
+    "err": "Ошибка: {{msg}}",
+    "attention": "Внимание!"  
   },
   "auth": {
     "login": "Войти",
@@ -22,9 +24,12 @@
     "disable_agent_title": "Отключить агента",
     "disable_agent_confirm": "Да, отключить агента",
     "disable_agent_desc": "Остановить и удалить со служб",
-    "disable_agent_message": "Вы уверены, что хотите отключить <bold>{{host}}</bold>? Это предотвратит связь агента с сервером."
+    "disable_agent_message": "Вы уверены, что хотите отключить <bold>{{host}}</bold>? Это предотвратит связь агента с сервером.",
+    "disable_agent_toast_msg": "Команда на отключение агента будет отправлена агенту"
   },
   "agent_details": {
+    "click_to_load": "Нажмите, чтобы прогрузить",
+
     "computer_info": "Данные о компьютере",
     "last_ping": "Последний пинг: {{time}}",
     "os": "ОС",
@@ -35,24 +40,33 @@
     "command_block_desc": "Отправить агенту команды",
     "command_report_packages_title": "Сканировать ПО",
     "command_report_packages_desc": "Обновить список установленного ПО",
+    "command_report_packages_toast_msg": "Команда на сканирование ПО будет отправлена агенту",
     "command_upgrade_package_title": "Обновить ПО",
     "command_upgrade_package_desc": "Обновить ПО с помощью пакетного менеджера",
+    "command_upgrade_package_toast_msg": "Команда на обновление ПО будет отправлена агенту",
     "send_command": "Отправить команду",
     "search_package_desc": "Найти ПО по названию или выбрать из уязвимых (если есть)",
     "detected_vuln_pkgs": "Уязвимые ПО",
     "search_results": "Результаты поиска",
     "no_packages_matching": "Не найдены ПО по запросу '{{pattern}}'",
 
-    "vulns": "Уязвимости ПО ({{amount}})",
+    "vulns": "Уязвимости ПО из CVE",
+    "vulns_total": "Всего уязвимых ПО: {{amount}}",
     "no_vulns": "Нет уязвимостей",
     "max_cvss": "Макс. CVSS: {{score}}",
     "mark_false_positive": "Пометить, как ложное срабатывание",
     "mark_false_positive_desc": "Вы уверены, что хотите отметить данную уязвимость как <bold>ложное срабатывание</bold>? Она будет скрыта с отчёта об уязвимостях",
     "mark_false_positive_confirm": "Да, пометить как ложное срабатывание",
 
+    "bdu_vulns": "Уязвимости ПО из БДУ",
+    "bdu_vulns_total": "Всего уязвимых ПО: {{amount}}",
+    "bdu_vulns_warning_title": "Версии ПО не проверяются автоматически на уязвимости из БДУ. Пожалуйста, сверяйтесь с затронутым ПО, указанным в каждой уязвимости",
+    "no_bdu_vulns": "Нет уязвимостей из БДУ",
+    "affected_software": "Затронутое ПО",
+    "bdu_fstec": "ФСТЭК БДУ",
+
     "installed_packages": "Установленные ПО",
     "installed_packages_total": "Всего: {{amount}}",
-    "installed_packages_click": "Нажмите, чтобы прогрузить установленнные ПО",
     "installed_packages_fetching": "Получение списка ПО...",
     "package_name": "Название",
     "version": "Версия",
@@ -60,7 +74,6 @@
 
     "command_history": "История команд",
     "command_history_total": "Всего: {{amount}}",
-    "command_history_click": "Нажмите, чтобы прогрузить команды",
     "command_history_fetching": "Получение списка команд...",
     "command_type": "Тип команды",
     "command_status": "Статус / Ответ",
