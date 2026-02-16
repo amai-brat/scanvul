@@ -15,7 +15,7 @@ public class ListBduVulnerablePackagesEndpoint(
     public override void Configure()
     {
         Version(1);
-        Get("api/{apiVersion}/admin/agents/{agentId}/vulnerable-packages/bdu");
+        Get("api/{apiVersion}/admin/agents/{agentId}/bdu-vulnerable-packages");
         Summary(s =>
         {
             s.Summary = "Get all БДУ vulnerable packages on computer of agent";
