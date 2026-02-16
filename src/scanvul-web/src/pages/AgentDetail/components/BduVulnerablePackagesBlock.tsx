@@ -166,22 +166,6 @@ export const BduVulnerablePackagesBlock = ({
                   </div>
                 ) : (
                   <>
-                    <div className="bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-900 rounded-md p-2 w-full">
-                      <span
-                        className="text-yellow-700 dark:text-yellow-300 font-bold text-sm flex items-center gap-2"
-                        title={t(
-                          "agent_details.bdu_vulns_warning_title",
-                          "Package versions are not checked automatically against vulnerabilities from BDU. Please verify according to affected software listed in each vulnerability",
-                        )}
-                      >
-                        <ShieldCheck className="w-4 h-4" />
-                        {t(
-                          "app.attention",
-                          "Attention: Verify version matches manually",
-                        )}
-                      </span>
-                    </div>
-
                     {organizedVulns.map((pkg) => (
                       <div
                         key={pkg.packageId}
