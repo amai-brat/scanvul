@@ -43,36 +43,15 @@
   - [x] entity for BDU vulnerable package
   - [x] endpoint like for CVE
   - [x] block on frontend with BDU
+- [x] change format of BDU documents' soft version info to like CVE documents'
 - [ ] find more appropriate package searching method [link](https://docs.opensearch.org/latest/query-dsl/term/index/)
+- [ ] rework version matching and comparing
 - [ ] test
   - [ ] has vulnerability → update → no vulnerability
+  - [ ] version matching and comparing (unit tests)
 - [ ] deploy
   - [ ] docker compose
   - [ ] readme
 - [ ] vulnerability report on organization every morning in pdf (s3) 
   - [ ] hangfire job to generate report
   - [ ] block on frontend on main page (accordion? make agent also as accordion?)
-- [x] change format of BDU documents' soft version info to like CVE documents'
-  - алгоритм добавления в opensearch:
-    1. проверка на один из шаблонов (<версия> - это строка без пробелов):
-       - ^от <версия>$
-       - ^от <версия> до <версия>$
-       - ^от <версия> по <версия>$
-       - ^до <версия>$
-       - ^от <версия> до <версия> включительно$
-       - ^от <версия> по <версия> включительно$
-       - ^до <версия> включительно$
-    2. добавить в vulnerable_software.soft.version_:
-    ```json
-    {
-      "version": "<проверка на шаблон прошла> ? <ok> : <копирка vulnerable_software.soft.version>",
-      "lt": "до|по",
-      "lt_or_eq": "до|по влючительно",
-      "gt_or_eq": "от (всегда включительно)"
-    }
-    ```
-  - алгоритм сканирования ПО
-    1. если vulnerable_software.soft.version_.version == "<ok>", то проверка по lt, lt_or_eq, gt_or_eq
-    2. если проверка прошла, количество сегментов в проверяемом ПО и в <версия> может различаться на 1
-    3. сравнение по lt, lt_or_eq, gt_or_eq
-    4. при лжи хотя бы в одном из условий - пропуск (админ должен вручную нажимать "ложно-положительное")
