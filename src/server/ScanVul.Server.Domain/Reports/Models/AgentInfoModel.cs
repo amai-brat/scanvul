@@ -11,7 +11,7 @@ namespace ScanVul.Server.Domain.Reports.Models;
 /// <param name="CveSeverityStats">CVE severity stats for agent</param>
 /// <param name="BduSeverityStats">BDU severity stats for agent</param>
 public record AgentInfoModel(
-    int Id,
+    long Id,
     string Name, 
     string IpAddress, 
     string OperatingSystem, 
