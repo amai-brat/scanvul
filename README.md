@@ -53,5 +53,5 @@
   - [ ] docker compose
   - [ ] readme
 - [ ] vulnerability report on organization every morning in pdf (s3) 
-  - [ ] hangfire job to generate report
+  - [x] hangfire job to generate report
   - [ ] block on frontend on main page (accordion? make agent also as accordion?)
