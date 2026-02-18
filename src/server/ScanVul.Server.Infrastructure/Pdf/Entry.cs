@@ -22,6 +22,7 @@ public static class Entry
         
         QuestPDF.Settings.License = LicenseType.Community;
 
+        services.AddScoped<IReportModelsGenerator, ReportModelsGenerator>();
         services.AddTransient<IVulnerabilityScanReportGenerator, QuestPdfVulnerabilityScanReportGenerator>();
         return services;
     }
