@@ -42,7 +42,7 @@ builder.Services.AddOpenSearch(builder.Environment,
     .Get<OpenSearchOptions>());
 builder.Services.AddHangfireServices(builder.Configuration);
 builder.Services.AddChocoPackageManager();
-builder.Services.AddPdf();
+builder.Services.AddPdf(builder.Configuration);
 
 builder.Services.AddProblemDetails();
 builder.Services.AddJwtAuthentication(builder.Configuration);
