@@ -1,4 +1,4 @@
-namespace ScanVul.Server.Infrastructure.Storage;
+namespace ScanVul.Server.Application.Options;
 
 public class StorageOptions
 {
@@ -11,6 +11,11 @@ public class StorageOptions
     /// Path where to store reports ({BasePath}/{ReportsPath}/report.pdf)
     /// </summary>
     public string ReportsPath { get; set; } = null!;
+    
+    /// <summary>
+    /// BasePath + ReportsPath
+    /// </summary>
+    public string ReportsFullPath => Path.Combine(BasePath, ReportsPath);
 
     public static void Validate(StorageOptions? options)
     {

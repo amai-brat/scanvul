@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
 using ScanVul.Server.Domain.Common;
+using ScanVul.Server.Domain.Reports.Repositories;
 using ScanVul.Server.Domain.UserAggregate.Repositories;
 using ScanVul.Server.Infrastructure.Data.Repositories;
 
@@ -24,6 +25,7 @@ public static class Entry
         services.AddScoped<IPackageInfoRepository, PackageInfoRepository>();
         services.AddScoped<IComputerRepository, ComputerRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IReportRepository, ReportRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         
         return services;

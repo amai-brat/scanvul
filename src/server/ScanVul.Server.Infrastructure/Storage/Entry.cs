@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ScanVul.Server.Application.Options;
 using ScanVul.Server.Domain.Common;
 using ScanVul.Server.Infrastructure.Storage.Services;
 
