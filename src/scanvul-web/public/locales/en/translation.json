@@ -14,6 +14,15 @@
     "save_creds": "Please save these credentials.",
     "invalid_creds": "Invalid credentials"
   },
+  "reports": {
+    "title": "Reports",
+    "total": "Total",
+    "loading_reports": "Loading reports...",
+    "loading_reports_error": "Error loading reports.",
+    "no_reports": "No reports",
+    "report_at": "Report at {{time}}",
+    "download_error": "Failed to download report: {{status}}"
+  },
   "agents": {
     "title": "Agents",
     "total": "Total",

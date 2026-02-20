@@ -54,4 +54,4 @@
   - [ ] readme
 - [ ] vulnerability report on organization every morning in pdf (s3) 
   - [x] hangfire job to generate report
-  - [ ] block on frontend on main page (accordion? make agent also as accordion?)
+  - [x] block on frontend on main page
