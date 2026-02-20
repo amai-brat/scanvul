@@ -79,6 +79,14 @@ public static class Entry
             {
                 TimeZone = TimeZoneInfo.Utc
             });
+        
+        RecurringJob.AddOrUpdate<VulnerabilityScanReportWorker>(
+            "vulnerability_scan_report", 
+            x => x.RunAsync(CancellationToken.None), 
+            options.Value.BduSnapshotDownloadJobCron, new RecurringJobOptions
+            {
+                TimeZone = TimeZoneInfo.Utc
+            });
 
         return app;
     }

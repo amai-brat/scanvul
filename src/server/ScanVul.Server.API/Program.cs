@@ -11,6 +11,8 @@ using ScanVul.Server.Infrastructure.Choco;
 using ScanVul.Server.Infrastructure.Data;
 using ScanVul.Server.Infrastructure.Hangfire;
 using ScanVul.Server.Infrastructure.OpenSearch;
+using ScanVul.Server.Infrastructure.Pdf;
+using ScanVul.Server.Infrastructure.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +43,8 @@ builder.Services.AddOpenSearch(builder.Environment,
     .Get<OpenSearchOptions>());
 builder.Services.AddHangfireServices(builder.Configuration);
 builder.Services.AddChocoPackageManager();
+builder.Services.AddStorage(builder.Configuration);
+builder.Services.AddPdf(builder.Configuration);
 
 builder.Services.AddProblemDetails();
 builder.Services.AddJwtAuthentication(builder.Configuration);

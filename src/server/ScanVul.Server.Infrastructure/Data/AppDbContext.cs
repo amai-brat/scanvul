@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
+using ScanVul.Server.Domain.Reports.Entities;
 using ScanVul.Server.Domain.UserAggregate.Entities;
 
 namespace ScanVul.Server.Infrastructure.Data;
@@ -11,6 +12,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options): DbContext(opt
     public DbSet<VulnerablePackage> VulnerablePackages => Set<VulnerablePackage>();
     public DbSet<BduVulnerablePackage> BduVulnerablePackages => Set<BduVulnerablePackage>();
     public DbSet<Computer> Computers => Set<Computer>();
+    public DbSet<VulnerabilityScanReport> VulnerabilityScanReports => Set<VulnerabilityScanReport>();
 
     public DbSet<User> Users => Set<User>();
     
