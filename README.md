@@ -52,6 +52,6 @@
 - [ ] deploy
   - [ ] docker compose
   - [ ] readme
-- [ ] vulnerability report on organization every morning in pdf (s3) 
+- [x] vulnerability report on organization every morning in pdf (s3) 
   - [x] hangfire job to generate report
   - [x] block on frontend on main page
