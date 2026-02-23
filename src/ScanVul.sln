@@ -26,6 +26,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "contracts", "contracts", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScanVul.Contracts", "ScanVul.Contracts\ScanVul.Contracts.csproj", "{2741DE8E-FDE6-4F86-BDFE-816C37D70D34}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution_items", "solution_items", "{DAECB126-DB2D-4F05-85A5-D31A0790370C}"
+	ProjectSection(SolutionItems) = preProject
+		..\README.md = ..\README.md
+		..\compose.yaml = ..\compose.yaml
+		..\.env.dev = ..\.env.dev
+		..\.env.template = ..\.env.template
+		..\.gitignore = ..\.gitignore
+		..\compose.dev.yaml = ..\compose.dev.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -1,0 +1,64 @@
+services:
+  server:
+    container_name: scanvul-server
+    build:
+      context: ./src
+      dockerfile: server/ScanVul.Server.API/Dockerfile
+    ports:
+      - "5000:5000"
+    env_file:
+      - path: .env
+        required: true
+    depends_on:
+      - postgres
+      - opensearch-node0
+  
+  frontend:
+    container_name: scanvul-frontend
+    build:
+      context: ./src/scanvul-web
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - server
+    volumes:
+      - ./certs:/etc/nginx/ssl
+  
+  postgres:
+    container_name: scanvul-postgres
+    image: postgres:17-alpine
+    env_file:
+      - path: .env
+        required: true
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./storage/postgres/data:/var/lib/postgresql/data
+      - ./storage/postgres/scripts:/scripts
+  
+  opensearch-node0:
+    image: opensearchproject/opensearch:3
+    container_name: scanvul-opensearch-node0
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch-node0
+      - discovery.seed_hosts=opensearch-node0
+      - cluster.initial_cluster_manager_nodes=opensearch-node0
+      - bootstrap.memory_lock=true
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+    env_file:
+      - path: .env
+        required: true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - ./storage/opensearch:/usr/share/opensearch/data
+    ports:
+      - "9200:9200"
