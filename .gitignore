@@ -3,6 +3,8 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
+certs/
+build/
 cve_snapshot_last_sync.json
 bdu_snapshot_last_sync.json
 

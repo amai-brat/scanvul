@@ -7,6 +7,7 @@
 
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <NoWarn>CS1591</NoWarn>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -23,6 +24,12 @@
     <ItemGroup>
       <ProjectReference Include="..\ScanVul.Server.Application\ScanVul.Server.Application.csproj" />
       <ProjectReference Include="..\ScanVul.Server.Infrastructure\ScanVul.Server.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>

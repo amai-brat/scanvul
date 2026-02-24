@@ -16,6 +16,11 @@ using ScanVul.Server.Infrastructure.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: false)
+    .AddEnvironmentVariables(prefix: "ENV_");
+
 builder.Services
     .AddFeatures(builder.Configuration)
     .SwaggerDocument(o =>
@@ -69,20 +74,5 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwaggerGen();
 }
-
-app.MapGet("/", () => "Hello World!");
-app.MapPost("/{computerId:long}", async (
-    IVulnerablePackageScanner packageScanner,
-    CancellationToken ct,
-    [FromRoute] long computerId = 6) =>
-{
-    await packageScanner.ScanAsync(computerId, ct);
-});
-
-app.MapGet("/cve", async (
-    ICveRepository cveRepository,
-    CancellationToken ct,
-    [Microsoft.AspNetCore.Mvc.FromQuery] string cveId) => 
-    await cveRepository.GetCveDescriptionDocumentsAsync([cveId], ct));
 
 app.Run();
