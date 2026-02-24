@@ -34,6 +34,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution_items", "solution_
 		..\.env.template = ..\.env.template
 		..\.gitignore = ..\.gitignore
 		..\compose.dev.yaml = ..\compose.dev.yaml
+		..\build_agent.sh = ..\build_agent.sh
 	EndProjectSection
 EndProject
 Global

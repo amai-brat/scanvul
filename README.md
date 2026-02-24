@@ -1,5 +1,37 @@
 # scanvul
 
+## Architecture
+![arch.png](doc/arch.png)
+
+## How to start
+1. Clone the repo
+2. On the root of repo create self-signed certs for HTTPS:
+    ```shell
+    mkdir certs
+    
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+      -keyout certs/nginx-selfsigned.key \
+      -out certs/nginx-selfsigned.crt
+    ```
+3. Fill `.env` file
+    ```shell
+    cp .env.template .env
+    nvim .env # fill with data (for example: cat .env.dev)
+    ```
+4. Start server (Nginx + ASP.NET Core + Postgres + OpenSearch)
+    ```shell
+    docker compose up -d
+    ```
+5. Build agent installer (will create zip files on `build`) or download from releases
+    ```shell
+    ./build_agent.sh
+    ```
+6. Unzip installer and install agent on computer as administrator
+    ```shell
+    ./ScanVul.Agent.Installer --help
+    sudo ./ScanVul.Agent.Installer --server http://<ip-addr-of-server>:5000/ # for Linux
+    ```
+
 ## TODO:
 - [x] create command line agent installer with service registering on windows and linux (systemd)
   - [x] exception when installing to computer where agent already exists
@@ -49,9 +81,9 @@
 - [ ] test
   - [ ] has vulnerability → update → no vulnerability
   - [ ] version matching and comparing (unit tests)
-- [ ] deploy
-  - [ ] docker compose
-  - [ ] readme
+- [x] deploy
+  - [x] docker compose
+  - [x] readme
 - [x] vulnerability report on organization every morning in pdf (s3) 
   - [x] hangfire job to generate report
   - [x] block on frontend on main page
