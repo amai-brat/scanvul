@@ -87,6 +87,14 @@ public static class Entry
             {
                 TimeZone = TimeZoneInfo.Utc
             });
+        
+        RecurringJob.AddOrUpdate<WingetPackagesSyncWorker>(
+            "winget_packages_sync", 
+            x => x.RunAsync(CancellationToken.None), 
+            options.Value.BduSnapshotDownloadJobCron, new RecurringJobOptions
+            {
+                TimeZone = TimeZoneInfo.Utc
+            });
 
         return app;
     }
