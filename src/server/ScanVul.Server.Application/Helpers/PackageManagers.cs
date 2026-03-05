@@ -5,5 +5,6 @@ public enum PackageManagerType
     Unknown = 0,
     Choco = 1,
     Pacman = 2,
-    Rpm = 3
+    Rpm = 3,
+    Winget = 4
 }

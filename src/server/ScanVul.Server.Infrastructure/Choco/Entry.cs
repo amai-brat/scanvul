@@ -10,6 +10,7 @@ public static class Entry
     public static IServiceCollection AddChocoPackageManager(this IServiceCollection services)
     {
         services.AddKeyedScoped<IPackageManager, ChocoPackageManager>(Consts.PackageManagers.Choco);
+        services.AddKeyedScoped<IPackageManager, WingetPackageManager>(Consts.PackageManagers.Winget);
         
         return services;
     }   
