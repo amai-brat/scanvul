@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
+using ScanVul.Server.Domain.PackageManagers.Entities;
 using ScanVul.Server.Domain.Reports.Entities;
 using ScanVul.Server.Domain.UserAggregate.Entities;
 
@@ -15,6 +16,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options): DbContext(opt
     public DbSet<VulnerabilityScanReport> VulnerabilityScanReports => Set<VulnerabilityScanReport>();
 
     public DbSet<User> Users => Set<User>();
+    
+    public DbSet<WingetPackage> WingetPackages => Set<WingetPackage>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
