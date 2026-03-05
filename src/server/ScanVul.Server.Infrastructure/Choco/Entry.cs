@@ -11,6 +11,7 @@ public static class Entry
     {
         services.AddKeyedScoped<IPackageManager, ChocoPackageManager>(Consts.PackageManagers.Choco);
         services.AddKeyedScoped<IPackageManager, WingetPackageManager>(Consts.PackageManagers.Winget);
+        services.AddKeyedScoped<IPackageManager, PacmanPackageManager>(Consts.PackageManagers.Pacman);
         
         return services;
     }   
