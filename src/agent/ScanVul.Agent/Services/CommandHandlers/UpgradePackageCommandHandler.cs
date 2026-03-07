@@ -5,7 +5,7 @@ using ScanVul.Contracts.Agents;
 namespace ScanVul.Agent.Services.CommandHandlers;
 
 public class UpgradePackageCommandHandler(
-    ILogger<ReportPackagesCommandHandler> logger,
+    ILogger<UpgradePackageCommandHandler> logger,
     Func<string, IPackageManager> packageManagerFactory) : ICommandHandler<UpgradePackageCommand>
 {
     public async Task<string> Handle(UpgradePackageCommand command, CancellationToken ct = default)

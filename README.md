@@ -83,7 +83,8 @@
   - [ ] version matching and comparing (unit tests)
 - [ ] winget
   - [x] package manager searching
-  - [ ] installing packages on agent
+  - [x] installing packages on agent
+  - [ ] installing packages on linux agents
   - [ ] warning on frontend when upgrading package on linux
 - [x] deploy
   - [x] docker compose
