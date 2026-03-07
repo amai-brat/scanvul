@@ -14,6 +14,37 @@ public class WindowsInstaller : IPlatformInstaller
         "Set-ExecutionPolicy Bypass -Scope Process -Force; " + 
         "[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; " +
         "iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))";
+        
+    private const string WingetInstallScript = """
+        $ProgressPreference = 'SilentlyContinue';
+        Write-Output 'Checking Winget installation...';
+
+        # 1. Define URLs (Official GitHub Releases)
+        $latestReleaseUrl = 'https://api.github.com/repos/microsoft/winget-cli/releases/latest';
+        try {
+          $release = Invoke-RestMethod -Uri $latestReleaseUrl;
+          $assetUrl = $release.assets | Where-Object { $_.name -like '*.msixbundle' } | Select-Object -ExpandProperty browser_download_url;
+        } catch {
+          Write-Warning 'Failed to fetch latest Winget release info.';
+          return;
+        }
+        # 3. Install Winget Bundle
+        $tempFile = [System.IO.Path]::GetTempFileName() + '.msixbundle';
+        Write-Output "Downloading Winget from $assetUrl";
+        Invoke-WebRequest -Uri $assetUrl -OutFile $tempFile;
+
+        Write-Output 'Installing Winget...';
+        try {
+          # Provisioning allows it to be used by LocalSystem and new users
+          Add-AppxProvisionedPackage -Online -PackagePath $tempFile -SkipLicense -ErrorAction Stop
+        } catch {
+          Write-Warning "Standard provisioning failed. Attempting local registration...";
+          # Fallback for some OS versions
+          Add-AppxPackage -Path $tempFile
+        }
+
+        Remove-Item $tempFile -Force;
+        """;
     
     public DirectoryInfo DefaultInstallationPath => new(@"C:\Program Files\ScanVul");
     public string AgentZipResourceName => "agent.win64.zip";
@@ -42,6 +73,10 @@ public class WindowsInstaller : IPlatformInstaller
             Console.WriteLine("Installing chocolatey (warnings about previous installation can be ignored)...");
             ps.AddStatement()
                 .AddScript(ChocoInstallScript);
+            
+            Console.WriteLine("Bootstrapping Winget...");
+            ps.AddStatement()
+                .AddScript(WingetInstallScript);
 
             await ps.InvokeAsync();
 
