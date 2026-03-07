@@ -1,12 +1,12 @@
 using Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing;
-using ScanVul.Agent.Services.PlatformPackageManagers;
+using ScanVul.Agent.Services.PackageManagers;
 using ScanVul.Contracts.Agents;
 
 namespace ScanVul.Agent.Services.CommandHandlers;
 
 public class UpgradePackageCommandHandler(
     ILogger<ReportPackagesCommandHandler> logger,
-    IPlatformPackageManager packageManager) : ICommandHandler<UpgradePackageCommand>
+    Func<string, IPackageManager> packageManagerFactory) : ICommandHandler<UpgradePackageCommand>
 {
     public async Task<string> Handle(UpgradePackageCommand command, CancellationToken ct = default)
     {
@@ -14,7 +14,14 @@ public class UpgradePackageCommandHandler(
         
         try
         {
+            var packageManager = packageManagerFactory(command.PackageManager);
+            
             await packageManager.UpgradePackageAsync(command.PackageName, ct);
+        }
+        catch (InvalidOperationException) 
+        {
+            logger.LogWarning("Unknown package manager: {PackageManager}", command.PackageManager);
+            return $"Unknown package manager: {command.PackageManager}";
         }
         catch (Exception ex)
         {

@@ -11,7 +11,11 @@ public static class Mapping
         return command.Body switch
         {
             ReportPackagesCommandBody => new ReportPackagesCommand(command.Id),
-            UpgradePackageCommandBody upgradePackageCommandBody => new UpgradePackageCommand(command.Id, upgradePackageCommandBody.PackageName),
+            UpgradePackageCommandBody upgradePackageCommandBody => 
+                new UpgradePackageCommand(
+                    command.Id, 
+                    upgradePackageCommandBody.PackageName, 
+                    upgradePackageCommandBody.PackageManager),
             DisableAgentCommandBody => new DisableAgentCommand(command.Id),
             _ => throw new ArgumentOutOfRangeException(nameof(command), command, null)
         };

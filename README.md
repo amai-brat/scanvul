@@ -81,6 +81,10 @@
 - [ ] test
   - [ ] has vulnerability → update → no vulnerability
   - [ ] version matching and comparing (unit tests)
+- [ ] winget
+  - [x] package manager searching
+  - [ ] installing packages on agent
+  - [ ] warning on frontend when upgrading package on linux
 - [x] deploy
   - [x] docker compose
   - [x] readme

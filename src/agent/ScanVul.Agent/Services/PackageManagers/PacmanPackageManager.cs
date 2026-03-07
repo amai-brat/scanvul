@@ -1,6 +1,9 @@
-namespace ScanVul.Agent.Services.PlatformPackageManagers;
+namespace ScanVul.Agent.Services.PackageManagers;
 
-public class ArchLinuxPlatformPackageManager : IPlatformPackageManager
+/// <summary>
+/// Pac(kage)man(ager)
+/// </summary>
+public class PacmanPackageManager : IPackageManager
 {
     public Task UpgradePackageAsync(string packageName, CancellationToken ct = default)
     {

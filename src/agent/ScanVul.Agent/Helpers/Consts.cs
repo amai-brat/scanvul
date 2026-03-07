@@ -16,4 +16,12 @@ public static class Consts
     {
         public const string CommandQueue = "CommandQueue";
     }
+    
+    public static class PackageManagers
+    {
+        public static readonly string Choco = Enum.GetName(PackageManagerType.Choco)!.ToLowerInvariant();
+        public static readonly string Winget = Enum.GetName(PackageManagerType.Winget)!.ToLowerInvariant();
+        public static readonly string Pacman = Enum.GetName(PackageManagerType.Pacman)!.ToLowerInvariant();
+        public static readonly string Rpm = Enum.GetName(PackageManagerType.Rpm)!.ToLowerInvariant();
+    }
 }

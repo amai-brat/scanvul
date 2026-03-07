@@ -1,6 +1,6 @@
-namespace ScanVul.Agent.Services.PlatformPackageManagers;
+namespace ScanVul.Agent.Services.PackageManagers;
 
-public class AltLinuxPlatformPackageManager : IPlatformPackageManager
+public class RpmPackageManager : IPackageManager
 {
     public Task UpgradePackageAsync(string packageName, CancellationToken ct = default)
     {
