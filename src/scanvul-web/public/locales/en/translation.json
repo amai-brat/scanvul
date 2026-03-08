@@ -78,6 +78,9 @@
     "installed_packages_total": "{{amount}} packages found",
     "installed_packages_fetching": "Fetching package list...",
     "package_name": "Package Name",
+    "package_manager": "Package Manager",
+    "err_no_package_manager": "Cannot perform upgrade: no package manager identified for this OS",
+    "pacman_warning": "Upgrading a package will upgrade the entire system. More info: <1>Wiki</1>",
     "version": "Version",
     "id": "ID",
 

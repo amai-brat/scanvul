@@ -1,4 +1,4 @@
-namespace ScanVul.Server.Application.Helpers;
+namespace ScanVul.Agent.Helpers;
 
 public enum PackageManagerType
 {

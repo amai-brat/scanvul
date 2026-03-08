@@ -78,6 +78,9 @@
     "installed_packages_total": "Всего: {{amount}}",
     "installed_packages_fetching": "Получение списка ПО...",
     "package_name": "Название",
+    "package_manager": "Пакетный менеджер",
+    "err_no_package_manager": "Невозможно выполнить обновление: не определён пакетный менеджер для данной ОС",
+    "pacman_warning": "При обновлении пакета обновится вся система. Подробнее: <1>Wiki</1>",
     "version": "Версия",
     "id": "Идентификатор",
 

@@ -1,6 +1,6 @@
-namespace ScanVul.Agent.Services.PlatformPackageManagers;
+namespace ScanVul.Agent.Services.PackageManagers;
 
-public interface IPlatformPackageManager
+public interface IPackageManager
 {
     /// <summary>
     /// Upgrade/install package

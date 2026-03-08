@@ -3,9 +3,9 @@ using System;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using NpgsqlTypes;
 using ScanVul.Server.Infrastructure.Data;
 
 #nullable disable
@@ -13,9 +13,11 @@ using ScanVul.Server.Infrastructure.Data;
 namespace ScanVul.Server.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260305195002_AddWingetPackage")]
+    partial class AddWingetPackage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -290,19 +292,8 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("name_row_id");
 
-                    b.Property<NpgsqlTsVector>("SearchVector")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("tsvector")
-                        .HasColumnName("search_vector")
-                        .HasComputedColumnSql("to_tsvector('english', coalesce(\"name\", '') || ' ' || coalesce(\"id\", ''))", true);
-
                     b.HasKey("Id")
                         .HasName("pk_winget_packages");
-
-                    b.HasIndex("SearchVector")
-                        .HasDatabaseName("ix_winget_packages_search_vector");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchVector"), "GIN");
 
                     b.ToTable("winget_packages", (string)null);
                 });

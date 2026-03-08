@@ -140,10 +140,11 @@ export const agentsApi = {
       .post(`/api/v1/admin/agents/${id}/commands/report-packages`)
       .then((res) => res.data),
 
-  sendUpgradePackage: (id: string, packageName: string) =>
+  sendUpgradePackage: (id: string, packageName: string, packageManager: string) =>
     api
       .post(`/api/v1/admin/agents/${id}/commands/upgrade-package`, {
         packageName,
+        packageManager,
       })
       .then((res) => res.data),
 

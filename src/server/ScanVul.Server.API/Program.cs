@@ -68,6 +68,7 @@ app.UseFastEndpoints(c =>
 {
     c.Versioning.Prefix = "v";
     c.Versioning.RouteTemplate = "{apiVersion}";
+    c.Serializer.Options.Converters.Add(new JsonStringEnumConverter());
 });
 
 if (app.Environment.IsDevelopment())

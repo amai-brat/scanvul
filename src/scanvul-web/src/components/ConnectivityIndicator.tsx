@@ -43,7 +43,7 @@ export const ConnectivityIndicator = ({
   }
 
   const title = t("components.connectivity_indicator.title", {
-    time: date.toLocaleString(),
+    time: date.toLocaleString(navigator.language),
     minutes: diffMinutes,
   });
 

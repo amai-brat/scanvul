@@ -35,7 +35,9 @@ export const ComputerInfoBlock = ({ agent }:
           />
           <div className="pt-4 border-t border-gray-100 dark:border-gray-800 text-xs text-gray-500">
             {t("agent_details.last_ping", {
-              time: new Date(agent.lastPingAt).toLocaleString(),
+              time: new Date(agent.lastPingAt).toLocaleString(
+                navigator.language,
+              ),
             })}
           </div>
         </div>

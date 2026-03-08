@@ -1,10 +1,10 @@
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 
-namespace ScanVul.Agent.Services.PlatformPackageManagers;
+namespace ScanVul.Agent.Services.PackageManagers;
 
-public class WindowsPlatformPackageManager(
-    ILogger<WindowsPlatformPackageManager> logger) : IPlatformPackageManager
+public class ChocoPackageManager(
+    ILogger<ChocoPackageManager> logger) : IPackageManager
 {
     public async Task UpgradePackageAsync(string packageName, CancellationToken ct = default)
     {

@@ -1,11 +1,11 @@
-export type PackageManager = "unknown" | "choco" | "pacman" | "rpm";
+export type PackageManager = "unknown" | "choco" | "pacman" | "rpm" | "winget";
 
-export const getPackageManager = (operatingSystem: string) : PackageManager => {
+export const getPackageManagers = (operatingSystem: string) : PackageManager[] => {
   const os = operatingSystem.trim().toLowerCase()
 
-  if (os.startsWith("win")) return "choco";
-  if (os.startsWith("arch")) return "pacman";
-  if (os.startsWith("alt")) return "rpm";
+  if (os.startsWith("win")) return ["winget", "choco"];
+  if (os.startsWith("arch")) return ["pacman"];
+  if (os.startsWith("alt")) return ["rpm"];
 
-  return "unknown";
+  return [];
 }

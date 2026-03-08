@@ -23,7 +23,7 @@ builder.Services.AddLogging(b =>
         JsonWriterOptions = new JsonWriterOptions
         {
             // removes \uXXXX
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             Indented = true,
         }
     },o =>

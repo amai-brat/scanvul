@@ -20,6 +20,6 @@ public abstract record AgentCommand(Guid CommandId);
 
 public record ReportPackagesCommand(Guid CommandId) : AgentCommand(CommandId);
 
-public record UpgradePackageCommand(Guid CommandId, string PackageName) : AgentCommand(CommandId);
+public record UpgradePackageCommand(Guid CommandId, string PackageName, string PackageManager) : AgentCommand(CommandId);
 
 public record DisableAgentCommand(Guid CommandId) : AgentCommand(CommandId);
