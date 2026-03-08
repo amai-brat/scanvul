@@ -80,7 +80,7 @@ export const ReportsList = () => {
               <div>
                 <h3 className="font-medium text-sm group-hover:text-primary transition-colors">
                   {t("reports.report_at", {
-                    time: new Date(report.createdAt).toLocaleString(),
+                    time: new Date(report.createdAt).toLocaleString(navigator.language),
                   })}
                 </h3>
               </div>

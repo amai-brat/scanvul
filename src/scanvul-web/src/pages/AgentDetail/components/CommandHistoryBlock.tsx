@@ -127,13 +127,17 @@ export const CommandHistoryBlock = ({
                         <td className="px-6 py-4 text-right">
                           <div className="text-xs text-gray-900 dark:text-gray-100">
                             {t("agent_details.command_created_at", {
-                              time: new Date(cmd.createdAt).toLocaleString(),
+                              time: new Date(cmd.createdAt).toLocaleString(
+                                navigator.language,
+                              ),
                             })}
                           </div>
                           {cmd.sentAt && (
                             <div className="text-[10px] text-gray-400">
                               {t("agent_details.command_sent_at", {
-                                time: new Date(cmd.sentAt).toLocaleString(),
+                                time: new Date(cmd.sentAt).toLocaleString(
+                                  navigator.language,
+                                ),
                               })}
                             </div>
                           )}
