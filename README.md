@@ -84,8 +84,9 @@
 - [ ] winget
   - [x] package manager searching
   - [x] installing packages on agent
-  - [ ] installing packages on linux agents
+  - [x] installing packages on linux agents
   - [ ] warning on frontend when upgrading package on linux
+  - [ ] choosing package manager on frontend
 - [x] deploy
   - [x] docker compose
   - [x] readme
