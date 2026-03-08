@@ -81,11 +81,11 @@
 - [ ] test
   - [ ] has vulnerability → update → no vulnerability
   - [ ] version matching and comparing (unit tests)
-- [ ] winget
+- [x] winget
   - [x] package manager searching
   - [x] installing packages on agent
   - [x] installing packages on linux agents
-  - [ ] warning on frontend when upgrading package on linux
+  - [x] warning on frontend when upgrading package on arch linux
   - [x] choosing package manager on frontend
 - [x] deploy
   - [x] docker compose

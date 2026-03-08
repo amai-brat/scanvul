@@ -20,7 +20,7 @@ import {
   getPackageManagers,
   type PackageManager,
 } from "../../../../utils/packageManager";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 
 
@@ -197,6 +197,29 @@ export const UpgradePackageCommand = ({
                         {pm}
                       </button>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 2.1. Pacman Warning */}
+              {activePackageManager === "pacman" && (
+                <div className="">
+                  <div className="flex items-center gap-2 text-xs font-semibold border-amber-200 bg-amber-50 text-amber-700">
+                    <span>
+                      <Trans
+                        i18nKey="agent_details.pacman_warning"
+                        components={{
+                          1: (
+                            <a
+                              href="https://wiki.archlinux.org/title/System_maintenance#Partial_upgrades_are_unsupported"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="underline hover:text-amber-900"
+                            />
+                          ),
+                        }}
+                      />
+                    </span>
                   </div>
                 </div>
               )}
