@@ -31,6 +31,6 @@ public class WingetPackageManager(AppDbContext dbContext) : IPackageManager
             .ToList();
     }
 
-    private static string GetWingetPackageUrlFromGithub(string name) =>
-        $"https://github.com/microsoft/winget-pkgs/tree/master/manifests/{name.FirstOrDefault()}";
+    private static string GetWingetPackageUrlFromGithub(string? name) =>
+        $"https://github.com/microsoft/winget-pkgs/tree/master/manifests/{name?.ToLowerInvariant().FirstOrDefault()}";
 }

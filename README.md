@@ -86,7 +86,7 @@
   - [x] installing packages on agent
   - [x] installing packages on linux agents
   - [ ] warning on frontend when upgrading package on linux
-  - [ ] choosing package manager on frontend
+  - [x] choosing package manager on frontend
 - [x] deploy
   - [x] docker compose
   - [x] readme

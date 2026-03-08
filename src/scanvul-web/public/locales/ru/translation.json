@@ -78,6 +78,8 @@
     "installed_packages_total": "Всего: {{amount}}",
     "installed_packages_fetching": "Получение списка ПО...",
     "package_name": "Название",
+    "package_manager": "Пакетный менеджер",
+    "err_no_package_manager": "Невозможно выполнить обновление: не определён пакетный менеджер для данной ОС",
     "version": "Версия",
     "id": "Идентификатор",
 
