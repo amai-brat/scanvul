@@ -80,6 +80,15 @@ public static class Entry
                 TimeZone = TimeZoneInfo.Utc
             });
         
+        RecurringJob.AddOrUpdate<BduMissingVersionFixWorker>(
+            "fix_missing_xml_versions", 
+            x => x.RunAsync(CancellationToken.None), 
+            "0 0 31 2 *", 
+            new RecurringJobOptions
+            {
+                TimeZone = TimeZoneInfo.Utc
+            });
+        
         RecurringJob.AddOrUpdate<VulnerabilityScanReportWorker>(
             "vulnerability_scan_report", 
             x => x.RunAsync(CancellationToken.None), 

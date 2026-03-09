@@ -2,13 +2,13 @@ using System.Dynamic;
 using System.IO.Compression;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using Hangfire;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using ScanVul.Server.Infrastructure.Hangfire.Helpers;
 using ScanVul.Server.Infrastructure.OpenSearch.Services;
 
 namespace ScanVul.Server.Infrastructure.Hangfire.Workers;
@@ -17,7 +17,7 @@ public record BduSyncInfo(
     DateTimeOffset LastSyncAt,
     long ContentLength);
 
-public partial class BduSnapshotDownloadWorker(
+public class BduSnapshotDownloadWorker(
     IServiceScopeFactory scopeFactory,
     IHttpClientFactory httpClientFactory) : IWorker
 {
@@ -27,21 +27,6 @@ public partial class BduSnapshotDownloadWorker(
     private const string IndexName = "bdu-index";
     private const string VersionInfoField = "version_";
     
-    [GeneratedRegex(@"^от (?<min>\S+) (?:до|по) (?<max>\S+) включительно$", RegexOptions.Compiled)]
-    private static partial Regex RangeInclusiveRegex();
-    
-    [GeneratedRegex(@"^от (?<min>\S+) (?:до|по) (?<max>\S+)$", RegexOptions.Compiled)]
-    private static partial Regex RangeRegex();
-    
-    [GeneratedRegex(@"^до (?<max>\S+) включительно$", RegexOptions.Compiled)]
-    private static partial Regex MaxInclusiveRegex();
-    
-    [GeneratedRegex(@"^до (?<max>\S+)$", RegexOptions.Compiled)]
-    private static partial Regex MaxRegex();
-    
-    [GeneratedRegex(@"^от (?<min>\S+)$", RegexOptions.Compiled)]
-    private static partial Regex MinRegex();
-
     [JobDisplayName("Download БДУ snapshot from ФСТЭК")]
     public async Task RunAsync(CancellationToken ct = default)
     {
@@ -272,7 +257,7 @@ public partial class BduSnapshotDownloadWorker(
             // Maps to: gt_or_eq, lt_or_eq
             if (!matched)
             {
-                var m = RangeInclusiveRegex().Match(versionStr);
+                var m = BduVersionUtils.RangeInclusiveRegex().Match(versionStr);
                 if (m.Success)
                 {
                     versionInfo["gt_or_eq"] = m.Groups["min"].Value;
@@ -285,7 +270,7 @@ public partial class BduSnapshotDownloadWorker(
             // Maps to: lt_or_eq
             if (!matched)
             {
-                var m = MaxInclusiveRegex().Match(versionStr);
+                var m = BduVersionUtils.MaxInclusiveRegex().Match(versionStr);
                 if (m.Success)
                 {
                     versionInfo["lt_or_eq"] = m.Groups["max"].Value;
@@ -297,7 +282,7 @@ public partial class BduSnapshotDownloadWorker(
             // Maps to: gt_or_eq, lt
             if (!matched)
             {
-                var m = RangeRegex().Match(versionStr);
+                var m = BduVersionUtils.RangeRegex().Match(versionStr);
                 if (m.Success)
                 {
                     versionInfo["gt_or_eq"] = m.Groups["min"].Value;
@@ -310,7 +295,7 @@ public partial class BduSnapshotDownloadWorker(
             // Maps to: lt
             if (!matched)
             {
-                var m = MaxRegex().Match(versionStr);
+                var m = BduVersionUtils.MaxRegex().Match(versionStr);
                 if (m.Success)
                 {
                     versionInfo["lt"] = m.Groups["max"].Value;
@@ -322,7 +307,7 @@ public partial class BduSnapshotDownloadWorker(
             // Maps to: gt_or_eq
             if (!matched)
             {
-                var m = MinRegex().Match(versionStr);
+                var m = BduVersionUtils.MinRegex().Match(versionStr);
                 if (m.Success)
                 {
                     versionInfo["gt_or_eq"] = m.Groups["min"].Value;
