@@ -1,6 +1,7 @@
 using System.IO.Compression;
 using Dapper;
 using EFCore.BulkExtensions;
+using Hangfire;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,7 @@ public class WingetPackagesSyncWorker(
 {
     private const string SourceUrl = "https://cdn.winget.microsoft.com/cache/source.msix";
     
+    [JobDisplayName("Download Winget packages index (SQLite) and save them to Postgres")]
     public async Task RunAsync(CancellationToken ct = default)
     {
         logger.LogInformation("Starting Winget packages sync...");
