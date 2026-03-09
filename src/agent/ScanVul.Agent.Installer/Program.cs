@@ -73,6 +73,14 @@ internal static class Program
             
             if (isInstalledEarlierResult.Value.IsInstalled && !string.IsNullOrEmpty(isInstalledEarlierResult.Value.Token))
             {
+                Console.WriteLine("Found previously installed agent. Enabling agent on server...");
+                var enableResult = await EnableAgentAsync(serverAddress, new EnableAgentRequest(Guid.Parse(isInstalledEarlierResult.Value.Token)), ct);
+                if (enableResult.IsFailure)
+                {
+                    Console.WriteLine(enableResult.Error);
+                    return;
+                }
+                
                 Console.WriteLine("Updating agent's configuration file...");
                 var settingsResult = InitAgentSettings(path, serverAddress, isInstalledEarlierResult.Value.Token);
                 if (settingsResult.IsFailure)
@@ -204,6 +212,27 @@ internal static class Program
         catch (Exception ex)
         {
             return Result.Failure<Guid>("Error when registering agent on server", ex);
+        }
+    }
+    
+    private static async Task<Result> EnableAgentAsync(Uri serverAddress, EnableAgentRequest request, CancellationToken ct = default)
+    {
+        try
+        {
+            var httpClient = new HttpClient();
+            httpClient.BaseAddress = serverAddress;
+            
+            var response = await httpClient.PostAsJsonAsync(
+                "/api/v1/agents/enable", 
+                request, 
+                EnableAgentRequestContext.Default.EnableAgentRequest, ct);
+            return response.IsSuccessStatusCode
+                ? Result.Success() 
+                : Result.Failure(response.ReasonPhrase ?? "Error");
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure("Error when enabling previously installed agent on server", ex);
         }
     }
 
