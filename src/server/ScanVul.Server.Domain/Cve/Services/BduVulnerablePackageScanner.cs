@@ -77,8 +77,9 @@ public class BduVulnerablePackageScanner(
         List<BduVulnerablePackage> vulnerablePackages = [];
         foreach (var bdu in possibleBduDocuments)
         {
-            foreach (var bduSoft in bdu.VulnerableSoftware.Soft)
+            foreach (var bduSoft in bdu.VulnerableSoftware!.Soft)
             {
+                if (!IsPackageNameAffected(package, bduSoft.Name)) continue;
                 if (!IsPackageVersionAffected(package.Version, bduSoft)) continue;
             
                 var vulnerablePackage = new BduVulnerablePackage(bdu.Identifier.First(), package, computer);
@@ -87,6 +88,12 @@ public class BduVulnerablePackageScanner(
         }
 
         return vulnerablePackages;
+    }
+    
+    private static bool IsPackageNameAffected(PackageInfo computerPackage, string bduPackageName)
+    {
+        var sanitizePackageName = SearchTermSanitizer.SanitizePackageName(computerPackage.Name).ToLowerInvariant();
+        return bduPackageName.Trim().Contains(sanitizePackageName, StringComparison.InvariantCultureIgnoreCase);
     }
     
     /// <summary>
