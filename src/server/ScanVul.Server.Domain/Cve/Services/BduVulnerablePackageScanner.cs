@@ -107,7 +107,8 @@ public class BduVulnerablePackageScanner(
     {
         try
         {
-            if (soft.VersionInfo?.Version is not "<ok>") return true;
+            if (soft.VersionInfo?.Version is not "<ok>")
+                return IsPackageVersionAffectedIfVersionIsNotOk(packageVersion, soft.VersionInfo?.Version);
             
             if (!versionMatcher.TryCreateVersionObject(packageVersion, VersionMatchType.Base, out var version))
                 return true;
@@ -156,5 +157,26 @@ public class BduVulnerablePackageScanner(
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Check whether package version is affected if BduSnapshotDownloadWorker couldn't parse version.
+    /// Check only by BaseNumberVersion, if couldn't returns true
+    /// </summary>
+    /// <param name="packageVersion">Version of package to check</param>
+    /// <param name="bduVersion">BduSoft version</param>
+    /// <returns></returns>
+    private bool IsPackageVersionAffectedIfVersionIsNotOk(string? packageVersion, string? bduVersion)
+    {
+        if (string.IsNullOrWhiteSpace(packageVersion) || string.IsNullOrWhiteSpace(bduVersion))
+            return true;
+        
+        if (!versionMatcher.TryCreateVersionObject(packageVersion, VersionMatchType.BaseNumber, out var packageVersionObj))
+            return true;
+        
+        if (!versionMatcher.TryCreateVersionObject(bduVersion, VersionMatchType.BaseNumber, out var bduVersionObj))
+            return true;
+        
+        return packageVersionObj.CompareTo(bduVersionObj) == 0;
     }
 }

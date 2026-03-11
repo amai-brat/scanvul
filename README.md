@@ -79,8 +79,8 @@
 - [ ] find more appropriate package searching method [link](https://docs.opensearch.org/latest/query-dsl/term/index/)
 - [ ] rework version matching and comparing
   - [x] bdu: check package name firstly, after version
-  - [ ] bdu: BaseVersion with only numbers
-  - [ ] bdu: if BaseVersion with only numbers: i can check for equality
+  - [x] bdu: BaseVersion with only numbers
+  - [x] bdu: if BaseVersion with only numbers: i can check for equality
 - [ ] test
   - [ ] has vulnerability → update → no vulnerability
   - [ ] version matching and comparing (unit tests)
