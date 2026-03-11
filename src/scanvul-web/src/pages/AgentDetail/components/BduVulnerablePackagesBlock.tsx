@@ -50,7 +50,7 @@ export const BduVulnerablePackagesBlock = ({
 
   const markFalsePositiveMutation = useMutation({
     mutationFn: (vulnerablePackageId: number) =>
-      agentsApi.markFalsePositive(vulnerablePackageId),
+      agentsApi.markFalsePositiveBdu(vulnerablePackageId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["vulns-bdu", agentId] });
       setVulnIdToMark(null);
