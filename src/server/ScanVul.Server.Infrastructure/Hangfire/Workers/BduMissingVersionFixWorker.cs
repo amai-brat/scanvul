@@ -102,7 +102,7 @@ public class BduMissingVersionFixWorker(IOpenSearchClient client) : IWorker
                Version = ""
             };
             var matched = false;
-            var versionStr = softItem.Version;
+            var versionStr = softItem.Version.Trim();
 
             if (!matched && BduVersionUtils.RangeInclusiveRegex().Match(versionStr) is { Success: true } m1)
             {

@@ -252,6 +252,7 @@ public class BduSnapshotDownloadWorker(
             IDictionary<string, object?> versionInfo = new ExpandoObject();
 
             var matched = false;
+            versionStr = versionStr.Trim();
 
             // 1. Check: ^от <ver> до|по <ver> включительно$
             // Maps to: gt_or_eq, lt_or_eq
