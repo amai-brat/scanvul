@@ -10,7 +10,7 @@ public class LinuxPlatformAgentManager : IPlatformAgentManager
 
     public async Task DisableAgentAsync(CancellationToken ct = default)
     {
-        await RunSystemCommandAsync("systemctl", $"disable --now --no-block {SystemdUnitFileName}", ct);
+        await RunSystemCommandAsync("systemctl", $"disable {SystemdUnitFileName}", ct);
     }
     
     private static async Task RunSystemCommandAsync(string command, string arguments, CancellationToken ct = default)

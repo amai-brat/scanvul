@@ -1,4 +1,3 @@
-using Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing;
 using ScanVul.Agent.Services.PlatformAgentManagers;
 using ScanVul.Contracts.Agents;
 
@@ -6,24 +5,33 @@ namespace ScanVul.Agent.Services.CommandHandlers;
 
 public class DisableAgentCommandHandler(
     ILogger<ReportPackagesCommandHandler> logger,
-    IPlatformAgentManager agentManager) : ICommandHandler<DisableAgentCommand>
+    IPlatformAgentManager agentManager,
+    IHostApplicationLifetime appLifetime) : ICommandHandler<DisableAgentCommand>
 {
-    public async Task<string> Handle(DisableAgentCommand command, CancellationToken ct = default)
+    private static readonly TimeSpan ShutdownDelay = TimeSpan.FromSeconds(10);
+    public Task<string> Handle(DisableAgentCommand command, CancellationToken ct = default)
     {
         logger.LogInformation("Processing {Command}:{CommandId}", command.GetType().Name, command.CommandId);
         
-        try
+        _ = Task.Run(async () =>
         {
-            await agentManager.DisableAgentAsync(ct);
-        }
-        catch (Exception ex)
-        {
-            logger.LogWarning(ex, "Error when disabling agent");
-            return $"Error when disabling agent: {ex.ToInvariantString()}";
-        }
+            try
+            {
+                await Task.Delay(ShutdownDelay, CancellationToken.None);
+
+                logger.LogInformation("Initiating agent uninstallation...");
+                await agentManager.DisableAgentAsync(CancellationToken.None);
+                
+                logger.LogInformation("Agent unregistered. Initiating graceful shutdown...");
+                appLifetime.StopApplication(); 
+            }
+            catch (Exception ex)
+            {
+                logger.LogCritical(ex, "FATAL ERROR: Failed to disable agent in background task.");
+            }
+        }, ct);
        
-        // unlikely that this will be logged and returned
-        logger.LogInformation("Successfully disabled agent");
-        return "OK";
+        logger.LogInformation("Disable sequence scheduled. Returning OK to server.");
+        return Task.FromResult("OK");
     }
 }
