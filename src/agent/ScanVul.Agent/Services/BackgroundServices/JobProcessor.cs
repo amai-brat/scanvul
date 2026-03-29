@@ -39,6 +39,7 @@ public class JobProcessor : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var queue = _serviceProvider.GetRequiredKeyedService<ConcurrentQueue<AgentCommand>>(Consts.KeyedServices.CommandQueue);
+        await EnqueueInterruptedCommandsAsync(queue);
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -124,6 +125,30 @@ public class JobProcessor : BackgroundService
         {
             var logger = _serviceProvider.GetRequiredService<ILogger<JobProcessor>>();
             logger.LogError(ex, "Failed to update executing commands file.");
+        }
+        finally
+        {
+            _fileLock.Release();
+        }
+    }
+
+    private async Task EnqueueInterruptedCommandsAsync(ConcurrentQueue<AgentCommand> queue)
+    {
+        try
+        {
+            await _fileLock.WaitAsync();
+
+            var json = await File.ReadAllTextAsync(ExecutingCommandsFile);
+            var commands = JsonSerializer.Deserialize<List<AgentCommand>>(json) ?? [];
+            foreach (var command in commands)
+            {
+                queue.Enqueue(command);
+            }
+        }
+        catch (Exception ex)
+        {
+            var logger = _serviceProvider.GetRequiredService<ILogger<JobProcessor>>();
+            logger.LogError(ex, "Failed to read interrupted commands file.");
         }
         finally
         {
