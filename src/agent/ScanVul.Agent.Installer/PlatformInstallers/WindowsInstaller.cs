@@ -74,9 +74,10 @@ public class WindowsInstaller : IPlatformInstaller
             ps.AddStatement()
                 .AddScript(ChocoInstallScript);
             
-            Console.WriteLine("Bootstrapping Winget...");
-            ps.AddStatement()
-                .AddScript(WingetInstallScript);
+            // pre-installed 
+            // Console.WriteLine("Bootstrapping Winget...");
+            // ps.AddStatement()
+            //     .AddScript(WingetInstallScript);
 
             await ps.InvokeAsync();
 
