@@ -1,0 +1,54 @@
+@startuml
+!theme plain
+autonumber
+hide footbox
+skinparam sequenceMessageAlign center
+'skinparam maxMessageSize 150
+
+participant "Сервер" as Srv
+
+box "Агент (.NET Worker)" #F0F8FF
+participant "HealthCheck\nService" as HC
+queue "In-Memory\nQueue" as Q
+participant "JobProcessor" as JP
+participant "ICommandHandler" as Cmd
+end box
+
+== Запуск службы ==
+JP -> JP: Чтение незавершенных команд из файла
+activate JP
+JP -> Q: Добавление в очередь
+deactivate JP
+
+== Цикл взаимодействия ==
+HC -> Srv: Ping (Агент жив)
+activate HC
+activate Srv
+Srv --> HC: Список команд
+deactivate Srv
+HC -> Q: Добавление в очередь
+deactivate HC
+
+activate Q
+Q ->> JP ++: Получение команды
+deactivate Q
+JP -> JP: Запись команды в файл
+
+JP -> Cmd ++: Выбор обработчика и запуск
+
+alt ReportPackagesCommand
+    Cmd -> Cmd: Сбор списка установленного ПО\n(через реестр / pacman / apt)
+    Cmd -> Srv ++: Отправка ПО
+    Srv --> Cmd --: OK
+else UpgradePackageCommand
+    Cmd -> Cmd: Вызов пакетного менеджера\n(winget / choco / apt...)
+else DisableAgentCommand
+    Cmd -> Cmd: Остановка службы агента
+end
+
+Cmd --> JP --: Результат выполнения
+
+JP -> Srv ++: Отправка статуса (OK / ошибка)
+Srv --> JP --: OK
+JP -> JP --: Удаление команды из файла
+@enduml
