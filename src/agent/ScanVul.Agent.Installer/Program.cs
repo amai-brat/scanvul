@@ -73,19 +73,19 @@ internal static class Program
             
             if (isInstalledEarlierResult.Value.IsInstalled && !string.IsNullOrEmpty(isInstalledEarlierResult.Value.Token))
             {
-                Console.WriteLine("Found previously installed agent. Enabling agent on server...");
-                var enableResult = await EnableAgentAsync(serverAddress, new EnableAgentRequest(Guid.Parse(isInstalledEarlierResult.Value.Token)), ct);
-                if (enableResult.IsFailure)
-                {
-                    Console.WriteLine(enableResult.Error);
-                    return;
-                }
-                
                 Console.WriteLine("Updating agent's configuration file...");
                 var settingsResult = InitAgentSettings(path, serverAddress, isInstalledEarlierResult.Value.Token);
                 if (settingsResult.IsFailure)
                 {
                     Console.WriteLine(settingsResult.Error);
+                    return;
+                }
+                
+                Console.WriteLine("Found previously installed agent. Enabling agent on server...");
+                var enableResult = await EnableAgentAsync(serverAddress, new EnableAgentRequest(Guid.Parse(isInstalledEarlierResult.Value.Token)), ct);
+                if (enableResult.IsFailure)
+                {
+                    Console.WriteLine(enableResult.Error);
                     return;
                 }
             }
