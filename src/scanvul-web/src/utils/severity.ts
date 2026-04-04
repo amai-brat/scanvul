@@ -20,7 +20,7 @@ export const getBduScore = (pkg: BduVulnerablePackageResponse): number => {
 };
 
 export const getSeverityLevel = (score: number): SeverityLevel => {
-  if (score >= 9.0) return "CRITICAL";
+  if (score == 10.0) return "CRITICAL";
   if (score >= 7.0) return "HIGH";
   if (score >= 4.0) return "MEDIUM";
   return "LOW";
