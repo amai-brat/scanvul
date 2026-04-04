@@ -57,6 +57,7 @@
     - [x] task to upgrade package (via chocolatey)
     - [x] task to stop (remove)
   - [ ] conditional compilation for different OSes
+  - [ ] in-memory queue = Channel 
 - [x] frontend
   - [x] agent's pc info
   - [x] vulnerable packages
@@ -84,6 +85,7 @@
 - [ ] test
   - [ ] has vulnerability → update → no vulnerability
   - [ ] version matching and comparing (unit tests)
+- [ ] links to package managers as options
 - [x] winget
   - [x] package manager searching
   - [x] installing packages on agent
