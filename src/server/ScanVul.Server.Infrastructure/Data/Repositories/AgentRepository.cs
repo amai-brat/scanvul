@@ -55,6 +55,14 @@ public class AgentRepository(AppDbContext dbContext) : IAgentRepository
         return agent;
     }
 
+    public async Task<Agent?> GetWithComputerAsync(long agentId, CancellationToken ct = default)
+    {
+        var agent = await dbContext.Agents
+            .Include(x => x.Computer)
+            .FirstOrDefaultAsync(x => x.Id == agentId, cancellationToken: ct);
+        return agent;
+    }
+
     public async Task<List<Agent>> GetActiveAgentsWithComputerNoTrackingAsync(CancellationToken ct = default)
     {
         return await dbContext.Agents
