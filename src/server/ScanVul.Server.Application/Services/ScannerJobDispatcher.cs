@@ -15,7 +15,7 @@ public class ScannerJobDispatcher(
         backgroundJobClient.Enqueue<VulnerablePackageScanner>(
             scanner => scanner.ScanAsync(computerId, CancellationToken.None));
         
-        backgroundJobClient.Enqueue<BduVulnerablePackageScanner>(
+        backgroundJobClient.Enqueue<BduVulnerablePackageScannerV2>(
             scanner => scanner.ScanAsync(computerId, CancellationToken.None));
     }
 }
