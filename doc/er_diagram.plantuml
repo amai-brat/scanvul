@@ -1,0 +1,120 @@
+@startuml
+skinparam linetype polyline
+left to right direction
+
+!define primary_key * 
+!define foreign_key {fk}
+
+entity "vulnerability_scan_reports" as vulnerability_scan_reports {
+  * id : bigint
+  --
+  created_at : timestamp with time zone
+  object_name : text
+}
+
+entity "winget_packages" as winget_packages {
+  * id : text
+  --
+  id_row_id : bigint
+  name_row_id : bigint
+  name : text
+  last_version_row_id : bigint
+  last_version : text
+}
+
+entity "users" as users {
+  * id : integer
+  --
+  name : text
+  password : text
+  is_active : boolean
+}
+
+entity "__EFMigrationsHistory" as migrations {
+  * migration_id : varchar(150)
+  --
+  product_version : varchar(32)
+}
+
+entity "computers" as computers {
+  * id : bigint
+  --
+  ip_address : inet
+  operating_system : integer
+  name : text
+  memory_in_mb : integer
+  cpu_name : text
+}
+
+entity "package_infos" as package_infos {
+  * id : bigint
+  --
+  name : text
+  version : text
+  --
+  unique (name, version)
+}
+
+entity "agents" as agents {
+  * id : bigint
+  --
+  token : uuid
+  last_ping_at : timestamp with time zone
+  last_packages_scraping_at : timestamp with time zone
+  computer_id : bigint {fk}
+  is_active : boolean
+}
+
+entity "computer_package_info" as computer_package_info {
+  * computer_id : bigint {fk}
+  * packages_id : bigint {fk}
+  --
+  primary key (computer_id, packages_id)
+}
+
+entity "vulnerable_packages" as vulnerable_packages {
+  * id : bigint
+  --
+  cve_id : text
+  package_info_id : bigint {fk}
+  computer_id : bigint {fk}
+  is_false_positive : boolean
+  --
+  unique (package_info_id, cve_id, computer_id)
+}
+
+entity "agent_command" as agent_command {
+  * id : uuid
+  --
+  agent_id : bigint {fk}
+  sent_at : timestamp with time zone
+  body : jsonb
+  agent_response : text
+  created_at : timestamp with time zone
+}
+
+entity "bdu_vulnerable_packages" as bdu_vulnerable_packages {
+  * id : bigint
+  --
+  bdu_id : text
+  package_info_id : bigint {fk}
+  computer_id : bigint {fk}
+  is_false_positive : boolean
+  --
+  unique (package_info_id, bdu_id, computer_id)
+}
+
+' Relationships
+
+agents }o--|| computers : "computer_id"
+vulnerable_packages }o--|| computers : "computer_id"
+vulnerable_packages }o--|| package_infos : "package_info_id"
+bdu_vulnerable_packages }o--|| computers : "computer_id"
+bdu_vulnerable_packages }o--|| package_infos : "package_info_id"
+agent_command }o--|| agents : "agent_id"
+
+' Many-to-many junction
+computer_package_info }o--|| computers : "computer_id"
+computer_package_info }o--|| package_infos : "packages_id"
+
+@enduml

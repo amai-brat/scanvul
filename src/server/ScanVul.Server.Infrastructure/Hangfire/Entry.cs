@@ -31,10 +31,33 @@ public static class Entry
             });
         });
         services.AddHangfireServer();
+        services.AddHttpClients();
         
         return services;
     }
 
+    private static IServiceCollection AddHttpClients(this IServiceCollection services)
+    {
+        services.AddHttpClient(HttpClientNames.Wazuh, client =>
+        {
+            client.BaseAddress = new Uri("https://cti.wazuh.com/");
+        });
+        
+        services.AddHttpClient(HttpClientNames.Fstec, client =>
+        {
+            client.BaseAddress = new Uri("https://bdu.fstec.ru/");
+        }).ConfigurePrimaryHttpMessageHandler(() =>
+        {
+            var handler = new HttpClientHandler();
+            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+            handler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
+            
+            return handler;
+        });
+
+        return services;
+    }
+    
     public static IApplicationBuilder UseHangfire(this IApplicationBuilder app)
     {
         app.UseHangfireDashboard();
@@ -45,6 +68,39 @@ public static class Entry
             "cve_snapshot_download", 
             x => x.RunAsync(CancellationToken.None), 
             options.Value.CveSnapshotDownloadJobCron, new RecurringJobOptions
+            {
+                TimeZone = TimeZoneInfo.Utc
+            });
+        
+        RecurringJob.AddOrUpdate<BduSnapshotDownloadWorker>(
+            "bdu_snapshot_download", 
+            x => x.RunAsync(CancellationToken.None), 
+            options.Value.BduSnapshotDownloadJobCron, new RecurringJobOptions
+            {
+                TimeZone = TimeZoneInfo.Utc
+            });
+        
+        RecurringJob.AddOrUpdate<BduMissingVersionFixWorker>(
+            "fix_missing_xml_versions", 
+            x => x.RunAsync(CancellationToken.None), 
+            "0 0 31 2 *", 
+            new RecurringJobOptions
+            {
+                TimeZone = TimeZoneInfo.Utc
+            });
+        
+        RecurringJob.AddOrUpdate<VulnerabilityScanReportWorker>(
+            "vulnerability_scan_report", 
+            x => x.RunAsync(CancellationToken.None), 
+            options.Value.BduSnapshotDownloadJobCron, new RecurringJobOptions
+            {
+                TimeZone = TimeZoneInfo.Utc
+            });
+        
+        RecurringJob.AddOrUpdate<WingetPackagesSyncWorker>(
+            "winget_packages_sync", 
+            x => x.RunAsync(CancellationToken.None), 
+            options.Value.BduSnapshotDownloadJobCron, new RecurringJobOptions
             {
                 TimeZone = TimeZoneInfo.Utc
             });

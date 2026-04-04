@@ -32,4 +32,13 @@ public class PackageInfoRepository(AppDbContext dbContext) : IPackageInfoReposit
         
         return package;
     }
+
+    public async Task<BduVulnerablePackage?> GetBduVulnerableByIdAsync(long vulnerablePackageId, CancellationToken ct = default)
+    {
+        var package = await dbContext.BduVulnerablePackages
+            .Include(x => x.PackageInfo)
+            .FirstOrDefaultAsync(x => x.Id == vulnerablePackageId, ct);
+        
+        return package;
+    }
 }

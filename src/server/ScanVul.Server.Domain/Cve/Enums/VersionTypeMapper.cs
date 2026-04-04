@@ -16,6 +16,7 @@ public static class VersionTypeMapper
             VersionType.Dpkg => VersionMatchType.Dpkg,
             VersionType.Rpm => VersionMatchType.Rpm,
             VersionType.Base => VersionMatchType.Base,
+            VersionType.BaseNumber => VersionMatchType.BaseNumber,
             _ => throw new ArgumentOutOfRangeException(nameof(versionType), versionType, null)
         };
     }

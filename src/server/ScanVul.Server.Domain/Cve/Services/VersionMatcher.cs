@@ -20,7 +20,8 @@ public enum VersionMatchType
     SemVer = 103,
     Dpkg = 104,
     Rpm = 105,
-    Base = 200
+    Base = 200,
+    BaseNumber = 210
 }
 
 public class VersionMatcher(ILogger<VersionMatcher> logger)
@@ -126,6 +127,7 @@ public class VersionMatcher(ILogger<VersionMatcher> logger)
             VersionMatchType.Dpkg => Dpkg.TryParse(version, out var dpkg) ? dpkg : null,
             VersionMatchType.Rpm => Rpm.TryParse(version, out var rpm) ? rpm : null,
             VersionMatchType.Base => BaseVersion.TryParse(version, out var baseVersion) ? baseVersion : null,
+            VersionMatchType.BaseNumber => BaseNumberVersion.TryParse(version, out var baseNumber) ? baseNumber : null,
             _ => throw new ArgumentException($"Unsupported version type: {type}")
         };
     }

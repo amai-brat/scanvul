@@ -35,6 +35,12 @@
       <ProjectReference Include="..\..\ScanVul.Contracts\ScanVul.Contracts.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Services\PackageManagers\WingetCommandBuilder.cs">
+        <DependentUpon>WingetPackageManager.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
     <Target Name="ZipPublish" AfterTargets="Publish">
         <ZipDirectory 
                 Overwrite="true"

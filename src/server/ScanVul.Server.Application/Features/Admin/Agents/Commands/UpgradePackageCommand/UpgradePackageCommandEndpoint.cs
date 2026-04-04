@@ -2,6 +2,7 @@ using System.Net;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using ScanVul.Server.Application.Helpers;
 using ScanVul.Server.Domain.AgentAggregate.Entities.Commands;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
 using ScanVul.Server.Domain.Common;
@@ -21,7 +22,7 @@ public class UpgradePackageCommandEndpoint(
         {
             s.Summary = "Send to agent 'upgrade package' command";
             s.Description = "Send to agent 'upgrade package' command";
-            s.ExampleRequest = new UpgradePackageCommandRequest(-1, "7zip");
+            s.ExampleRequest = new UpgradePackageCommandRequest(-1, "7zip", PackageManagerType.Winget);
         });
         Description(x => x
             .WithTags("Admin")
@@ -39,7 +40,8 @@ public class UpgradePackageCommandEndpoint(
             return new ProblemDetails(ValidationFailures, statusCode: (int) HttpStatusCode.NotFound);
         }
 
-        var command = new AgentCommand(agent, new UpgradePackageCommandBody(req.PackageName));
+        var command = new AgentCommand(agent, new UpgradePackageCommandBody(
+            req.PackageName, req.PackageManager.ToString().ToLowerInvariant()));
         agent.Commands.Add(command);
         
         await unitOfWork.SaveChangesAsync(ct);

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ScanVul.Server.Application.Helpers;
 
 namespace ScanVul.Server.Application.Features.Admin.Agents.Commands.UpgradePackageCommand;
 
@@ -7,6 +8,8 @@ namespace ScanVul.Server.Application.Features.Admin.Agents.Commands.UpgradePacka
 /// </summary>
 /// <param name="AgentId">Agent ID</param>
 /// <param name="PackageName">Exact package name from package manager</param>
+/// <param name="PackageManager">Package manager</param>
 public record UpgradePackageCommandRequest(
     [FromRoute(Name = "agentId")] long AgentId,
-    string PackageName);
+    string PackageName,
+    PackageManagerType PackageManager);

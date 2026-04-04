@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using NpgsqlTypes;
 using ScanVul.Server.Infrastructure.Data;
 
 #nullable disable
@@ -80,6 +81,45 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                         .HasDatabaseName("ix_agents_computer_id");
 
                     b.ToTable("agents", (string)null);
+                });
+
+            modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.BduVulnerablePackage", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("BduId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("bdu_id");
+
+                    b.Property<long>("ComputerId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("computer_id");
+
+                    b.Property<bool>("IsFalsePositive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_false_positive");
+
+                    b.Property<long>("PackageInfoId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("package_info_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_bdu_vulnerable_packages");
+
+                    b.HasIndex("ComputerId")
+                        .HasDatabaseName("ix_bdu_vulnerable_packages_computer_id");
+
+                    b.HasIndex("PackageInfoId", "BduId", "ComputerId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_bdu_vulnerable_packages_package_info_id_bdu_id_computer_id");
+
+                    b.ToTable("bdu_vulnerable_packages", (string)null);
                 });
 
             modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.Commands.AgentCommand", b =>
@@ -223,6 +263,73 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                     b.ToTable("vulnerable_packages", (string)null);
                 });
 
+            modelBuilder.Entity("ScanVul.Server.Domain.PackageManagers.Entities.WingetPackage", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<long>("IdRowId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_row_id");
+
+                    b.Property<string>("LastVersion")
+                        .HasColumnType("text")
+                        .HasColumnName("last_version");
+
+                    b.Property<long?>("LastVersionRowId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("last_version_row_id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<long>("NameRowId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("name_row_id");
+
+                    b.Property<NpgsqlTsVector>("SearchVector")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("tsvector")
+                        .HasColumnName("search_vector")
+                        .HasComputedColumnSql("to_tsvector('english', coalesce(\"name\", '') || ' ' || coalesce(\"id\", ''))", true);
+
+                    b.HasKey("Id")
+                        .HasName("pk_winget_packages");
+
+                    b.HasIndex("SearchVector")
+                        .HasDatabaseName("ix_winget_packages_search_vector");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchVector"), "GIN");
+
+                    b.ToTable("winget_packages", (string)null);
+                });
+
+            modelBuilder.Entity("ScanVul.Server.Domain.Reports.Entities.VulnerabilityScanReport", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("ObjectName")
+                        .HasColumnType("text")
+                        .HasColumnName("object_name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_vulnerability_scan_reports");
+
+                    b.ToTable("vulnerability_scan_reports", (string)null);
+                });
+
             modelBuilder.Entity("ScanVul.Server.Domain.UserAggregate.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -281,6 +388,27 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                     b.Navigation("Computer");
                 });
 
+            modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.BduVulnerablePackage", b =>
+                {
+                    b.HasOne("ScanVul.Server.Domain.AgentAggregate.Entities.Computer", "Computer")
+                        .WithMany("BduVulnerablePackages")
+                        .HasForeignKey("ComputerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_bdu_vulnerable_packages_computers_computer_id");
+
+                    b.HasOne("ScanVul.Server.Domain.AgentAggregate.Entities.PackageInfo", "PackageInfo")
+                        .WithMany()
+                        .HasForeignKey("PackageInfoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_bdu_vulnerable_packages_package_infos_package_info_id");
+
+                    b.Navigation("Computer");
+
+                    b.Navigation("PackageInfo");
+                });
+
             modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.Commands.AgentCommand", b =>
                 {
                     b.HasOne("ScanVul.Server.Domain.AgentAggregate.Entities.Agent", "Agent")
@@ -321,6 +449,8 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ScanVul.Server.Domain.AgentAggregate.Entities.Computer", b =>
                 {
+                    b.Navigation("BduVulnerablePackages");
+
                     b.Navigation("VulnerablePackages");
                 });
 #pragma warning restore 612, 618

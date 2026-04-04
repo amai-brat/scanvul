@@ -10,5 +10,6 @@ public enum VersionType
     Dpkg = 5,
     Rpm = 6,
     
-    Base = 100
+    Base = 100,
+    BaseNumber = 110
 }

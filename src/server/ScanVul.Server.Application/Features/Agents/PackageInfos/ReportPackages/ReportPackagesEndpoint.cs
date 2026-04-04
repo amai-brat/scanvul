@@ -1,20 +1,19 @@
 using System.Net;
 using FastEndpoints;
-using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using ScanVul.Contracts.PackageInfos;
+using ScanVul.Server.Application.Services;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
 using ScanVul.Server.Domain.Common;
-using ScanVul.Server.Domain.Cve.Services;
 
 namespace ScanVul.Server.Application.Features.Agents.PackageInfos.ReportPackages;
 
 public class ReportPackagesEndpoint(
     IAgentRepository agentRepository,
     IPackageInfoRepository packageInfoRepository,
-    IBackgroundJobClient backgroundJobClient,
+    ScannerJobDispatcher scannerJobDispatcher,
     IUnitOfWork unitOfWork) 
     : Endpoint<ReportPackagesRequestWrapper, Results<Ok, ProblemDetails>>
 {
@@ -105,8 +104,7 @@ public class ReportPackagesEndpoint(
         agent.LastPackagesScrapingAt = DateTime.UtcNow;
         await unitOfWork.SaveChangesAsync(ct);
         
-        backgroundJobClient.Enqueue<IVulnerablePackageScanner>(
-            s => s.ScanAsync(agent.Computer.Id, CancellationToken.None));
+        scannerJobDispatcher.DispatchScan(agent.Computer.Id);
         
         return TypedResults.Ok();
     }

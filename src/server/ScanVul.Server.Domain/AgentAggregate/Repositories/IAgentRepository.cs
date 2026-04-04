@@ -10,6 +10,7 @@ public interface IAgentRepository
     Task<Agent?> GetByTokenWithNotSentCommandsAsync(Guid token, CancellationToken ct = default);
     Task<Agent?> GetByTokenWithCommandAsync(Guid token, Guid commandId, CancellationToken ct = default);
     Task<Agent?> GetWithCommandsAsync(long agentId, CancellationToken ct = default);
+    Task<Agent?> GetWithComputerAsync(long agentId, CancellationToken ct = default);
     
     Task<List<Agent>> GetActiveAgentsWithComputerNoTrackingAsync(CancellationToken ct = default);
     Task<Agent?> GetWithPackagesNoTrackingAsync(long agentId, CancellationToken ct = default);
@@ -22,4 +23,12 @@ public interface IAgentRepository
     /// <param name="ct"></param>
     /// <returns></returns>
     Task<Agent?> GetWithVulnerablePackagesNoTrackingAsync(long agentId, CancellationToken ct = default);
+    
+    /// <summary>
+    /// Get agent with BDU vulnerable packages excluding false positives
+    /// </summary>
+    /// <param name="agentId"></param>
+    /// <param name="ct"></param>
+    /// <returns></returns>
+    Task<Agent?> GetWithBduVulnerablePackagesNoTrackingAsync(long agentId, CancellationToken ct = default);
 }

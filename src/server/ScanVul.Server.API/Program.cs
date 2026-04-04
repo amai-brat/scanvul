@@ -11,8 +11,15 @@ using ScanVul.Server.Infrastructure.Choco;
 using ScanVul.Server.Infrastructure.Data;
 using ScanVul.Server.Infrastructure.Hangfire;
 using ScanVul.Server.Infrastructure.OpenSearch;
+using ScanVul.Server.Infrastructure.Pdf;
+using ScanVul.Server.Infrastructure.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: false)
+    .AddEnvironmentVariables(prefix: "ENV_");
 
 builder.Services
     .AddFeatures(builder.Configuration)
@@ -41,6 +48,8 @@ builder.Services.AddOpenSearch(builder.Environment,
     .Get<OpenSearchOptions>());
 builder.Services.AddHangfireServices(builder.Configuration);
 builder.Services.AddChocoPackageManager();
+builder.Services.AddStorage(builder.Configuration);
+builder.Services.AddPdf(builder.Configuration);
 
 builder.Services.AddProblemDetails();
 builder.Services.AddJwtAuthentication(builder.Configuration);
@@ -59,26 +68,12 @@ app.UseFastEndpoints(c =>
 {
     c.Versioning.Prefix = "v";
     c.Versioning.RouteTemplate = "{apiVersion}";
+    c.Serializer.Options.Converters.Add(new JsonStringEnumConverter());
 });
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwaggerGen();
 }
-
-app.MapGet("/", () => "Hello World!");
-app.MapPost("/{computerId:long}", async (
-    IVulnerablePackageScanner packageScanner,
-    CancellationToken ct,
-    [FromRoute] long computerId = 6) =>
-{
-    await packageScanner.ScanAsync(computerId, ct);
-});
-
-app.MapGet("/cve", async (
-    ICveRepository cveRepository,
-    CancellationToken ct,
-    [Microsoft.AspNetCore.Mvc.FromQuery] string cveId) => 
-    await cveRepository.GetCveDescriptionDocumentsAsync([cveId], ct));
 
 app.Run();

@@ -1,4 +1,3 @@
-// UpgradePackageCommand.tsx
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { agentsApi, type AgentResponse } from "../../../../api/agentsApi";
 import { useMemo, useState } from "react";
@@ -11,9 +10,18 @@ import {
   AlertTriangle,
   Package,
   ExternalLink,
+  Settings,
 } from "lucide-react";
-import { packageManagerApi, type PackageMetadata } from "../../../../api/packageManagerApi";
-import { getPackageManager } from "../../../../utils/packageManager";
+import {
+  packageManagerApi,
+  type PackageMetadata,
+} from "../../../../api/packageManagerApi";
+import {
+  getPackageManagers,
+  type PackageManager,
+} from "../../../../utils/packageManager";
+import { Trans, useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 
 
 export const UpgradePackageCommand = ({
@@ -24,9 +32,11 @@ export const UpgradePackageCommand = ({
   isCommandsOpen: boolean;
 }) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [upgradePackageName, setUpgradePackageName] = useState("");
   const [searchResults, setSearchResults] = useState<PackageMetadata[]>([]);
+  const [packageManager, setPackageManager] = useState<PackageManager | string>();
 
   const { data: vulnData, isLoading: vulnLoading } = useQuery({
     queryKey: ["vulns", agent.id],
@@ -35,31 +45,56 @@ export const UpgradePackageCommand = ({
 
   const uniqueVulnPackages = useMemo(() => {
     if (!vulnData?.packages) return [];
-    return Array.from(new Set(vulnData.packages.map((p) => p.packageName))).sort();
+    return Array.from(
+      new Set(vulnData.packages.map((p) => p.packageName)),
+    ).sort();
   }, [vulnData]);
+
+  const availablePackageManagers = useMemo(() => {
+    return getPackageManagers(agent.operatingSystem || "unknown");
+  }, [agent.operatingSystem]);
+
+  const activePackageManager = useMemo(() => {
+    if (
+      packageManager &&
+      availablePackageManagers.includes(packageManager as PackageManager)
+    ) {
+      return packageManager;
+    }
+    return availablePackageManagers.length > 0
+      ? availablePackageManagers[0]
+      : undefined;
+  }, [packageManager, availablePackageManagers]);
 
   const searchPackageMutation = useMutation({
     mutationFn: async () => {
-      const pm = getPackageManager(agent.operatingSystem || "unknown");
-      return packageManagerApi.search(upgradePackageName, pm);
+      if (!activePackageManager) {
+        throw new Error(t("agent_details.err_no_package_manager"));
+      }
+      return packageManagerApi.search(upgradePackageName, activePackageManager as PackageManager);
     },
     onSuccess: (data) => {
       setSearchResults(data.packages);
     },
     onError: (err) => {
       console.error("Failed to search packages", err);
+      toast.error(t("app.err", {
+        msg: err.message
+      }))
     },
   });
 
   const upgradePackageMutation = useMutation({
     mutationFn: (pkgName: string) =>
-      agentsApi.sendUpgradePackage(agent.id.toString(), pkgName),
+      agentsApi.sendUpgradePackage(agent.id.toString(), pkgName, activePackageManager!),
     onSuccess: () => {
       if (isCommandsOpen)
         queryClient.invalidateQueries({ queryKey: ["commands", agent.id.toString()] });
       setShowUpgradeModal(false);
       setUpgradePackageName("");
       setSearchResults([]);
+
+      toast.info(t("agent_details.command_upgrade_package_toast_msg"));
     },
   });
 
@@ -78,14 +113,16 @@ export const UpgradePackageCommand = ({
         disabled={!agent.isActive}
         className="w-full flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 max-w-[90%]">
           <div className="bg-emerald-50 text-emerald-600 p-2 rounded-md">
             <DownloadCloud className="w-4 h-4" />
           </div>
           <div className="text-left">
-            <div className="text-sm font-semibold">Upgrade Package</div>
+            <div className="text-sm font-semibold">
+              {t("agent_details.command_upgrade_package_title")}
+            </div>
             <div className="text-xs text-gray-500">
-              Update specific software
+              {t("agent_details.command_upgrade_package_desc")}
             </div>
           </div>
         </div>
@@ -100,7 +137,9 @@ export const UpgradePackageCommand = ({
           <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl w-full max-w-lg border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col max-h-[90vh]">
             {/* Header */}
             <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center shrink-0">
-              <h3 className="font-semibold text-lg">Upgrade Package</h3>
+              <h3 className="font-semibold text-lg">
+                {t("agent_details.command_upgrade_package_title")}
+              </h3>
               <button onClick={() => setShowUpgradeModal(false)}>
                 <XCircle className="w-5 h-5 text-gray-400 hover:text-gray-600" />
               </button>
@@ -109,8 +148,7 @@ export const UpgradePackageCommand = ({
             {/* Scrollable Content */}
             <div className="p-6 space-y-6 overflow-y-auto">
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                Search for a package to upgrade or select from detected
-                vulnerabilities.
+                {t("agent_details.search_package_desc")}
               </p>
 
               {/* 1. Vulnerable Packages Section */}
@@ -118,7 +156,7 @@ export const UpgradePackageCommand = ({
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-xs font-semibold text-amber-600 dark:text-amber-500">
                     <AlertTriangle className="w-3 h-3" />
-                    <span>Detected Vulnerable Packages</span>
+                    <span>{t("agent_details.detected_vuln_pkgs")}</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {uniqueVulnPackages.map((pkg) => (
@@ -134,10 +172,62 @@ export const UpgradePackageCommand = ({
                 </div>
               )}
 
-              {/* 2. Search Input */}
+              {/* 2. Package Manager Selection */}
+              {availablePackageManagers.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-gray-700 dark:text-gray-300">
+                    <Settings className="w-3 h-3" />
+                    <span>{t("agent_details.package_manager")}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {availablePackageManagers.map((pm) => (
+                      <button
+                        key={pm}
+                        onClick={() => {
+                          setPackageManager(pm);
+                          setSearchResults([]);
+                          setUpgradePackageName("");
+                        }}
+                        className={`px-3 py-1.5 text-xs font-medium rounded-md border transition-all ${
+                          activePackageManager === pm
+                            ? "bg-slate-800 text-white border-slate-800 dark:bg-blue-600 dark:border-blue-600 shadow-sm"
+                            : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-700"
+                        }`}
+                      >
+                        {pm}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 2.1. Pacman Warning */}
+              {activePackageManager === "pacman" && (
+                <div className="">
+                  <div className="flex items-center gap-2 text-xs font-semibold border-amber-200 bg-amber-50 text-amber-700">
+                    <span>
+                      <Trans
+                        i18nKey="agent_details.pacman_warning"
+                        components={{
+                          1: (
+                            <a
+                              href="https://wiki.archlinux.org/title/System_maintenance#Partial_upgrades_are_unsupported"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="underline hover:text-amber-900"
+                            />
+                          ),
+                        }}
+                      />
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* 3. Search Input */}
               <div className="space-y-2">
                 <label className="block text-xs font-medium text-gray-700 dark:text-gray-300">
-                  Package Name
+                  {t("agent_details.package_name")}
                 </label>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
@@ -156,7 +246,8 @@ export const UpgradePackageCommand = ({
                     onClick={() => searchPackageMutation.mutate()}
                     disabled={
                       !upgradePackageName.trim() ||
-                      searchPackageMutation.isPending
+                      searchPackageMutation.isPending ||
+                      !activePackageManager
                     }
                     className="px-3 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
                     title="Search Package Manager"
@@ -170,11 +261,11 @@ export const UpgradePackageCommand = ({
                 </div>
               </div>
 
-              {/* 3. Search Results */}
+              {/* 4. Search Results */}
               {searchResults.length > 0 && (
                 <div className="space-y-2">
                   <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Search Results
+                    {t("agent_details.search_results")}
                   </h4>
                   <div className="space-y-2 max-h-60 pr-1">
                     {searchResults.map((pkg) => (
@@ -222,10 +313,12 @@ export const UpgradePackageCommand = ({
 
               {/* No Results State */}
               {searchPackageMutation.isSuccess &&
-                searchResults.length === 0 && 
+                searchResults.length === 0 &&
                 upgradePackageName && (
                   <p className="text-xs text-center text-gray-500 py-2">
-                    No packages found matching "{upgradePackageName}"
+                    {t("agent_details.no_packages_matching", {
+                      pattern: upgradePackageName,
+                    })}
                   </p>
                 )}
             </div>
@@ -236,7 +329,7 @@ export const UpgradePackageCommand = ({
                 onClick={() => setShowUpgradeModal(false)}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
               >
-                Cancel
+                {t("components.confirmation_modal.cancel")}
               </button>
               <button
                 onClick={() =>
@@ -250,7 +343,7 @@ export const UpgradePackageCommand = ({
                 {upgradePackageMutation.isPending && (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 )}
-                Send Command
+                {t("agent_details.send_command")}
               </button>
             </div>
           </div>
