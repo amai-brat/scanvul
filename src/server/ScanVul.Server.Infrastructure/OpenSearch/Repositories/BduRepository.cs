@@ -31,10 +31,10 @@ public class BduRepository(IOpenSearchClient client) : IBduRepository
             {
                 Should = new List<QueryContainer>
                 {
-                    new TermQuery 
+                    new MatchPhraseQuery 
                     { 
                         Field = "vulnerable_software.soft.name", 
-                        Value = sanitizedPackageName 
+                        Query = sanitizedPackageName
                     }
                 },
                 MinimumShouldMatch = 1

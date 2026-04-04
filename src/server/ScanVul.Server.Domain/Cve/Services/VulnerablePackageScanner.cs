@@ -82,9 +82,9 @@ public class VulnerablePackageScanner(
         // check CNA
         foreach (var cve in possibleCves)
         {
-            foreach (var affectedItem in cve.Payload.Containers.Cna?.Affected ?? [])
+            foreach (var affectedItem in cve.Payload.Containers?.Cna?.Affected ?? [])
             {
-                if (!IsPackageAffectedItem(package.Name, affectedItem)) continue;
+                if (!IsPackageAffectedItem(package, affectedItem.Product)) continue;
                 
                 foreach (var versionInfo in affectedItem.Versions)
                 {
@@ -101,11 +101,11 @@ public class VulnerablePackageScanner(
             // check ADP (тут должна быть очень сложная логика, учитывающая ОС, пакетные менеджеры...)
             foreach (var cve in possibleCves)
             {
-                foreach (var adp in cve.Payload.Containers.Adp)
+                foreach (var adp in cve.Payload.Containers?.Adp ?? [])
                 {
                     foreach (var affectedItem in adp.Affected)
                     {
-                        if (!IsPackageAffectedItem(package.Name, affectedItem)) continue;
+                        if (!IsPackageAffectedItem(package, affectedItem.Product)) continue;
 
                         foreach (var versionInfo in affectedItem.Versions)
                         {
@@ -122,9 +122,10 @@ public class VulnerablePackageScanner(
         return vulnerablePackages;
     }
 
-    private static bool IsPackageAffectedItem(string packageName, AffectedItem affectedItem)
+    private static bool IsPackageAffectedItem(PackageInfo computerPackage, string cvePackageName)
     {
-        return affectedItem.Product.StartsWith(packageName, StringComparison.OrdinalIgnoreCase);
+        var sanitizePackageName = SearchTermSanitizer.SanitizePackageName(computerPackage.Name).ToLowerInvariant();
+        return cvePackageName.Trim().Contains(sanitizePackageName, StringComparison.InvariantCultureIgnoreCase);
     }
     
     private bool IsPackageVersionAffected(string packageVersion, VersionInfo versionInfo)

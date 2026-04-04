@@ -38,26 +38,26 @@ public class CveRepository(IOpenSearchClient client) : ICveRepository
             {
                 Should = new List<QueryContainer>
                 {
-                    new TermQuery 
+                    new MatchPhraseQuery 
                     { 
                         Field = "payload.containers.cna.affected.product.keyword", 
-                        Value = sanitizedPackageName 
+                        Query = sanitizedPackageName
                     },
-                    new TermQuery 
+                    new MatchPhraseQuery 
                     { 
                         Field = "payload.containers.adp.affected.product.keyword", 
-                        Value = sanitizedPackageName 
+                        Query = sanitizedPackageName
                     },
                     
-                    new TermQuery 
+                    new MatchPhraseQuery 
                     { 
                         Field = "payload.containers.cna.affected.product.vendor", 
-                        Value = sanitizedPackageName 
+                        Query = sanitizedPackageName
                     },
-                    new TermQuery 
+                    new MatchPhraseQuery 
                     { 
                         Field = "payload.containers.adp.affected.product.vendor", 
-                        Value = sanitizedPackageName 
+                        Query = sanitizedPackageName
                     }
                 },
                 MinimumShouldMatch = 1

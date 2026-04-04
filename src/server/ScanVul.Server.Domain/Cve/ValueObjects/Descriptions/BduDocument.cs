@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json.Serialization;
 
 namespace ScanVul.Server.Domain.Cve.ValueObjects.Descriptions;
@@ -88,6 +89,7 @@ public class BduVulnerableSoftwareWrapper
     public List<BduSoft> Soft { get; set; } = [];
 }
 
+[DebuggerDisplay("Name = {Name}, Vendor = {Vendor}")]
 public class BduSoft
 {
     public required string Name { get; set; }

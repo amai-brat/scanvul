@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using JetBrains.Annotations;
 
 namespace ScanVul.Server.Domain.Cve.ValueObjects.Versions;
@@ -10,7 +11,7 @@ public class CveVersionDocument
 public class Payload
 {
     public required CveMetadata CveMetadata { get; set; }
-    public required Containers Containers { get; set; }
+    public Containers? Containers { get; set; }
 }
 
 public class CveMetadata
@@ -40,6 +41,7 @@ public class AdpContainer
     public List<AffectedItem> Affected { get; set; } = [];
 }
 
+[DebuggerDisplay("Product = {Product}, Vendor = {Vendor}")]
 public class AffectedItem
 {
     public required string Product { get; set; }
