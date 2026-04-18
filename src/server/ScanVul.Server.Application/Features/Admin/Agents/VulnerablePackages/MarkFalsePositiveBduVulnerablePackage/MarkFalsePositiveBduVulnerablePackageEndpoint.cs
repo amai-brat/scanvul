@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
 using ScanVul.Server.Domain.Common;
 
-namespace ScanVul.Server.Application.Features.Admin.Agents.PackageInfos.MarkFalsePositiveBduVulnerablePackage;
+namespace ScanVul.Server.Application.Features.Admin.Agents.VulnerablePackages.MarkFalsePositiveBduVulnerablePackage;
 
 public class MarkFalsePositiveBduVulnerablePackageEndpoint(
     IPackageInfoRepository packageRepository,

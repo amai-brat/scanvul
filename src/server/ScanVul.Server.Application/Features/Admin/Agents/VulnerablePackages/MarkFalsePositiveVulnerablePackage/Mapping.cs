@@ -1,6 +1,6 @@
 using ScanVul.Server.Domain.AgentAggregate.Entities;
 
-namespace ScanVul.Server.Application.Features.Admin.Agents.PackageInfos.MarkFalsePositiveVulnerablePackage;
+namespace ScanVul.Server.Application.Features.Admin.Agents.VulnerablePackages.MarkFalsePositiveVulnerablePackage;
 
 public static class Mapping
 {

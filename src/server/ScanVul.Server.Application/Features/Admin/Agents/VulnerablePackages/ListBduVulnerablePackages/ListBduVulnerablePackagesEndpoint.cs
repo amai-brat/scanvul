@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
 using ScanVul.Server.Domain.Cve.Repositories;
 
-namespace ScanVul.Server.Application.Features.Admin.Agents.PackageInfos.ListBduVulnerablePackages;
+namespace ScanVul.Server.Application.Features.Admin.Agents.VulnerablePackages.ListBduVulnerablePackages;
 
 public class ListBduVulnerablePackagesEndpoint(
     IAgentRepository agentRepository,

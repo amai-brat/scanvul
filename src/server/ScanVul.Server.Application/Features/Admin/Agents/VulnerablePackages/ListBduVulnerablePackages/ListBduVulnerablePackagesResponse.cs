@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 
-namespace ScanVul.Server.Application.Features.Admin.Agents.PackageInfos.ListBduVulnerablePackages;
+namespace ScanVul.Server.Application.Features.Admin.Agents.VulnerablePackages.ListBduVulnerablePackages;
 
 /// <summary>
 /// List vulnerable packages response

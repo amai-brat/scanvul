@@ -3,7 +3,7 @@ using ScanVul.Server.Domain.AgentAggregate.Entities;
 using ScanVul.Server.Domain.Cve.Services;
 using ScanVul.Server.Domain.Cve.ValueObjects.Descriptions;
 
-namespace ScanVul.Server.Application.Features.Admin.Agents.PackageInfos.ListBduVulnerablePackages;
+namespace ScanVul.Server.Application.Features.Admin.Agents.VulnerablePackages.ListBduVulnerablePackages;
 
 public static class Mapping
 {

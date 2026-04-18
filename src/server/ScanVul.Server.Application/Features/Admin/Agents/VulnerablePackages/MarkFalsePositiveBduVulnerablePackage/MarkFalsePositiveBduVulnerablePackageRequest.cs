@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ScanVul.Server.Application.Features.Admin.Agents.PackageInfos.MarkFalsePositiveBduVulnerablePackage;
+namespace ScanVul.Server.Application.Features.Admin.Agents.VulnerablePackages.MarkFalsePositiveBduVulnerablePackage;
 
 /// <summary>
 /// Mark false positive BDU vulnerable package request

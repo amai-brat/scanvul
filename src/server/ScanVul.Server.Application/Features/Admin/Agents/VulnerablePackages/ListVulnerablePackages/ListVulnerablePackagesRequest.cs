@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ScanVul.Server.Application.Features.Admin.Agents.PackageInfos.ListVulnerablePackages;
+namespace ScanVul.Server.Application.Features.Admin.Agents.VulnerablePackages.ListVulnerablePackages;
 
 /// <summary>
 /// List vulnerable packages request

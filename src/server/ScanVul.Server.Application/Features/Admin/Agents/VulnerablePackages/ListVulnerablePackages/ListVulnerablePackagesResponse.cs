@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using JetBrains.Annotations;
 
-namespace ScanVul.Server.Application.Features.Admin.Agents.PackageInfos.ListVulnerablePackages;
+namespace ScanVul.Server.Application.Features.Admin.Agents.VulnerablePackages.ListVulnerablePackages;
 
 /// <summary>
 /// List vulnerable packages response

@@ -1,7 +1,7 @@
 using ScanVul.Server.Domain.AgentAggregate.Entities;
 using ScanVul.Server.Domain.Cve.ValueObjects.Descriptions;
 
-namespace ScanVul.Server.Application.Features.Admin.Agents.PackageInfos.ListVulnerablePackages;
+namespace ScanVul.Server.Application.Features.Admin.Agents.VulnerablePackages.ListVulnerablePackages;
 
 public static class Mapping
 {
