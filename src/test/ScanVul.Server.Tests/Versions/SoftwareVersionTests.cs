@@ -16,6 +16,8 @@ public class SoftwareVersionTests
     [InlineData("0.0.1-alpha", "0.0.1", CompareResult.Less)]
     [InlineData("13.9.8", "14.0", CompareResult.Less)]
     [InlineData("1.0", "1.0", CompareResult.Equal)]
+    [InlineData("2026.03.17-1", "2026.03.17-2", CompareResult.Less)]
+    [InlineData("2026.02.17-1", "2026.03.17-1", CompareResult.Less)]
     public void Compare_InputDataGiven_CorrectlyCompared(
         string first, 
         string second, 
