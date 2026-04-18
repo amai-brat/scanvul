@@ -13,64 +13,22 @@ public class BduVulnerablePackageScanner(
     IComputerRepository computerRepository,
     ILogger<BduVulnerablePackageScanner> logger,
     IUnitOfWork unitOfWork,
-    VersionMatcher versionMatcher) : IVulnerablePackageScanner
+    VersionMatcher versionMatcher) : BaseVulnerablePackageScanner<BduVulnerablePackage>(unitOfWork, logger)
 {
-    public async Task ScanAsync(long computerId, CancellationToken ct = default)
-    {
-        try
-        {
-            await ScanInternalAsync(computerId, ct);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error scanning vulnerable package of computer {ComputerId} (BDU)", computerId);
-        }
-    }
-
-    private async Task ScanInternalAsync(long computerId, CancellationToken ct)
+    protected override async Task<(
+        Computer? Computer, 
+        List<PackageInfo> Packages, 
+        List<BduVulnerablePackage> VulnerablePackages
+        )> GetComputerWithPackagesAsync(long computerId, CancellationToken ct)
     {
         var computer = await computerRepository.GetComputerWithBduPackagesAsync(computerId, ct);
-        if (computer == null)
-        {
-            logger.LogError("Could not find computer {ComputerId}", computerId);
-            throw new Exception($"Could not find computer {computerId}");
-        }
-        logger.LogInformation("Scanning packages of computer {ComputerId} for vulnerabilities (BDU)", computerId);
-
-        List<BduVulnerablePackage> vulnerablePackages = [];
-        foreach (var package in computer.Packages)
-        {
-            vulnerablePackages.AddRange(await ScanPackageAsync(computer, package, ct));
-        }
-
-        var uniqueVulnerablePackages = vulnerablePackages
-            .DistinctBy(x => (x.PackageInfoId, BduId: x.VulnerabilityId))
-            .ToList();
-        
-        var incomingIds = new HashSet<(long PackageInfoId, string BduId)>(uniqueVulnerablePackages
-            .Select(x => (x.PackageInfoId, BduId: x.VulnerabilityId)));
-        var existingIds = new HashSet<(long PackageInfoId, string BduId)>(computer.BduVulnerablePackages
-            .Select(x => (x.PackageInfoId, BduId: x.VulnerabilityId)));
-        
-        // Remove not relevant vulnerable packages
-        var toRemove = computer.BduVulnerablePackages
-            .Where(x => !incomingIds.Contains((x.PackageInfoId, x.VulnerabilityId)))
-            .ToList();
-        foreach (var item in toRemove) 
-            computer.BduVulnerablePackages.Remove(item);
-        
-        // Add new ones
-        var toAdd = uniqueVulnerablePackages
-            .Where(x => !existingIds.Contains((x.PackageInfoId, x.VulnerabilityId)))
-            .ToList();
-        computer.BduVulnerablePackages.AddRange(toAdd);
-
-        await unitOfWork.SaveChangesAsync(ct);
-        
-        logger.LogInformation("Successfully scanned packages of computer {ComputerId} for vulnerabilities (BDU). Found: {Count}", computerId, computer.BduVulnerablePackages.Count);
+        return (computer, computer?.Packages ?? [], computer?.BduVulnerablePackages ?? []);
     }
 
-    private async Task<List<BduVulnerablePackage>> ScanPackageAsync(Computer computer, PackageInfo package, CancellationToken ct = default)
+    protected override async Task<IReadOnlyCollection<BduVulnerablePackage>> ScanPackageAsync(
+        Computer computer, 
+        PackageInfo package, 
+        CancellationToken ct = default)
     {
         var possibleBduDocuments = await bduRepository.GetMatchedBduVersionDocumentsAsync(package, ct);
 
