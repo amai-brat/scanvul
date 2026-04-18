@@ -5,11 +5,10 @@ skinparam defaultTextAlignment center
 skinparam nodesep 50
 skinparam ranksep 60
 
-' ----- Определение цветов и стилей -----
 actor "Администратор" as Admin #E6F3FF
 
 node "Серверная инфраструктура" as ServerInfra {
-    component "Фронтенд и API Gateway\n<<Nginx, React>>" as Nginx #LightGreen
+    component "Фронтенд и API шлюз\n<<Nginx, React>>" as Nginx #LightGreen
     component "Сервер\n<<ASP.NET Core>>" as Server #LightYellow
     
     database "Банк данных\nуязвимостей\n<<OpenSearch>>" as OpenSearch #LightCyan
@@ -26,39 +25,35 @@ node "Агенты" as AgentsGroup #F0F8FF {
     
     node "ОС Windows" {
         component "Агент Windows\n<<.NET Worker>>\n<<Служба Windows>>" as AgWin #LightPink
-        component "Winget\n<<Утилита CLI>>" as Winget #E6E6FA
-        component "Chocolatey\n<<Утилита CLI>>" as Choco #E6E6FA
-        database "Реестр Windows\n<<OS Registry>>" as WinReg #LightCyan
+        component "Winget" as Winget #E6E6FA
+        component "Chocolatey" as Choco #E6E6FA
+        database "Реестр\nWindows" as WinReg #LightCyan
     }
     
     node "Arch Linux" {
         component "Агент Arch Linux\n<<.NET Worker>>\n<<systemd unit>>" as AgArch #LightPink
-        component "pacman\n<<Утилита CLI>>" as Pacman #E6E6FA
+        component "pacman" as Pacman #E6E6FA
     }
     
     node "Alt Linux" {
         component "Агент Alt Linux\n<<.NET Worker>>\n<<systemd unit>>" as AgAlt #LightPink
-        component "apt\n<<Утилита CLI>>" as Rpm #E6E6FA
+        component "apt" as Rpm #E6E6FA
     }
 }
 
-' ----- Связи (Внешние и серверные) -----
-Admin --> Nginx : **HTTPS**\nМониторинг и управление
-Nginx --> Server : **HTTP (proxy_pass)**\nПолучение данных
+Admin --> Nginx
+Nginx --> Server : **HTTP**\nПолучение\nданных
 
-Server --> OpenSearch : **REST API (HTTP)**\nПоиск и обновление уязвимостей
-Server --> Postgres : **TCP (PgSQL)**\nХранение данных об агентах
+Server --> OpenSearch : **REST API (HTTP)**\nПоиск и обновление\nуязвимостей
+Server --> Postgres : **TCP (SQL)**\nХранение данных\nоб агентах
 
 Server --> Wazuh : **HTTPS**\nОбновление CVE
 Server --> FSTEC : **HTTPS**\nОбновление БДУ
-Server --> WingetIndex : **HTTPS**\nОбновление пакетов Winget
+Server --> WingetIndex : **HTTPS**\nОбновление\nпакетов Winget
 
-' ----- Связи: Сервер <-> Агенты -----
-' Используем две линии для наглядности request/response при short-polling
-AgentsGroup --> Server : **HTTP Request (short-polling)**\nHealthCheck,\nинвентаризация,\nзапрос команд
-Server -r-> AgentsGroup : **HTTP Response**\nПередача команд на исполнение
+AgentsGroup --> Server : **HTTP Request**\nHealthCheck,\nинвентаризация,\nзапрос команд
+Server -r-> AgentsGroup : **HTTP Response**\nПередача\nкоманд
 
-' ----- Связи: Обновление ПО -----
 AgWin --> Winget : **CLI / IPC**\nОбновление ПО
 AgWin --> Choco : **CLI / IPC**\nОбновление ПО
 AgWin --> WinReg : **Win32 API**\nСписок ПО
