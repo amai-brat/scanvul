@@ -99,9 +99,9 @@
   - [x] hangfire job to generate report
   - [x] block on frontend on main page
 - [ ] lists with false-positive and patchless vulnerable packages
-  - [ ] PatchExists - column to VulnerablePackage and BduVulnerablePackage
-  - [ ] remember IsFalsePositive and PatchExists when scanning
-  - [ ] API to mark/unmark PatchExists, IsFalsePositive
+  - [x] PatchExists - column to VulnerablePackage and BduVulnerablePackage
+  - [x] remember IsFalsePositive and PatchExists when scanning
+  - [x] API to mark/unmark PatchExists, IsFalsePositive
   - [ ] blocks on frontend with not PatchExists and IsFalsePositive
 - [ ] snapshots
   - [ ] entities for snapshot (vulnerable packages with scoring by cvss), diff between snapshots (what vulnerable package added, removed)

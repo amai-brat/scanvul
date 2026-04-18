@@ -22,6 +22,8 @@ public record ListVulnerablePackagesResponse(List<VulnerablePackageResponse> Pac
 /// <param name="CvssV30">CVSS v3.0 score</param>
 /// <param name="CvssV20">CVSS v2.0 score</param>
 /// <param name="Description">English description of CVE</param>
+/// <param name="IsFalsePositive">Flag whether package is false positive vulnerable</param>
+/// <param name="IsPatchless">Flag whether package doesn't have patches to fix vulnerablity currently</param>
 [PublicAPI]
 public record VulnerablePackageResponse(
     long Id,
@@ -35,5 +37,7 @@ public record VulnerablePackageResponse(
     double? CvssV30,
     [property: JsonPropertyName("cvssV2_0")]
     double? CvssV20,
-    string? Description);
+    string? Description,
+    bool IsFalsePositive,
+    bool IsPatchless);
     

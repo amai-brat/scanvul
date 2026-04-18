@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
 
 namespace ScanVul.Server.Domain.AgentAggregate.Repositories;
@@ -17,18 +18,18 @@ public interface IAgentRepository
     Task<Agent?> GetWithCommandsNoTrackingAsync(long agentId, CancellationToken ct = default);
     
     /// <summary>
-    /// Get agent with vulnerable packages excluding false positives
+    /// Get agent with vulnerable packages with filters
     /// </summary>
-    /// <param name="agentId"></param>
-    /// <param name="ct"></param>
-    /// <returns></returns>
-    Task<Agent?> GetWithVulnerablePackagesNoTrackingAsync(long agentId, CancellationToken ct = default);
+    Task<Agent?> GetWithVulnerablePackagesNoTrackingAsync(
+        long agentId, 
+        Expression<Func<VulnerablePackage, bool>> vulnerablePackageFilter, 
+        CancellationToken ct = default);
     
     /// <summary>
-    /// Get agent with BDU vulnerable packages excluding false positives
+    /// Get agent with BDU vulnerable packages with filters
     /// </summary>
-    /// <param name="agentId"></param>
-    /// <param name="ct"></param>
-    /// <returns></returns>
-    Task<Agent?> GetWithBduVulnerablePackagesNoTrackingAsync(long agentId, CancellationToken ct = default);
+    Task<Agent?> GetWithBduVulnerablePackagesNoTrackingAsync(
+        long agentId,
+        Expression<Func<BduVulnerablePackage, bool>> vulnerablePackageFilter, 
+        CancellationToken ct = default);
 }

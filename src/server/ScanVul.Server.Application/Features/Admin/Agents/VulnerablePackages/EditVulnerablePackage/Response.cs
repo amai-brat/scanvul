@@ -11,7 +11,7 @@ namespace ScanVul.Server.Application.Features.Admin.Agents.VulnerablePackages.Ed
 /// <param name="PackageName">Package name</param>
 /// <param name="PackageVersion">Package version</param>
 /// <param name="IsFalsePositive">Flag whether package is false positive vulnerable</param>
-/// <param name="IsFalsePositive">Flag whether package doesn't have patches to fix vulnerablity currently</param>
+/// <param name="IsPatchless">Flag whether package doesn't have patches to fix vulnerablity currently</param>
 [PublicAPI]
 public record EditVulnerablePackageResponse(
     long Id,

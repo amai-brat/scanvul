@@ -37,7 +37,9 @@ public static class Mapping
             Cvss3: cvss3Score,
             Cvss4: cvss4Score,
             Software: doc.VulnerableSoftware.Soft
-                .SelectSimilarPackage(p.PackageInfo.Name));
+                .SelectSimilarPackage(p.PackageInfo.Name),
+            IsFalsePositive: p.IsFalsePositive,
+            IsPatchless: p.IsPatchless);
     }
 
     private static IEnumerable<VulnerableSoftware> SelectSimilarPackage(

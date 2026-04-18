@@ -30,7 +30,12 @@ public class ListBduVulnerablePackagesEndpoint(
         ListBduVulnerablePackagesRequest req,
         CancellationToken ct)
     {
-        var agent = await agentRepository.GetWithBduVulnerablePackagesNoTrackingAsync(req.AgentId, ct);
+        var agent = await agentRepository.GetWithBduVulnerablePackagesNoTrackingAsync(
+            req.AgentId,
+            v => 
+                (req.IsFalsePositive == null || v.IsFalsePositive) && 
+                (req.IsPatchless == null || v.IsPatchless), 
+            ct);
         if (agent is null)
         {
             AddError(x => x.AgentId, "Agent not found");

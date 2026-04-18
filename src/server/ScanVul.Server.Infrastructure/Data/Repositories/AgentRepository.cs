@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
@@ -93,22 +94,28 @@ public class AgentRepository(AppDbContext dbContext) : IAgentRepository
         return agent;
     }
 
-    public async Task<Agent?> GetWithVulnerablePackagesNoTrackingAsync(long agentId, CancellationToken ct = default)
+    public async Task<Agent?> GetWithVulnerablePackagesNoTrackingAsync(
+        long agentId, 
+        Expression<Func<VulnerablePackage, bool>> vulnerablePackageFilter,
+        CancellationToken ct = default)
     {
         var agent = await dbContext.Agents
             .Include(x => x.Computer)
-                .ThenInclude(x => x.VulnerablePackages.Where(vp => !vp.IsFalsePositive))
+                .ThenInclude(x => x.VulnerablePackages.AsQueryable().Where(vulnerablePackageFilter))
                     .ThenInclude(x => x.PackageInfo)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == agentId, cancellationToken: ct);
         return agent;
     }
 
-    public async Task<Agent?> GetWithBduVulnerablePackagesNoTrackingAsync(long agentId, CancellationToken ct = default)
+    public async Task<Agent?> GetWithBduVulnerablePackagesNoTrackingAsync(
+        long agentId,
+        Expression<Func<BduVulnerablePackage, bool>> vulnerablePackageFilter,
+        CancellationToken ct = default)
     {
         var agent = await dbContext.Agents
             .Include(x => x.Computer)
-                .ThenInclude(x => x.BduVulnerablePackages.Where(vp => !vp.IsFalsePositive))
+                .ThenInclude(x => x.BduVulnerablePackages.AsQueryable().Where(vulnerablePackageFilter))
                     .ThenInclude(x => x.PackageInfo)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == agentId, cancellationToken: ct);

@@ -30,7 +30,12 @@ public class ListVulnerablePackagesEndpoint(
         ListVulnerablePackagesRequest req,
         CancellationToken ct)
     {
-        var agent = await agentRepository.GetWithVulnerablePackagesNoTrackingAsync(req.AgentId, ct);
+        var agent = await agentRepository.GetWithVulnerablePackagesNoTrackingAsync(
+            req.AgentId, 
+            v => 
+                (req.IsFalsePositive == null || v.IsFalsePositive) && 
+                (req.IsPatchless == null || v.IsPatchless), 
+            ct);
         if (agent is null)
         {
             AddError(x => x.AgentId, "Agent not found");
