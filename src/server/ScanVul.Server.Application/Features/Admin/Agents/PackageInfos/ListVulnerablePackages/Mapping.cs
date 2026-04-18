@@ -49,7 +49,7 @@ public static class Mapping
         
         return new VulnerablePackageResponse(
             Id: p.Id,
-            CveId: p.CveId,
+            CveId: p.VulnerabilityId,
             PackageId: p.PackageInfoId,
             PackageName: p.PackageInfo.Name,
             PackageVersion: p.PackageInfo.Version,

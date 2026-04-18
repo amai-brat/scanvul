@@ -47,24 +47,24 @@ public class VulnerablePackageScanner(
         }
 
         var uniqueVulnerablePackages = vulnerablePackages
-            .DistinctBy(x => (x.PackageInfoId, x.CveId))
+            .DistinctBy(x => (x.PackageInfoId, CveId: x.VulnerabilityId))
             .ToList();
         
         var incomingIds = new HashSet<(long PackageInfoId, string CveId)>(uniqueVulnerablePackages
-            .Select(x => (x.PackageInfoId, x.CveId)));
+            .Select(x => (x.PackageInfoId, CveId: x.VulnerabilityId)));
         var existingIds = new HashSet<(long PackageInfoId, string CveId)>(computer.VulnerablePackages
-            .Select(x => (x.PackageInfoId, x.CveId)));
+            .Select(x => (x.PackageInfoId, CveId: x.VulnerabilityId)));
         
         // Remove not relevant vulnerable packages
         var toRemove = computer.VulnerablePackages
-            .Where(x => !incomingIds.Contains((x.PackageInfoId, x.CveId)))
+            .Where(x => !incomingIds.Contains((x.PackageInfoId, x.VulnerabilityId)))
             .ToList();
         foreach (var item in toRemove) 
             computer.VulnerablePackages.Remove(item);
         
         // Add new ones
         var toAdd = uniqueVulnerablePackages
-            .Where(x => !existingIds.Contains((x.PackageInfoId, x.CveId)))
+            .Where(x => !existingIds.Contains((x.PackageInfoId, x.VulnerabilityId)))
             .ToList();
         computer.VulnerablePackages.AddRange(toAdd);
 

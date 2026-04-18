@@ -10,7 +10,7 @@ public class BduVulnerablePackageConfiguration : IEntityTypeConfiguration<BduVul
     {
         builder.HasKey(x => x.Id);
         
-        builder.HasIndex(x => new {x.PackageInfoId, x.BduId, x.ComputerId})
+        builder.HasIndex(x => new {x.PackageInfoId, BduId = x.VulnerabilityId, x.ComputerId})
             .IsUnique();
         
         builder.HasOne(x => x.Computer)

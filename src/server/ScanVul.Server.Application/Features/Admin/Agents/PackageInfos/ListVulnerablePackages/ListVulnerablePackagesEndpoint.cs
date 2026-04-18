@@ -40,14 +40,14 @@ public class ListVulnerablePackagesEndpoint(
         var cveDescriptions = await cveRepository.GetCveDescriptionDocumentsAsync(
             agent.Computer
                 .VulnerablePackages
-                .Select(x => x.CveId), 
+                .Select(x => x.VulnerabilityId), 
             ct);
 
         var descriptionDic = cveDescriptions
             .ToDictionary(x => x.Payload.CveMetadata.CveId);
         
         var packages = agent.Computer.VulnerablePackages
-            .Select(p => p.MapToResponse(descriptionDic[p.CveId]))
+            .Select(p => p.MapToResponse(descriptionDic[p.VulnerabilityId]))
             .OrderBy(x => x.PackageName)
             .ToList();
         

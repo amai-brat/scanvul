@@ -8,7 +8,7 @@ public static class Mapping
     {
         return new MarkFalsePositiveBduVulnerablePackageResponse(
             Id: p.Id,
-            BduId: p.BduId,
+            BduId: p.VulnerabilityId,
             PackageId: p.PackageInfoId,
             PackageName: p.PackageInfo.Name,
             PackageVersion: p.PackageInfo.Version,

@@ -42,24 +42,24 @@ public class BduVulnerablePackageScannerV2(
         }
 
         var uniqueVulnerablePackages = vulnerablePackages
-            .DistinctBy(x => (x.PackageInfoId, x.BduId))
+            .DistinctBy(x => (x.PackageInfoId, BduId: x.VulnerabilityId))
             .ToList();
         
         var incomingIds = new HashSet<(long PackageInfoId, string BduId)>(uniqueVulnerablePackages
-            .Select(x => (x.PackageInfoId, x.BduId)));
+            .Select(x => (x.PackageInfoId, BduId: x.VulnerabilityId)));
         var existingIds = new HashSet<(long PackageInfoId, string BduId)>(computer.BduVulnerablePackages
-            .Select(x => (x.PackageInfoId, x.BduId)));
+            .Select(x => (x.PackageInfoId, BduId: x.VulnerabilityId)));
         
         // Remove not relevant vulnerable packages
         var toRemove = computer.BduVulnerablePackages
-            .Where(x => !incomingIds.Contains((x.PackageInfoId, x.BduId)))
+            .Where(x => !incomingIds.Contains((x.PackageInfoId, x.VulnerabilityId)))
             .ToList();
         foreach (var item in toRemove) 
             computer.BduVulnerablePackages.Remove(item);
         
         // Add new ones
         var toAdd = uniqueVulnerablePackages
-            .Where(x => !existingIds.Contains((x.PackageInfoId, x.BduId)))
+            .Where(x => !existingIds.Contains((x.PackageInfoId, x.VulnerabilityId)))
             .ToList();
         computer.BduVulnerablePackages.AddRange(toAdd);
 

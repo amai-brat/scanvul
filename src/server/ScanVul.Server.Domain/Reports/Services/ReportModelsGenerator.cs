@@ -69,13 +69,13 @@ public class ReportModelsGenerator(
         CancellationToken ct = default)
     {
         var cveDescriptions = await cveRepository.GetCveDescriptionDocumentsAsync(
-           vulnerablePackages.Select(x => x.CveId), ct);
+           vulnerablePackages.Select(x => x.VulnerabilityId), ct);
 
         var descriptionDic = cveDescriptions
             .ToDictionary(x => x.Payload.CveMetadata.CveId);
         
         var scores = vulnerablePackages
-            .Select(p => GetCveCvssScore(descriptionDic[p.CveId]))
+            .Select(p => GetCveCvssScore(descriptionDic[p.VulnerabilityId]))
             .ToList();
         
         int crit = 0, high = 0, medium = 0, low = 0;
@@ -101,13 +101,13 @@ public class ReportModelsGenerator(
         CancellationToken ct = default)
     {
         var bduDescriptions = await bduRepository.GetBduDescriptionDocumentsAsync(
-            vulnerablePackages.Select(x => x.BduId), ct);
+            vulnerablePackages.Select(x => x.VulnerabilityId), ct);
 
         var descriptionDic = bduDescriptions
             .ToDictionary(x => x.Identifier.First());
         
         var scores = vulnerablePackages
-            .Select(p => GetBduCvssScore(descriptionDic[p.BduId]))
+            .Select(p => GetBduCvssScore(descriptionDic[p.VulnerabilityId]))
             .ToList();
         
         int crit = 0, high = 0, medium = 0, low = 0;

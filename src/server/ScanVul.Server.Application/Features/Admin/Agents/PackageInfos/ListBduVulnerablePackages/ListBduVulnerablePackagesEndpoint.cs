@@ -40,14 +40,14 @@ public class ListBduVulnerablePackagesEndpoint(
         var bduDescriptions = await bduRepository.GetBduDescriptionDocumentsAsync(
             agent.Computer
                 .BduVulnerablePackages
-                .Select(x => x.BduId), 
+                .Select(x => x.VulnerabilityId), 
             ct);
 
         var descriptionDic = bduDescriptions
             .ToDictionary(x => x.Identifier.First());
         
         var packages = agent.Computer.BduVulnerablePackages
-            .Select(p => p.MapToResponse(descriptionDic[p.BduId]))
+            .Select(p => p.MapToResponse(descriptionDic[p.VulnerabilityId]))
             .OrderBy(x => x.PackageName)
             .ThenBy(x => x.BduId)
             .ToList();
