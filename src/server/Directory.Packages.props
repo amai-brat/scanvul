@@ -2,33 +2,36 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+    <CentralPackageFloatingVersionsEnabled>true</CentralPackageFloatingVersionsEnabled>
+    <MicrosoftPackageVersion>10.0.*</MicrosoftPackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <!-- Microsoft -->
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.11" />
-    <PackageVersion Include="Microsoft.Data.Sqlite" Version="10.0.3" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.11" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.11" />
-    <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.11" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.11" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.11" />
-    <PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.11" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(MicrosoftPackageVersion)" />
+    <PackageVersion Include="Microsoft.Data.Sqlite" Version="$(MicrosoftPackageVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="$(MicrosoftPackageVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="$(MicrosoftPackageVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="$(MicrosoftPackageVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(MicrosoftPackageVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="$(MicrosoftPackageVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="$(MicrosoftPackageVersion)" />
     <!-- Other -->
-    <PackageVersion Include="Asp.Versioning.Mvc" Version="8.1.0" />
-    <PackageVersion Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+    <PackageVersion Include="Asp.Versioning.Mvc" Version="8.1.1" />
+    <PackageVersion Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.1" />
     <PackageVersion Include="Dapper" Version="2.1.66" />
-    <PackageVersion Include="EFCore.BulkExtensions" Version="9.0.2" />
-    <PackageVersion Include="EFCore.NamingConventions" Version="9.0.0" />
-    <PackageVersion Include="FastEndpoints" Version="7.1.1" />
-    <PackageVersion Include="FastEndpoints.Security" Version="7.1.1" />
-    <PackageVersion Include="FastEndpoints.Swagger" Version="7.1.1" />
-    <PackageVersion Include="Hangfire" Version="1.8.22" />
-    <PackageVersion Include="Hangfire.PostgreSql" Version="1.20.12" />
-    <PackageVersion Include="JetBrains.Annotations" Version="2025.2.2" />
-    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageVersion Include="EFCore.BulkExtensions" Version="10.0.1" />
+    <PackageVersion Include="EFCore.NamingConventions" Version="10.0.1" />
+    <PackageVersion Include="FastEndpoints" Version="8.1.0" />
+    <PackageVersion Include="FastEndpoints.Security" Version="8.1.0" />
+    <PackageVersion Include="FastEndpoints.Swagger" Version="8.1.0" />
+    <PackageVersion Include="Hangfire" Version="1.8.23" />
+    <PackageVersion Include="Hangfire.PostgreSql" Version="1.21.1" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2025.2.4" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
     <PackageVersion Include="NuGet.Protocol" Version="7.3.1" />
     <PackageVersion Include="OpenSearch.Client" Version="1.8.0" />
     <PackageVersion Include="OpenSearch.Client.JsonNetSerializer" Version="1.8.0" />
-    <PackageVersion Include="QuestPDF" Version="2026.2.1" />
+    <PackageVersion Include="QuestPDF" Version="2026.2.4" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 </Project>
