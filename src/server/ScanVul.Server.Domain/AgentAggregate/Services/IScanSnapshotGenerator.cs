@@ -35,16 +35,31 @@ public class ScanSnapshotGenerator(
         };
 
         var scanSnapshot = new ScanSnapshot(computer, snapshotPayload);
-
         var lastSnapshot = computer.Snapshots.FirstOrDefault();
-        if (lastSnapshot is not null)
+
+        if (lastSnapshot is null)
+        {
+            // likely this is first snapshot so add it
+            computer.Snapshots.Add(scanSnapshot);
+        }
+        else
         {
             var diffPayload = GetDiffPayload(computerId);
+            if (diffPayload.IsEmpty)
+            {
+                // there is last snapshot, but diff is empty => skip, no need to save same snapshot
+                return;
+            }
+            
+            computer.Snapshots.Add(scanSnapshot);
+            
+            // circular reference scan_snapshot.last_diff_id <-> scan_snapshot_diff.second_snapshot_id
+            await unitOfWork.SaveChangesAsync(ct);
+            
             var lastDiff = new ScanSnapshotDiff(lastSnapshot, scanSnapshot, diffPayload);
             scanSnapshot.LastDiff = lastDiff;
         }
         
-        computer.Snapshots.Add(scanSnapshot);
         await unitOfWork.SaveChangesAsync(ct);
 
         ClearCache(computerId);
