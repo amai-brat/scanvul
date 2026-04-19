@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
@@ -11,6 +12,7 @@ public class BduVulnerablePackageScannerV2(
     IBduRepository bduRepository,
     IComputerRepository computerRepository,
     ILogger<BduVulnerablePackageScannerV2> logger,
+    IMemoryCache cache,
     IUnitOfWork unitOfWork) : BaseVulnerablePackageScanner<BduVulnerablePackage>(unitOfWork, logger)
 {
     protected override async Task<(
@@ -45,7 +47,16 @@ public class BduVulnerablePackageScannerV2(
 
         return vulnerablePackages;
     }
-    
+
+    protected override Task SaveVulnerablePackagesChangesAsync(long computerId, List<BduVulnerablePackage> removedVulnerablePackages, List<BduVulnerablePackage> addedVulnerablePackages,
+        CancellationToken ct = default)
+    {
+        cache.Set(CacheKeys.AddedBduVulnerablePackages(computerId), addedVulnerablePackages);
+        cache.Set(CacheKeys.RemovedBduVulnerablePackages(computerId), removedVulnerablePackages);
+        
+        return Task.CompletedTask;
+    }
+
     private static bool IsPackageNameAffected(PackageInfo computerPackage, string bduPackageName)
     {
         var sanitizePackageName = SearchTermSanitizer.SanitizePackageName(computerPackage.Name).ToLowerInvariant();

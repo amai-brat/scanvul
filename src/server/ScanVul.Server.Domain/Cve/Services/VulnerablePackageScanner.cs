@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
@@ -16,6 +17,7 @@ public class VulnerablePackageScanner(
     ILogger<VulnerablePackageScanner> logger,
     IOptions<ScanSettings> options,
     IUnitOfWork unitOfWork,
+    IMemoryCache cache,
     VersionMatcher versionMatcher) : BaseVulnerablePackageScanner<VulnerablePackage>(unitOfWork, logger)
 {
     protected override async Task<(
@@ -24,7 +26,7 @@ public class VulnerablePackageScanner(
         List<VulnerablePackage> VulnerablePackages
         )> GetComputerWithPackagesAsync(long computerId, CancellationToken ct)
     {
-        var computer = await computerRepository.GetComputerWithAllPackagesAsync(computerId, ct);
+        var computer = await computerRepository.GetComputerWithCvePackagesAsync(computerId, ct);
         return (computer, computer?.Packages ?? [], computer?.VulnerablePackages ?? []);
     }
 
@@ -78,6 +80,15 @@ public class VulnerablePackageScanner(
         }
 
         return vulnerablePackages;
+    }
+
+    protected override Task SaveVulnerablePackagesChangesAsync(long computerId, List<VulnerablePackage> removedVulnerablePackages, List<VulnerablePackage> addedVulnerablePackages,
+        CancellationToken ct = default)
+    {
+        cache.Set(CacheKeys.AddedVulnerablePackages(computerId), addedVulnerablePackages);
+        cache.Set(CacheKeys.RemovedVulnerablePackages(computerId), removedVulnerablePackages);
+        
+        return Task.CompletedTask;
     }
 
     private static bool IsPackageAffectedItem(PackageInfo computerPackage, string cvePackageName)

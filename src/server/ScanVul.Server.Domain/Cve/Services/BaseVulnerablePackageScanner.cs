@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
+using ScanVul.Server.Domain.AgentAggregate.Services;
 using ScanVul.Server.Domain.Common;
 
 namespace ScanVul.Server.Domain.Cve.Services;
@@ -30,6 +31,19 @@ public abstract class BaseVulnerablePackageScanner<TVulnPkg>(
     protected abstract Task<IReadOnlyCollection<TVulnPkg>> ScanPackageAsync(
         Computer computer,
         PackageInfo package,
+        CancellationToken ct = default);
+
+    /// <summary>
+    /// Save changes of vulnerable packages (in cache) to use them later in <see cref="IScanSnapshotGenerator"/> 
+    /// </summary>
+    /// <param name="computerId">Computer ID</param>
+    /// <param name="removedVulnerablePackages">Removed ones</param>
+    /// <param name="addedVulnerablePackages">Added ones</param>
+    /// <param name="ct">Cancellation token</param>
+    protected abstract Task SaveVulnerablePackagesChangesAsync(
+        long computerId,
+        List<TVulnPkg> removedVulnerablePackages,
+        List<TVulnPkg> addedVulnerablePackages, 
         CancellationToken ct = default);
     
     private async Task ScanInternalAsync(long computerId, CancellationToken ct)
@@ -71,6 +85,8 @@ public abstract class BaseVulnerablePackageScanner<TVulnPkg>(
         computerWithPackages.VulnerablePackages.AddRange(toAdd);
 
         await unitOfWork.SaveChangesAsync(ct);
+
+        await SaveVulnerablePackagesChangesAsync(computerId, toRemove, toAdd, ct);
         
         logger.LogInformation("Successfully scanned packages of computer {ComputerId} for vulnerabilities", computerId);
     }
