@@ -13,6 +13,7 @@ public class ScanSnapshotDiff
     public ScanSnapshot SecondSnapshot { get; private set; } = null!;
 
     public ScanSnapshotDiffPayload Payload { get; private set; } = null!;
+    public ScanSnapshotDiffSummary Summary { get; private set; } = null!;
 
     [UsedImplicitly]
     private ScanSnapshotDiff() { }
@@ -27,6 +28,7 @@ public class ScanSnapshotDiff
         SecondSnapshotId = secondSnapshot.Id;
         SecondSnapshot = secondSnapshot;
         Payload = payload;
+        Summary = payload.CreateSummary();
     }
 }
 
@@ -47,4 +49,29 @@ public class ScanSnapshotDiffPayload
     
     public List<BduVulnerablePackage> AddedBduVulnerablePackages { get; set; } = [];
     public List<BduVulnerablePackage> RemovedBduVulnerablePackages { get; set; } = [];
+
+    public ScanSnapshotDiffSummary CreateSummary()
+    {
+        return new ScanSnapshotDiffSummary
+        {
+            AddedPackages = AddedPackages.Count,
+            RemovedPackages = RemovedPackages.Count,
+            AddedVulnerablePackages = AddedVulnerablePackages.Count,
+            RemovedVulnerablePackages = RemovedVulnerablePackages.Count,
+            AddedBduVulnerablePackages = AddedBduVulnerablePackages.Count,
+            RemovedBduVulnerablePackages = RemovedBduVulnerablePackages.Count
+        };
+    }
+}
+
+public class ScanSnapshotDiffSummary
+{
+    public int AddedPackages { get; set; }
+    public int RemovedPackages { get; set; }
+    
+    public int AddedVulnerablePackages { get; set; }
+    public int RemovedVulnerablePackages { get; set; }
+    
+    public int AddedBduVulnerablePackages { get; set; }
+    public int RemovedBduVulnerablePackages { get; set; }
 }

@@ -14,6 +14,8 @@ public class ScanSnapshot
     public Computer Computer { get; private set; } = null!;
 
     public ScanSnapshotPayload Payload { get; private set; } = null!;
+    public ScanSnapshotSummary Summary { get; private set; } = null!;
+    
     public ScanSnapshotDiff? LastDiff { get; set; }
 
     [UsedImplicitly]
@@ -24,6 +26,7 @@ public class ScanSnapshot
         ComputerId = computer.Id;
         Computer = computer;
         Payload = payload;
+        Summary = payload.CreateSummary();
         
         CreatedAt = DateTime.UtcNow;
     }

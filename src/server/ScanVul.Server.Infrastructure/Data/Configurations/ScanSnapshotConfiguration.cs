@@ -16,6 +16,9 @@ public class ScanSnapshotConfiguration : IEntityTypeConfiguration<ScanSnapshot>
 
         builder.ComplexProperty(x => x.Payload, 
             b => b.ToJson());
+        
+        builder.ComplexProperty(x => x.Summary,
+            b => b.ToJson());
     }
 }
 
@@ -33,6 +36,9 @@ public class ScanSnapshotDiffConfiguration : IEntityTypeConfiguration<ScanSnapsh
             .HasForeignKey(x => x.SecondSnapshotId);
 
         builder.ComplexProperty(x => x.Payload, 
+            b => b.ToJson());
+        
+        builder.ComplexProperty(x => x.Summary,
             b => b.ToJson());
     }
 }
