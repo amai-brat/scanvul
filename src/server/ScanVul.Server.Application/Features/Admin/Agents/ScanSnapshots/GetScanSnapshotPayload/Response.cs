@@ -1,0 +1,73 @@
+using System.Text.Json.Serialization;
+using JetBrains.Annotations;
+
+namespace ScanVul.Server.Application.Features.Admin.Agents.ScanSnapshots.GetScanSnapshotPayload;
+
+/// <summary>
+/// Get scan snapshot payload response
+/// </summary>
+/// <param name="Payload">Payload on snapshot</param>
+/// <param name="Diff">Payload of diff between this snapshot and before (nullable)</param>
+[PublicAPI]
+public record GetScanSnapshotPayloadResponse(
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    ScanSnapshotPayloadResponse? Payload,
+    ScanSnapshotDiffPayloadResponse? Diff);
+    
+/// <summary>
+/// Payload on snapshot
+/// </summary>
+/// <param name="Packages">Packages</param>
+/// <param name="VulnerablePackages">Vulnerable packages (CVE)</param>
+/// <param name="BduVulnerablePackages">Vulnerable packages (BDU)</param>
+[PublicAPI]
+public record ScanSnapshotPayloadResponse(
+    IEnumerable<PackageInfo> Packages,
+    IEnumerable<VulnerablePackage> VulnerablePackages,
+    IEnumerable<VulnerablePackage> BduVulnerablePackages);
+
+/// <summary>
+/// Payload of diff between this snapshot and before
+/// </summary>
+/// <param name="AddedPackages">Added packages</param>
+/// <param name="RemovedPackages">Removed packages</param>
+/// <param name="AddedVulnerablePackages">Added vulnerable packages (CVE)</param>
+/// <param name="RemovedVulnerablePackages">Removed vulnerable packages (CVE)</param>
+/// <param name="AddedBduVulnerablePackages">Added vulnerable packages (BDU)</param>
+/// <param name="RemovedBduVulnerablePackages">Removed vulnerable packages (BDU)</param>
+[PublicAPI]
+public record ScanSnapshotDiffPayloadResponse(
+    IEnumerable<PackageInfo> AddedPackages,
+    IEnumerable<PackageInfo> RemovedPackages,
+    IEnumerable<VulnerablePackage> AddedVulnerablePackages,
+    IEnumerable<VulnerablePackage> RemovedVulnerablePackages,
+    IEnumerable<VulnerablePackage> AddedBduVulnerablePackages,
+    IEnumerable<VulnerablePackage> RemovedBduVulnerablePackages);
+
+/// <summary>
+/// Package
+/// </summary>
+/// <param name="Id">Package ID</param>
+/// <param name="Name">Package name</param>
+/// <param name="Version">Package version</param>
+[PublicAPI]
+public record PackageInfo(
+    long Id, 
+    string Name, 
+    string Version);
+
+/// <summary>
+/// Vulnerable package
+/// </summary>
+/// <param name="Id">Vulnerable package ID</param>
+/// <param name="VulnerabilityId">Vulnerability ID (e.g. CVE-2024-56738, BDU:2026-05547)</param>
+/// <param name="PackageInfoId">Package ID</param>
+/// <param name="IsFalsePositive">Scanner false-positively marked package as vulnerable</param>
+/// <param name="IsPatchless">Vulnerable package currently doesn't have patch</param>
+[PublicAPI]
+public record VulnerablePackage(
+    long Id, 
+    string VulnerabilityId, 
+    long PackageInfoId, 
+    bool IsFalsePositive, 
+    bool IsPatchless);

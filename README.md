@@ -106,7 +106,7 @@
 - [ ] snapshots
   - [x] entities for snapshot (vulnerable packages with scoring by cvss), diff between snapshots (what vulnerable package added, removed)
   - [x] snapshot for every scanning process (if no diff (changes), don't save??)
-  - [ ] snapshot and diff summary
+  - [x] snapshot and diff summary
   - [ ] frontend: block right to commands with snapshot summary + diff summary, when clicking to snapshot, modal with info
   - [ ] snapshot diffs for all organization's agents (to pdf)
 

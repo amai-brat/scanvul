@@ -32,4 +32,6 @@ public interface IAgentRepository
         long agentId,
         Expression<Func<BduVulnerablePackage, bool>> vulnerablePackageFilter, 
         CancellationToken ct = default);
+    
+    Task<Agent?> GetWithScanSnapshotsNoTrackingAsync(long agentId, CancellationToken ct = default);
 }

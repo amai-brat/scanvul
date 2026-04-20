@@ -121,4 +121,15 @@ public class AgentRepository(AppDbContext dbContext) : IAgentRepository
             .FirstOrDefaultAsync(x => x.Id == agentId, cancellationToken: ct);
         return agent;
     }
+
+    public async Task<Agent?> GetWithScanSnapshotsNoTrackingAsync(long agentId, CancellationToken ct = default)
+    {
+        var agent = await dbContext.Agents
+            .Include(x => x.Computer)
+                .ThenInclude(x => x.Snapshots)
+                    .ThenInclude(x => x.LastDiff)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == agentId, cancellationToken: ct);
+        return agent;
+    }
 }
