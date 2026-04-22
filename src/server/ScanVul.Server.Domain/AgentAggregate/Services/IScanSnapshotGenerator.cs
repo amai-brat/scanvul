@@ -29,9 +29,9 @@ public class ScanSnapshotGenerator(
 
         var snapshotPayload = new ScanSnapshotPayload
         {
-            Packages = computer.Packages,
-            VulnerablePackages = computer.VulnerablePackages,
-            BduVulnerablePackages = computer.BduVulnerablePackages
+            Packages = computer.Packages.Select(ReducedPackageInfo.From).ToList(),
+            VulnerablePackages = computer.VulnerablePackages.Select(ReducedVulnerablePackage.From).ToList(),
+            BduVulnerablePackages = computer.BduVulnerablePackages.Select(ReducedVulnerablePackage.From).ToList()
         };
 
         var scanSnapshot = new ScanSnapshot(computer, snapshotPayload);
@@ -70,22 +70,22 @@ public class ScanSnapshotGenerator(
         var diffPayload = new ScanSnapshotDiffPayload();
         
         var addedPackages = cache.Get<List<PackageInfo>>(CacheKeys.AddedPackages(computerId));
-        if (addedPackages is not null) diffPayload.AddedPackages = addedPackages;
+        if (addedPackages is not null) diffPayload.AddedPackages = addedPackages.Select(ReducedPackageInfo.From).ToList();
         
         var removedPackages = cache.Get<List<PackageInfo>>(CacheKeys.RemovedPackages(computerId));
-        if (removedPackages is not null) diffPayload.RemovedPackages = removedPackages;
+        if (removedPackages is not null) diffPayload.RemovedPackages = removedPackages.Select(ReducedPackageInfo.From).ToList();
         
         var addedVulns = cache.Get<List<VulnerablePackage>>(CacheKeys.AddedVulnerablePackages(computerId));
-        if (addedVulns is not null) diffPayload.AddedVulnerablePackages = addedVulns;
+        if (addedVulns is not null) diffPayload.AddedVulnerablePackages = addedVulns.Select(ReducedVulnerablePackage.From).ToList();
         
         var removedVulns = cache.Get<List<VulnerablePackage>>(CacheKeys.RemovedVulnerablePackages(computerId));
-        if (removedVulns is not null) diffPayload.RemovedVulnerablePackages = removedVulns;
+        if (removedVulns is not null) diffPayload.RemovedVulnerablePackages = removedVulns.Select(ReducedVulnerablePackage.From).ToList();
         
         var addedBduVulns = cache.Get<List<BduVulnerablePackage>>(CacheKeys.AddedBduVulnerablePackages(computerId));
-        if (addedBduVulns is not null) diffPayload.AddedBduVulnerablePackages = addedBduVulns;
+        if (addedBduVulns is not null) diffPayload.AddedBduVulnerablePackages = addedBduVulns.Select(ReducedVulnerablePackage.From).ToList();
         
         var removedBduVulns = cache.Get<List<BduVulnerablePackage>>(CacheKeys.RemovedBduVulnerablePackages(computerId));
-        if (removedBduVulns is not null) diffPayload.RemovedBduVulnerablePackages = removedBduVulns;
+        if (removedBduVulns is not null) diffPayload.RemovedBduVulnerablePackages = removedBduVulns.Select(ReducedVulnerablePackage.From).ToList();
 
         return diffPayload;
     }

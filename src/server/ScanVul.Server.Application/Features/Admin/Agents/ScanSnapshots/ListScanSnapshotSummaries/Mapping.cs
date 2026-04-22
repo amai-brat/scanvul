@@ -8,16 +8,17 @@ public static class Mapping
     {
         return new ScanSnapshotSummary(
             SnapshotId: snapshot.Id, 
-            Payload: snapshot.Payload.ToResponse(),
+            Payload: snapshot.Summary.ToResponse(),
             Diff: snapshot.LastDiff?.Summary.ToResponse());
     }
 
-    private static ScanSnapshotPayloadSummary ToResponse(this ScanSnapshotPayload payload)
+    private static ScanSnapshotPayloadSummary ToResponse(
+        this Domain.AgentAggregate.Entities.Snapshots.ScanSnapshotSummary payload)
     {
         return new ScanSnapshotPayloadSummary(
-            payload.Packages.Count, 
-            payload.VulnerablePackages.Count, 
-            payload.BduVulnerablePackages.Count);
+            payload.Packages, 
+            payload.VulnerablePackages, 
+            payload.BduVulnerablePackages);
     }
 
     private static ScanSnapshotDiffSummary ToResponse(

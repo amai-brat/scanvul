@@ -9,7 +9,7 @@ public static class Mapping
     {
         return new GetScanSnapshotPayloadResponse(
             Payload: includePayload 
-                ? snapshot.Payload.ToResponse() 
+                ? snapshot.Payload!.ToResponse() 
                 : null,
             Diff: snapshot.LastDiff?.Payload.ToResponse());
     }
@@ -36,12 +36,12 @@ public static class Mapping
             payload.RemovedBduVulnerablePackages.Select(x => x.ToResponse()));
     }
     
-    private static PackageInfo ToResponse(this Domain.AgentAggregate.Entities.PackageInfo pkg)
+    private static PackageInfo ToResponse(this ReducedPackageInfo pkg)
     {
         return new PackageInfo(pkg.Id, pkg.Name, pkg.Version);
     }
     
-    private static VulnerablePackage ToResponse(this BaseVulnerablePackage vulnPkg)
+    private static VulnerablePackage ToResponse(this ReducedVulnerablePackage vulnPkg)
     {
         return new VulnerablePackage(
             vulnPkg.Id, 
