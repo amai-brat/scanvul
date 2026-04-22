@@ -41,14 +41,14 @@ public class ScanSnapshotDiffPayload
                            AddedBduVulnerablePackages.Count == 0 &&
                            RemovedBduVulnerablePackages.Count == 0;
     
-    public List<PackageInfo> AddedPackages { get; set; } = [];
-    public List<PackageInfo> RemovedPackages { get; set; } = [];
+    public List<ReducedPackageInfo> AddedPackages { get; set; } = [];
+    public List<ReducedPackageInfo> RemovedPackages { get; set; } = [];
     
-    public List<VulnerablePackage> AddedVulnerablePackages { get; set; } = [];
-    public List<VulnerablePackage> RemovedVulnerablePackages { get; set; } = [];
+    public List<ReducedVulnerablePackage> AddedVulnerablePackages { get; set; } = [];
+    public List<ReducedVulnerablePackage> RemovedVulnerablePackages { get; set; } = [];
     
-    public List<BduVulnerablePackage> AddedBduVulnerablePackages { get; set; } = [];
-    public List<BduVulnerablePackage> RemovedBduVulnerablePackages { get; set; } = [];
+    public List<ReducedVulnerablePackage> AddedBduVulnerablePackages { get; set; } = [];
+    public List<ReducedVulnerablePackage> RemovedBduVulnerablePackages { get; set; } = [];
 
     public ScanSnapshotDiffSummary CreateSummary()
     {

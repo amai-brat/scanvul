@@ -14,10 +14,28 @@ public class ScanSnapshotConfiguration : IEntityTypeConfiguration<ScanSnapshot>
             .WithMany(x => x.Snapshots)
             .HasForeignKey(x => x.ComputerId);
 
-        builder.ComplexProperty(x => x.Payload, 
-            b => b.ToJson());
+        builder.HasOne(x => x.Payload)
+            .WithOne()
+            .HasForeignKey<ScanSnapshotPayload>(x => x.ScanSnapshotId);
         
         builder.ComplexProperty(x => x.Summary,
+            b => b.ToJson());
+    }
+}
+
+public class ScanSnapshotPayloadConfiguration : IEntityTypeConfiguration<ScanSnapshotPayload>
+{
+    public void Configure(EntityTypeBuilder<ScanSnapshotPayload> builder)
+    {
+        builder.HasKey(x => x.ScanSnapshotId);
+
+        builder.ComplexCollection(x => x.Packages, 
+            b => b.ToJson());
+
+        builder.ComplexCollection(x => x.VulnerablePackages,
+            b => b.ToJson());
+        
+        builder.ComplexCollection(x => x.BduVulnerablePackages,
             b => b.ToJson());
     }
 }

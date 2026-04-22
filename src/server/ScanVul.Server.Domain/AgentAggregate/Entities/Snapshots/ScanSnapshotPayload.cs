@@ -2,9 +2,11 @@ namespace ScanVul.Server.Domain.AgentAggregate.Entities.Snapshots;
 
 public class ScanSnapshotPayload
 {
-    public List<PackageInfo> Packages { get; set; } = [];
-    public List<VulnerablePackage> VulnerablePackages { get; set; } = [];
-    public List<BduVulnerablePackage> BduVulnerablePackages { get; set; } = [];
+    public Guid ScanSnapshotId { get; set; }
+    
+    public List<ReducedPackageInfo> Packages { get; set; } = [];
+    public List<ReducedVulnerablePackage> VulnerablePackages { get; set; } = [];
+    public List<ReducedVulnerablePackage> BduVulnerablePackages { get; set; } = [];
 
     public ScanSnapshotSummary CreateSummary()
     {
