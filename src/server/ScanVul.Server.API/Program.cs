@@ -2,11 +2,9 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using Microsoft.AspNetCore.Mvc;
 using ScanVul.Server.API;
+using ScanVul.Server.API.Core;
 using ScanVul.Server.Application;
-using ScanVul.Server.Domain.Cve.Repositories;
-using ScanVul.Server.Domain.Cve.Services;
 using ScanVul.Server.Infrastructure.Choco;
 using ScanVul.Server.Infrastructure.Data;
 using ScanVul.Server.Infrastructure.Hangfire;
@@ -33,6 +31,7 @@ builder.Services
         {
             s.Title = "ScanVul Server API";
             s.Version = "v1";
+            s.SchemaSettings.SchemaProcessors.Add(new EnumSummarySchemaProcessor());
         };
         o.UseOneOfForPolymorphism = true;
         o.SerializerSettings = options =>
