@@ -93,6 +93,66 @@ export interface ListCommandsResponse {
   commands: CommandResponse[];
 }
 
+export interface PackageInfo {
+  id: number;
+  name: string;
+  version: string;
+}
+
+export interface VulnerablePackage {
+  id: number;
+  vulnerabilityId: string;
+  packageInfoId: number;
+  isFalsePositive: boolean;
+  isPatchless: boolean;
+}
+
+export interface ScanSnapshotPayloadSummary {
+  packages: number;
+  vulnerablePackages: number;
+  bduVulnerablePackages: number;
+}
+
+export interface ScanSnapshotDiffSummary {
+  addedPackages: number;
+  removedPackages: number;
+  addedVulnerablePackages: number;
+  removedVulnerablePackages: number;
+  addedBduVulnerablePackages: number;
+  removedBduVulnerablePackages: number;
+}
+
+export interface ScanSnapshotSummary {
+  snapshotId: string;
+  createdAt: string;
+  payload: ScanSnapshotPayloadSummary;
+  diff: ScanSnapshotDiffSummary | null;
+}
+
+export interface ListScanSnapshotSummariesResponse {
+  summaries: ScanSnapshotSummary[];
+}
+
+export interface ScanSnapshotPayloadResponse {
+  packages: PackageInfo[];
+  vulnerablePackages: VulnerablePackage[];
+  bduVulnerablePackages: VulnerablePackage[];
+}
+
+export interface ScanSnapshotDiffPayloadResponse {
+  addedPackages: PackageInfo[];
+  removedPackages: PackageInfo[];
+  addedVulnerablePackages: VulnerablePackage[];
+  removedVulnerablePackages: VulnerablePackage[];
+  addedBduVulnerablePackages: VulnerablePackage[];
+  removedBduVulnerablePackages: VulnerablePackage[];
+}
+
+export interface GetScanSnapshotPayloadResponse {
+  payload: ScanSnapshotPayloadResponse | null;
+  diff: ScanSnapshotDiffPayloadResponse | null;
+}
+
 export const agentsApi = {
   list: () =>
     api.get<ListAgentsResponse>("/api/v1/admin/agents").then((res) => res.data),
@@ -140,7 +200,11 @@ export const agentsApi = {
       .post(`/api/v1/admin/agents/${id}/commands/report-packages`)
       .then((res) => res.data),
 
-  sendUpgradePackage: (id: string, packageName: string, packageManager: string) =>
+  sendUpgradePackage: (
+    id: string,
+    packageName: string,
+    packageManager: string,
+  ) =>
     api
       .post(`/api/v1/admin/agents/${id}/commands/upgrade-package`, {
         packageName,
@@ -151,5 +215,22 @@ export const agentsApi = {
   disableAgent: (id: string) =>
     api
       .post(`/api/v1/admin/agents/${id}/commands/disable-agent`)
+      .then((res) => res.data),
+
+  getSnapshotSummaries: (agentId: string) =>
+    api
+      .get<ListScanSnapshotSummariesResponse>(
+        `/api/v1/admin/agents/${agentId}/snapshots/summary`,
+      )
+      .then((res) => res.data),
+
+  getSnapshotPayload: (snapshotId: string, includePayload = true) =>
+    api
+      .get<GetScanSnapshotPayloadResponse>(
+        `/api/v1/admin/agents/snapshots/${snapshotId}`,
+        {
+          params: { includePayload },
+        },
+      )
       .then((res) => res.data),
 };

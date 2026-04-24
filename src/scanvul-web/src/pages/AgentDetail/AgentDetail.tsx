@@ -12,7 +12,7 @@ import { DisableAgentCommand } from "./components/commands/DisableAgentCommand";
 import { UpgradePackageCommand } from "./components/commands/UpgradePackageCommand";
 import { useTranslation } from "react-i18next";
 import { BduVulnerablePackagesBlock } from "./components/BduVulnerablePackagesBlock";
-
+import { ScanSnapshotsBlock } from "./components/ScanSnapshotsBlock";
 
 export const AgentDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -45,7 +45,7 @@ export const AgentDetail = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-min">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 auto-rows-min">
         <ComputerInfoBlock agent={agent} />
 
         <Card title={t("agent_details.commands")} className="h-full">
@@ -58,6 +58,7 @@ export const AgentDetail = () => {
             <DisableAgentCommand agent={agent} isCommandsOpen={isCommandsOpen} />
           </div>
         </Card>
+        <ScanSnapshotsBlock agentId={id!} />
 
         <VulnerablePackagesBlock agentId={id!} />
         <BduVulnerablePackagesBlock agentId={id!} />

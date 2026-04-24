@@ -59,6 +59,9 @@
     "search_results": "Search Results",
     "no_packages_matching": "No packages found matching '{{pattern}}'",
 
+    "scan_snapshots": "Scan Snapshots",
+    "no_snapshots": "No snapshots available for this agent.",
+
     "vulns": "Vulnerabilities from CVE",
     "vulns_total": "Total vulnerable software: {{amount}}",
     "no_vulns": "No vulnerabilities found",
@@ -107,5 +110,27 @@
       "processing": "Processing...",
       "cancel": "Cancel"
     }
+  },
+  "snapshots": {
+    "tooltips": {
+      "packages": "{{total}} packages ({{added}} added, {{removed}} removed)",
+      "cve": "{{total}} CVE vulnerable packages ({{added}} added, {{removed}} removed)",
+      "bdu": "{{total}} BDU vulnerable packages ({{added}} added, {{removed}} removed)"
+    },
+    "modal_title": "Snapshot Details",
+    "diff_section": "Changes since previous snapshot",
+    "no_diff": "No changes detected or this is the first snapshot.",
+    "added_packages": "Added Packages",
+    "removed_packages": "Removed Packages",
+    "added_cve": "New Vulnerabilities (CVE)",
+    "removed_cve": "Fixed Vulnerabilities (CVE)",
+    "full_payload": "View Full Snapshot Payload",
+    "total_packages": "Total Installed Packages",
+    "total_cve": "Total Vulnerabilities (CVE)",
+    "total_bdu": "Total Vulnerabilities (BDU)"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Failed to load data"
   }
 }
