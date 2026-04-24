@@ -1,3 +1,5 @@
+using ScanVul.Server.Domain.AgentAggregate.Enums;
+
 namespace ScanVul.Server.Domain.AgentAggregate.Entities;
 
 public abstract class BaseVulnerablePackage
@@ -33,12 +35,7 @@ public abstract class BaseVulnerablePackage
     public Computer Computer { get; protected set; } = null!;
     
     /// <summary>
-    /// Scanner false-positively marked package as vulnerable
+    /// Status
     /// </summary>
-    public bool IsFalsePositive { get; set; }
-    
-    /// <summary>
-    /// Vulnerable package currently doesn't have patch
-    /// </summary>
-    public bool IsPatchless { get; set; }
+    public VulnerablePackageStatus Status { get; set; }
 }
