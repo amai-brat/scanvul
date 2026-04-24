@@ -4,5 +4,5 @@ namespace ScanVul.Server.Domain.AgentAggregate.Repositories;
 
 public interface ISnapshotRepository
 {
-    Task<ScanSnapshot?> GetScanSnapshotByIdAsync(Guid snapshotId, CancellationToken ct = default);
+    Task<ScanSnapshot?> GetScanSnapshotByIdAsync(Guid snapshotId, bool includePayload, CancellationToken ct = default);
 }

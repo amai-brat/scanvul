@@ -28,7 +28,7 @@ public class GetScanSnapshotPayloadEndpoint(
         GetScanSnapshotPayloadRequest req,
         CancellationToken ct)
     {
-        var snapshot = await snapshotRepository.GetScanSnapshotByIdAsync(req.SnapshotId, ct);
+        var snapshot = await snapshotRepository.GetScanSnapshotByIdAsync(req.SnapshotId, req.IncludePayload, ct);
         if (snapshot is null)
         {
             AddError(x => x.SnapshotId, "Snapshot not found");

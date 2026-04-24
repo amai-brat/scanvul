@@ -9,7 +9,7 @@ public static class Mapping
     {
         return new GetScanSnapshotPayloadResponse(
             Payload: includePayload 
-                ? snapshot.Payload!.ToResponse() 
+                ? snapshot.Payload?.ToResponse() 
                 : null,
             Diff: snapshot.LastDiff?.Payload.ToResponse());
     }

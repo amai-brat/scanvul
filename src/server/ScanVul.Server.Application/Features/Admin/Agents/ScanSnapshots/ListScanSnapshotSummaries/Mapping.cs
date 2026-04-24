@@ -8,6 +8,7 @@ public static class Mapping
     {
         return new ScanSnapshotSummary(
             SnapshotId: snapshot.Id, 
+            CreatedAt: snapshot.CreatedAt,
             Payload: snapshot.Summary.ToResponse(),
             Diff: snapshot.LastDiff?.Summary.ToResponse());
     }

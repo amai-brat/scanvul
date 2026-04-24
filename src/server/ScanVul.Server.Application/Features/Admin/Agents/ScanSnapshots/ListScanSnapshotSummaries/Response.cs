@@ -14,11 +14,13 @@ public record ListScanSnapshotSummariesResponse(
 /// Scan snapshot summary
 /// </summary>
 /// <param name="SnapshotId">Snapshot ID</param>
+/// <param name="CreatedAt">Snapshot creation time</param>
 /// <param name="Payload">Summary of snapshot payload</param>
 /// <param name="Diff">Summary of diff payload between this snapshot and before (nullable)</param>
 [PublicAPI]
 public record ScanSnapshotSummary(
     Guid SnapshotId,
+    DateTime CreatedAt,
     ScanSnapshotPayloadSummary Payload,
     ScanSnapshotDiffSummary? Diff);
 
