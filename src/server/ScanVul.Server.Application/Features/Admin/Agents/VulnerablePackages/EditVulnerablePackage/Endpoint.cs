@@ -2,6 +2,7 @@ using System.Net;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using ScanVul.Server.Domain.AgentAggregate.Enums;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
 using ScanVul.Server.Domain.Common;
 
@@ -24,9 +25,7 @@ public class EditVulnerablePackageEndpoint(
             s.Summary = "Edit vulnerable package";
             s.Description = "Edit vulnerable package";
             s.ExampleRequest = new EditVulnerablePackageRequest(
-                VulnerablePackageId: -1, 
-                IsFalsePositive: true, 
-                IsPatchless: true);
+                VulnerablePackageId: -1, Status: VulnerablePackageStatus.FalsePositive);
         });
         Description(x => x
             .WithTags("Admin")
@@ -45,11 +44,8 @@ public class EditVulnerablePackageEndpoint(
             return new ProblemDetails(ValidationFailures, (int) HttpStatusCode.NotFound);
         }
         
-        if (req.IsFalsePositive is not null)
-            vulnerablePackage.IsFalsePositive = req.IsFalsePositive.Value;
-        
-        if (req.IsPatchless is not null)
-            vulnerablePackage.IsPatchless = req.IsPatchless.Value;
+        if (req.Status is not null)
+            vulnerablePackage.Status = req.Status.Value;
         
         await unitOfWork.SaveChangesAsync(ct);
         

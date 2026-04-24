@@ -2,6 +2,7 @@ using System.Net;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using ScanVul.Server.Domain.AgentAggregate.Enums;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
 using ScanVul.Server.Domain.Cve.Repositories;
 
@@ -33,8 +34,8 @@ public class ListVulnerablePackagesEndpoint(
         var agent = await agentRepository.GetWithVulnerablePackagesNoTrackingAsync(
             req.AgentId, 
             v => 
-                (req.IsFalsePositive == null || v.IsFalsePositive) && 
-                (req.IsPatchless == null || v.IsPatchless), 
+                (req.IsFalsePositive == null || v.Status == VulnerablePackageStatus.FalsePositive) && 
+                (req.IsPatchless == null || v.Status == VulnerablePackageStatus.Patchless), 
             ct);
         if (agent is null)
         {

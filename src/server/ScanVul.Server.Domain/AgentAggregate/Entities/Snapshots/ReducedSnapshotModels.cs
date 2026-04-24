@@ -1,3 +1,5 @@
+using ScanVul.Server.Domain.AgentAggregate.Enums;
+
 namespace ScanVul.Server.Domain.AgentAggregate.Entities.Snapshots;
 
 public class ReducedPackageInfo
@@ -23,8 +25,7 @@ public class ReducedVulnerablePackage
     public string VulnerabilityId { get; set; } = null!;
     public long PackageInfoId { get; set; }
     public long ComputerId { get; set; }
-    public bool IsFalsePositive { get; set; }
-    public bool IsPatchless { get; set; }
+    public VulnerablePackageStatus Status { get; set; }
 
     public static ReducedVulnerablePackage From(BaseVulnerablePackage package)
     {
@@ -34,8 +35,7 @@ public class ReducedVulnerablePackage
             VulnerabilityId = package.VulnerabilityId,
             PackageInfoId = package.PackageInfoId,
             ComputerId = package.ComputerId,
-            IsFalsePositive = package.IsFalsePositive,
-            IsPatchless = package.IsPatchless
+            Status = package.Status
         };
     }
 }

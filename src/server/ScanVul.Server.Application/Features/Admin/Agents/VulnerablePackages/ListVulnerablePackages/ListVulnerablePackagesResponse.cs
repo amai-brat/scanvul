@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using JetBrains.Annotations;
+using ScanVul.Server.Domain.AgentAggregate.Enums;
 
 namespace ScanVul.Server.Application.Features.Admin.Agents.VulnerablePackages.ListVulnerablePackages;
 
@@ -22,8 +23,7 @@ public record ListVulnerablePackagesResponse(List<VulnerablePackageResponse> Pac
 /// <param name="CvssV30">CVSS v3.0 score</param>
 /// <param name="CvssV20">CVSS v2.0 score</param>
 /// <param name="Description">English description of CVE</param>
-/// <param name="IsFalsePositive">Flag whether package is false positive vulnerable</param>
-/// <param name="IsPatchless">Flag whether package doesn't have patches to fix vulnerablity currently</param>
+/// <param name="Status">Status</param>
 [PublicAPI]
 public record VulnerablePackageResponse(
     long Id,
@@ -38,6 +38,5 @@ public record VulnerablePackageResponse(
     [property: JsonPropertyName("cvssV2_0")]
     double? CvssV20,
     string? Description,
-    bool IsFalsePositive,
-    bool IsPatchless);
+    VulnerablePackageStatus Status);
     

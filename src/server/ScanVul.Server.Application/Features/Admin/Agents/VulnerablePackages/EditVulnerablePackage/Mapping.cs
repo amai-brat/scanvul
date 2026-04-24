@@ -12,7 +12,6 @@ public static class Mapping
             PackageId: p.PackageInfoId,
             PackageName: p.PackageInfo.Name,
             PackageVersion: p.PackageInfo.Version,
-            IsFalsePositive: p.IsFalsePositive,
-            IsPatchless: p.IsPatchless);
+            Status: p.Status);
     }
 }

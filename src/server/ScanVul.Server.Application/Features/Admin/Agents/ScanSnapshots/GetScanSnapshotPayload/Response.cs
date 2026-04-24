@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using JetBrains.Annotations;
+using ScanVul.Server.Domain.AgentAggregate.Enums;
 
 namespace ScanVul.Server.Application.Features.Admin.Agents.ScanSnapshots.GetScanSnapshotPayload;
 
@@ -62,12 +63,10 @@ public record PackageInfo(
 /// <param name="Id">Vulnerable package ID</param>
 /// <param name="VulnerabilityId">Vulnerability ID (e.g. CVE-2024-56738, BDU:2026-05547)</param>
 /// <param name="PackageInfoId">Package ID</param>
-/// <param name="IsFalsePositive">Scanner false-positively marked package as vulnerable</param>
-/// <param name="IsPatchless">Vulnerable package currently doesn't have patch</param>
+/// <param name="Status">Status</param>
 [PublicAPI]
 public record VulnerablePackage(
     long Id, 
     string VulnerabilityId, 
     long PackageInfoId, 
-    bool IsFalsePositive, 
-    bool IsPatchless);
+    VulnerablePackageStatus Status);

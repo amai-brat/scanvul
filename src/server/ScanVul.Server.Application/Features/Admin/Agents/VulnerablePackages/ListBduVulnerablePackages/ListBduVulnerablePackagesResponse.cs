@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using ScanVul.Server.Domain.AgentAggregate.Enums;
 
 namespace ScanVul.Server.Application.Features.Admin.Agents.VulnerablePackages.ListBduVulnerablePackages;
 
@@ -25,8 +26,7 @@ public record ListBduVulnerablePackagesResponse(List<BduVulnerablePackageRespons
 /// <param name="Cvss3">CVSS v3.0/v3.1 score</param>
 /// <param name="Cvss4">CVSS v4.0 score</param>
 /// <param name="Software">Affected software</param>
-/// <param name="IsFalsePositive">Flag whether package is false positive vulnerable</param>
-/// <param name="IsPatchless">Flag whether package doesn't have patches to fix vulnerablity currently</param>
+/// <param name="Status">Status</param>
 [PublicAPI]
 public record BduVulnerablePackageResponse
 (
@@ -43,8 +43,7 @@ public record BduVulnerablePackageResponse
     double? Cvss3,
     double? Cvss4,
     IEnumerable<VulnerableSoftware> Software,
-    bool IsFalsePositive,
-    bool IsPatchless
+    VulnerablePackageStatus Status 
 );
 
 /// <summary>

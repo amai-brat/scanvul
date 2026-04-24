@@ -57,7 +57,6 @@ public static class Mapping
             CvssV30: cnaCvss30 ?? adpCvss30,
             CvssV20: cnaCvss20 ?? adpCvss20,
             Description: cnaDescription ?? adpDescription,
-            IsFalsePositive: p.IsFalsePositive,
-            IsPatchless: p.IsPatchless);
+            Status: p.Status);
     }
 }

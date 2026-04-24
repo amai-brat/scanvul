@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using ScanVul.Server.Domain.AgentAggregate.Enums;
 
 namespace ScanVul.Server.Application.Features.Admin.Agents.VulnerablePackages.EditBduVulnerablePackage;
 
@@ -10,8 +11,7 @@ namespace ScanVul.Server.Application.Features.Admin.Agents.VulnerablePackages.Ed
 /// <param name="PackageId">Package ID</param>
 /// <param name="PackageName">Package name</param>
 /// <param name="PackageVersion">Package version</param>
-/// <param name="IsFalsePositive">Flag whether package is false positive vulnerable</param>
-/// <param name="IsPatchless">Flag whether package doesn't have patches to fix vulnerablity currently</param>
+/// <param name="Status">Status</param>
 [PublicAPI]
 public record EditBduVulnerablePackageResponse(
     long Id,
@@ -19,5 +19,4 @@ public record EditBduVulnerablePackageResponse(
     long PackageId,
     string PackageName,
     string PackageVersion,
-    bool IsFalsePositive,
-    bool IsPatchless);
+    VulnerablePackageStatus Status);

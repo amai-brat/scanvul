@@ -1,4 +1,3 @@
-using ScanVul.Server.Domain.AgentAggregate.Entities;
 using ScanVul.Server.Domain.AgentAggregate.Entities.Snapshots;
 
 namespace ScanVul.Server.Application.Features.Admin.Agents.ScanSnapshots.GetScanSnapshotPayload;
@@ -47,7 +46,6 @@ public static class Mapping
             vulnPkg.Id, 
             vulnPkg.VulnerabilityId, 
             vulnPkg.PackageInfoId, 
-            vulnPkg.IsFalsePositive, 
-            vulnPkg.IsPatchless);
+            vulnPkg.Status);
     }
 }
