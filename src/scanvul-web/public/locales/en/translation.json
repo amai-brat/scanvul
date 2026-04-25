@@ -37,7 +37,7 @@
     "disable_agent_toast_msg": "Disable agent command will be sent to agent"
   },
   "agent_details": {
-    "click_to_load": "Click to load commands",
+    "click_to_load": "Click to load",
 
     "computer_info": "Computer Info",
     "last_ping": "Last ping: {{time}}",
@@ -63,15 +63,18 @@
     "no_snapshots": "No snapshots available for this agent.",
 
     "vulns": "Vulnerabilities from CVE",
-    "vulns_total": "Total vulnerable software: {{amount}}",
+    "vulns_total": "{{amount}} packages",
     "no_vulns": "No vulnerabilities found",
     "max_cvss": "Max CVSS: {{score}}",
-    "mark_false_positive": "Mark False Positive",
-    "mark_false_positive_desc": "Are you sure you want to mark this package as a <bold>False Positive</bold>? It will be hidden from the vulnerability report",
-    "mark_false_positive_confirm": "Yes, Mark False Positive",
+    "change_status": "Change status...",
+    "status_vulnerable": "Vulnerable",
+    "status_falsePositive": "False Positive",
+    "status_patchless": "Patchless",
+    "status_fixed": "Fixed",
+    "status_unknown": "Unknown",
 
     "bdu_vulns": "Vulnerabilities from BDU",
-    "bdu_vulns_total": "Total vulnerable software: {{amount}}",
+    "bdu_vulns_total": "{{amount}} packages",
     "bdu_vulns_warning_title": "Package versions are not checked automatically against vulnerabilities from BDU. Please verify according to affected software listed in each vulnerability",
     "no_bdu_vulns": "No vulnerabilities from BDU",
     "affected_software": "Affected software",

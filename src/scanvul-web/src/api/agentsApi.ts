@@ -18,6 +18,13 @@ export interface PackageResponse {
   version: string;
 }
 
+export type VulnerablePackageStatus =
+  | "unknown"
+  | "vulnerable"
+  | "falsePositive"
+  | "patchless"
+  | "fixed";
+
 export interface VulnerablePackageResponse {
   id: number;
   cveId: string;
@@ -28,7 +35,9 @@ export interface VulnerablePackageResponse {
   cvssV3_0: number | null;
   cvssV2_0: number | null;
   description: string | null;
+  status: VulnerablePackageStatus;
 }
+
 
 export interface Identifier {
   type: string;
@@ -162,10 +171,11 @@ export const agentsApi = {
       .get<ListPackagesResponse>(`/api/v1/admin/agents/${id}/packages`)
       .then((res) => res.data),
 
-  getVulnPackages: (id: string) =>
+  getVulnPackages: (id: string, status?: VulnerablePackageStatus) =>
     api
       .get<ListVulnerablePackagesResponse>(
         `/api/v1/admin/agents/${id}/vulnerable-packages`,
+        { params: { status } },
       )
       .then((res) => res.data),
 
@@ -176,11 +186,9 @@ export const agentsApi = {
       )
       .then((res) => res.data),
 
-  markFalsePositive: (vulnerablePackageId: number) =>
+  changeVulnStatus: (vulnerablePackageId: number, status: VulnerablePackageStatus) =>
     api
-      .patch(
-        `/api/v1/admin/agents/vulnerable-packages/${vulnerablePackageId}/false-positive`,
-      )
+      .patch(`/api/v1/admin/agents/vulnerable-packages/${vulnerablePackageId}`, { status })
       .then((res) => res.data),
 
   markFalsePositiveBdu: (bduVulnerablePackageId: number) =>
