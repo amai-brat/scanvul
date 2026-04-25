@@ -46,6 +46,8 @@ public static class Mapping
             vulnPkg.Id, 
             vulnPkg.VulnerabilityId, 
             vulnPkg.PackageInfoId, 
+            vulnPkg.PackageName,
+            vulnPkg.PackageVersion,
             vulnPkg.Status);
     }
 }

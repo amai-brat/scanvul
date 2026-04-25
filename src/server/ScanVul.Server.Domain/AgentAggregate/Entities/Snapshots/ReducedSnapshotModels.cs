@@ -24,6 +24,8 @@ public class ReducedVulnerablePackage
     public long Id { get; set; }
     public string VulnerabilityId { get; set; } = null!;
     public long PackageInfoId { get; set; }
+    public string PackageName { get; set; } = null!;
+    public string PackageVersion { get; set; } = null!;
     public long ComputerId { get; set; }
     public VulnerablePackageStatus Status { get; set; }
 
@@ -34,6 +36,8 @@ public class ReducedVulnerablePackage
             Id = package.Id,
             VulnerabilityId = package.VulnerabilityId,
             PackageInfoId = package.PackageInfoId,
+            PackageName = package.PackageInfo.Name,
+            PackageVersion = package.PackageInfo.Version,
             ComputerId = package.ComputerId,
             Status = package.Status
         };
