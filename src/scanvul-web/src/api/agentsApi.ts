@@ -71,6 +71,7 @@ export interface BduVulnerablePackageResponse {
   cvss3: number | null; // v3.0 / v3.1
   cvss4: number | null; // v4.0
   software: VulnerableSoftware[];
+  status: VulnerablePackageStatus;
 }
 
 export interface ListBduVulnerablePackagesResponse {
@@ -179,22 +180,33 @@ export const agentsApi = {
       )
       .then((res) => res.data),
 
-  getBduVulnPackages: (id: string) =>
+  getBduVulnPackages: (id: string, status?: VulnerablePackageStatus) =>
+      api
+          .get<ListBduVulnerablePackagesResponse>(
+              `/api/v1/admin/agents/${id}/bdu-vulnerable-packages`,
+              { params: { status } }
+          )
+          .then((res) => res.data),
+
+  changeVulnStatus: (
+    vulnerablePackageId: number,
+    status: VulnerablePackageStatus,
+  ) =>
     api
-      .get<ListBduVulnerablePackagesResponse>(
-        `/api/v1/admin/agents/${id}/bdu-vulnerable-packages`,
+      .patch(
+        `/api/v1/admin/agents/vulnerable-packages/${vulnerablePackageId}`,
+        { status },
       )
       .then((res) => res.data),
 
-  changeVulnStatus: (vulnerablePackageId: number, status: VulnerablePackageStatus) =>
-    api
-      .patch(`/api/v1/admin/agents/vulnerable-packages/${vulnerablePackageId}`, { status })
-      .then((res) => res.data),
-
-  markFalsePositiveBdu: (bduVulnerablePackageId: number) =>
+  changeVulnStatusBdu: (
+    vulnerablePackageId: number,
+    status: VulnerablePackageStatus,
+  ) =>
     api
       .patch(
-        `/api/v1/admin/agents/bdu-vulnerable-packages/${bduVulnerablePackageId}/false-positive`,
+        `/api/v1/admin/agents/bdu-vulnerable-packages/${vulnerablePackageId}`,
+        { status },
       )
       .then((res) => res.data),
 
