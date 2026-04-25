@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Microsoft.AspNetCore.Http.Json;
 using ScanVul.Server.API;
 using ScanVul.Server.API.Core;
 using ScanVul.Server.Application;
@@ -39,6 +40,11 @@ builder.Services
             options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         };
     });
+builder.Services.Configure<JsonOptions>(o =>
+{
+    o.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+});
+
 builder.Services.AddHttpClient();
 builder.Services.AddData(builder.Configuration.GetConnectionString("Postgres"));
 builder.Services.AddOpenSearch(builder.Environment, 
