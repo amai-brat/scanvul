@@ -98,12 +98,12 @@
 - [x] vulnerability report on organization every morning in pdf (s3) 
   - [x] hangfire job to generate report
   - [x] block on frontend on main page
-- [ ] lists with false-positive and patchless vulnerable packages
+- [x] lists with false-positive and patchless vulnerable packages
   - [x] ~~PatchExists - column to VulnerablePackage and BduVulnerablePackage~~
   - [x] remember IsFalsePositive and PatchExists when scanning
   - [x] API to mark/unmark PatchExists, IsFalsePositive
   - [x] change IsFalsePositive and IsPatchless to status enum column
-  - [ ] blocks on frontend with not PatchExists and IsFalsePositive
+  - [x] blocks on frontend with not PatchExists and IsFalsePositive
 - [ ] snapshots
   - [x] entities for snapshot (vulnerable packages with scoring by cvss), diff between snapshots (what vulnerable package added, removed)
   - [x] snapshot for every scanning process (if no diff (changes), don't save??)
