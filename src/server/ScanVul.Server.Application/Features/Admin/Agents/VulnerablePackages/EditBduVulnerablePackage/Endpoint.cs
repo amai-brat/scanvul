@@ -38,7 +38,7 @@ public class EditBduVulnerablePackageEndpoint(
         EditBduVulnerablePackageRequest req,
         CancellationToken ct)
     {
-        var vulnerablePackage = await packageRepository.GetVulnerableByIdAsync(req.VulnerablePackageId, ct);
+        var vulnerablePackage = await packageRepository.GetBduVulnerableByIdAsync(req.VulnerablePackageId, ct);
         if (vulnerablePackage is null)
         {
             AddError(x => x.VulnerablePackageId, $"Vulnerable package {req.VulnerablePackageId} not found");

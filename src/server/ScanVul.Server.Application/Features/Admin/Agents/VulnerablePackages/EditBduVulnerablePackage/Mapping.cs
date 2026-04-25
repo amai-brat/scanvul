@@ -4,7 +4,7 @@ namespace ScanVul.Server.Application.Features.Admin.Agents.VulnerablePackages.Ed
 
 public static class Mapping
 {
-    public static EditBduVulnerablePackageResponse MapToResponse(this VulnerablePackage p)
+    public static EditBduVulnerablePackageResponse MapToResponse(this BduVulnerablePackage p)
     {
         return new EditBduVulnerablePackageResponse(
             Id: p.Id,
