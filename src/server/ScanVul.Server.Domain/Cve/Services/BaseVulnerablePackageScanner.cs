@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
+using ScanVul.Server.Domain.AgentAggregate.Enums;
 using ScanVul.Server.Domain.AgentAggregate.Services;
 using ScanVul.Server.Domain.Common;
 
@@ -10,6 +11,11 @@ public abstract class BaseVulnerablePackageScanner<TVulnPkg>(
     ILogger logger) : IVulnerablePackageScanner
     where TVulnPkg : BaseVulnerablePackage
 {
+    // ReSharper disable once StaticMemberInGenericType
+    private static readonly HashSet<VulnerablePackageStatus> RollingStatusesAfterUpdate = [
+        VulnerablePackageStatus.FalsePositive,
+    ];
+    
     public async Task ScanAsync(long computerId, CancellationToken ct = default)
     {
         try
@@ -22,6 +28,11 @@ public abstract class BaseVulnerablePackageScanner<TVulnPkg>(
         }
     }
     
+    /// <summary>
+    /// Get computer, its packages and vulnerable packages
+    /// </summary>
+    /// <param name="computerId">Computer ID</param>
+    /// <param name="ct">Cancellation token</param>
     protected abstract Task<(
         Computer? Computer, 
         List<PackageInfo> Packages,
@@ -66,10 +77,12 @@ public abstract class BaseVulnerablePackageScanner<TVulnPkg>(
             .DistinctBy(x => (x.PackageInfoId, x.VulnerabilityId))
             .ToList();
         
-        var incomingIds = new HashSet<(long PackageInfoId, string CveId)>(uniqueVulnerablePackages
+        var incomingIds = new HashSet<(long PackageInfoId, string VulnerabilityId)>(uniqueVulnerablePackages
             .Select(x => (x.PackageInfoId, x.VulnerabilityId)));
-        var existingIds = new HashSet<(long PackageInfoId, string CveId)>(computerWithPackages.VulnerablePackages
+        var existingIds = new HashSet<(long PackageInfoId, string VulnerabilityId)>(computerWithPackages.VulnerablePackages
             .Select(x => (x.PackageInfoId, x.VulnerabilityId)));
+        var existingPackageStatuses = computerWithPackages.VulnerablePackages
+            .ToDictionary(x => (x.PackageInfo.Name, x.VulnerabilityId), x => x.Status); 
         
         // Remove not relevant vulnerable packages
         var toRemove = computerWithPackages.VulnerablePackages
@@ -82,12 +95,26 @@ public abstract class BaseVulnerablePackageScanner<TVulnPkg>(
         var toAdd = uniqueVulnerablePackages
             .Where(x => !existingIds.Contains((x.PackageInfoId, x.VulnerabilityId)))
             .ToList();
+        
+        foreach (var vulnPkg in toAdd)
+        {
+            // if package version changed (updated), pass vulnerable package status
+            if (!existingPackageStatuses.TryGetValue((vulnPkg.PackageInfo.Name, vulnPkg.VulnerabilityId), 
+                    out var currentStatus)) continue;
+            if (RollingStatusesAfterUpdate.Contains(currentStatus))
+            {
+                vulnPkg.Status = currentStatus;
+            }
+        }
+        
         computerWithPackages.VulnerablePackages.AddRange(toAdd);
 
         await unitOfWork.SaveChangesAsync(ct);
 
         await SaveVulnerablePackagesChangesAsync(computerId, toRemove, toAdd, ct);
         
-        logger.LogInformation("Successfully scanned packages of computer {ComputerId} for vulnerabilities", computerId);
+        logger.LogInformation("Successfully scanned packages of computer {ComputerId} for vulnerabilities. " +
+                              "Found {VulnerablePackagesCount} vulnerable packages", 
+            computerId, computerWithPackages.VulnerablePackages.Count);
     }
 }
