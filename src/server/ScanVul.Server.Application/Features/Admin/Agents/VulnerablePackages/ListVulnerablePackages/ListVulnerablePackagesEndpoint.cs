@@ -33,9 +33,7 @@ public class ListVulnerablePackagesEndpoint(
     {
         var agent = await agentRepository.GetWithVulnerablePackagesNoTrackingAsync(
             req.AgentId, 
-            v => 
-                (req.IsFalsePositive == null || v.Status == VulnerablePackageStatus.FalsePositive) && 
-                (req.IsPatchless == null || v.Status == VulnerablePackageStatus.Patchless), 
+            v => req.Status == null || v.Status == req.Status,
             ct);
         if (agent is null)
         {
