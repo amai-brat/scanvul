@@ -2,6 +2,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
 using ScanVul.Server.Domain.AgentAggregate.Entities.Snapshots;
+using ScanVul.Server.Domain.AgentAggregate.Enums;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
 using ScanVul.Server.Domain.Common;
 
@@ -18,6 +19,19 @@ public class ScanSnapshotGenerator(
     IComputerRepository computerRepository,
     IUnitOfWork unitOfWork) : IScanSnapshotGenerator
 {
+    /// <summary>
+    /// Vulnerable package statuses that should be counted in diff payload
+    /// </summary>
+    /// <remarks>
+    /// This thing was added because if package was updated (=> new packageInfoId => new vulnerablePackageId),
+    /// fixed state (FalsePositive, Patchless, etc.) is ignored and go like new vulnerability.
+    /// </remarks>
+    private static readonly HashSet<VulnerablePackageStatus> DiffVulnerableStatuses =
+    [
+        VulnerablePackageStatus.Unknown,
+        VulnerablePackageStatus.Vulnerable,
+    ];
+    
     public async Task GenerateAsync(long computerId, CancellationToken ct = default)
     {
         var computer = await computerRepository.GetComputerWithAllPackagesAndLastSnapshotAsync(computerId, ct);
@@ -76,16 +90,40 @@ public class ScanSnapshotGenerator(
         if (removedPackages is not null) diffPayload.RemovedPackages = removedPackages.Select(ReducedPackageInfo.From).ToList();
         
         var addedVulns = cache.Get<List<VulnerablePackage>>(CacheKeys.AddedVulnerablePackages(computerId));
-        if (addedVulns is not null) diffPayload.AddedVulnerablePackages = addedVulns.Select(ReducedVulnerablePackage.From).ToList();
+        if (addedVulns is not null)
+        {
+            diffPayload.AddedVulnerablePackages = addedVulns
+                .Where(x => DiffVulnerableStatuses.Contains(x.Status))
+                .Select(ReducedVulnerablePackage.From)
+                .ToList();
+        }
         
         var removedVulns = cache.Get<List<VulnerablePackage>>(CacheKeys.RemovedVulnerablePackages(computerId));
-        if (removedVulns is not null) diffPayload.RemovedVulnerablePackages = removedVulns.Select(ReducedVulnerablePackage.From).ToList();
+        if (removedVulns is not null)
+        {
+            diffPayload.RemovedVulnerablePackages = removedVulns
+                .Where(x => DiffVulnerableStatuses.Contains(x.Status))
+                .Select(ReducedVulnerablePackage.From)
+                .ToList();
+        }
         
         var addedBduVulns = cache.Get<List<BduVulnerablePackage>>(CacheKeys.AddedBduVulnerablePackages(computerId));
-        if (addedBduVulns is not null) diffPayload.AddedBduVulnerablePackages = addedBduVulns.Select(ReducedVulnerablePackage.From).ToList();
+        if (addedBduVulns is not null)
+        {
+            diffPayload.AddedBduVulnerablePackages = addedBduVulns
+                .Where(x => DiffVulnerableStatuses.Contains(x.Status))
+                .Select(ReducedVulnerablePackage.From)
+                .ToList();
+        }
         
         var removedBduVulns = cache.Get<List<BduVulnerablePackage>>(CacheKeys.RemovedBduVulnerablePackages(computerId));
-        if (removedBduVulns is not null) diffPayload.RemovedBduVulnerablePackages = removedBduVulns.Select(ReducedVulnerablePackage.From).ToList();
+        if (removedBduVulns is not null)
+        {
+            diffPayload.RemovedBduVulnerablePackages = removedBduVulns
+                .Where(x => DiffVulnerableStatuses.Contains(x.Status))
+                .Select(ReducedVulnerablePackage.From)
+                .ToList();
+        }
 
         return diffPayload;
     }
