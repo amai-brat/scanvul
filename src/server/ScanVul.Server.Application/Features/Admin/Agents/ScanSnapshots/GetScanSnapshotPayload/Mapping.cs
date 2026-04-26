@@ -4,13 +4,9 @@ namespace ScanVul.Server.Application.Features.Admin.Agents.ScanSnapshots.GetScan
 
 public static class Mapping
 {
-    public static GetScanSnapshotPayloadResponse ToResponse(this ScanSnapshot snapshot, bool includePayload)
+    public static GetScanSnapshotPayloadResponse ToResponse(this ScanSnapshot snapshot)
     {
-        return new GetScanSnapshotPayloadResponse(
-            Payload: includePayload 
-                ? snapshot.Payload?.ToResponse() 
-                : null,
-            Diff: snapshot.LastDiff?.Payload.ToResponse());
+        return new GetScanSnapshotPayloadResponse(Payload: snapshot.Payload?.ToResponse());
     }
 
     private static ScanSnapshotPayloadResponse ToResponse(this ScanSnapshotPayload payload)
@@ -22,17 +18,6 @@ public static class Mapping
                 .Select(x => x.ToResponse()),
             BduVulnerablePackages: payload.BduVulnerablePackages
                 .Select(x => x.ToResponse()));
-    }
-
-    private static ScanSnapshotDiffPayloadResponse ToResponse(this ScanSnapshotDiffPayload payload)
-    {
-        return new ScanSnapshotDiffPayloadResponse(
-            payload.AddedPackages.Select(x => x.ToResponse()),
-            payload.RemovedPackages.Select(x => x.ToResponse()),
-            payload.AddedVulnerablePackages.Select(x => x.ToResponse()),
-            payload.RemovedVulnerablePackages.Select(x => x.ToResponse()),
-            payload.AddedBduVulnerablePackages.Select(x => x.ToResponse()),
-            payload.RemovedBduVulnerablePackages.Select(x => x.ToResponse()));
     }
     
     private static PackageInfo ToResponse(this ReducedPackageInfo pkg)

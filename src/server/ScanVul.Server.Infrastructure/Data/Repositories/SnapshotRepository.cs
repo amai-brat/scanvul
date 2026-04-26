@@ -16,4 +16,20 @@ public class SnapshotRepository(AppDbContext dbContext) : ISnapshotRepository
             .FirstOrDefaultAsync(x => x.Id == snapshotId, ct);
         return result;
     }
+
+    public async Task<ScanSnapshot?> GetWithPayloadAsync(Guid snapshotId, CancellationToken ct = default)
+    {
+        var result = await dbContext.ScanSnapshots
+            .Include(x => x.Payload)
+            .FirstOrDefaultAsync(x => x.Id == snapshotId, ct);
+        return result;
+    }
+
+    public async Task<ScanSnapshot?> GetWithDiffAsync(Guid snapshotId, CancellationToken ct = default)
+    {
+        var result = await dbContext.ScanSnapshots
+            .Include(x => x.LastDiff)
+            .FirstOrDefaultAsync(x => x.Id == snapshotId, ct);
+        return result;
+    }
 }

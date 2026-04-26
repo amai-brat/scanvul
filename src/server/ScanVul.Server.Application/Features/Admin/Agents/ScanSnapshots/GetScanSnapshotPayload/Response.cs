@@ -8,12 +8,9 @@ namespace ScanVul.Server.Application.Features.Admin.Agents.ScanSnapshots.GetScan
 /// Get scan snapshot payload response
 /// </summary>
 /// <param name="Payload">Payload on snapshot</param>
-/// <param name="Diff">Payload of diff between this snapshot and before (nullable)</param>
 [PublicAPI]
 public record GetScanSnapshotPayloadResponse(
-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    ScanSnapshotPayloadResponse? Payload,
-    ScanSnapshotDiffPayloadResponse? Diff);
+    ScanSnapshotPayloadResponse? Payload);
     
 /// <summary>
 /// Payload on snapshot
@@ -26,24 +23,6 @@ public record ScanSnapshotPayloadResponse(
     IEnumerable<PackageInfo> Packages,
     IEnumerable<VulnerablePackage> VulnerablePackages,
     IEnumerable<VulnerablePackage> BduVulnerablePackages);
-
-/// <summary>
-/// Payload of diff between this snapshot and before
-/// </summary>
-/// <param name="AddedPackages">Added packages</param>
-/// <param name="RemovedPackages">Removed packages</param>
-/// <param name="AddedVulnerablePackages">Added vulnerable packages (CVE)</param>
-/// <param name="RemovedVulnerablePackages">Removed vulnerable packages (CVE)</param>
-/// <param name="AddedBduVulnerablePackages">Added vulnerable packages (BDU)</param>
-/// <param name="RemovedBduVulnerablePackages">Removed vulnerable packages (BDU)</param>
-[PublicAPI]
-public record ScanSnapshotDiffPayloadResponse(
-    IEnumerable<PackageInfo> AddedPackages,
-    IEnumerable<PackageInfo> RemovedPackages,
-    IEnumerable<VulnerablePackage> AddedVulnerablePackages,
-    IEnumerable<VulnerablePackage> RemovedVulnerablePackages,
-    IEnumerable<VulnerablePackage> AddedBduVulnerablePackages,
-    IEnumerable<VulnerablePackage> RemovedBduVulnerablePackages);
 
 /// <summary>
 /// Package

@@ -1,12 +1,12 @@
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ScanVul.Server.Application.Features.Admin.Agents.ScanSnapshots.GetScanSnapshotPayload;
+namespace ScanVul.Server.Application.Features.Admin.Agents.ScanSnapshots.GetScanSnapshotDiff;
 
 /// <summary>
-/// Get scan snapshot payload request
+/// Get scan snapshot last diff request
 /// </summary>
 /// <param name="SnapshotId">Snaphot ID</param>
 [PublicAPI]
-public record GetScanSnapshotPayloadRequest(
+public record GetScanSnapshotDiffRequest(
     [FromRoute(Name = "snapshotId")] Guid SnapshotId);
