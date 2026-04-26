@@ -14,6 +14,8 @@ public abstract class BaseVulnerablePackageScanner<TVulnPkg>(
     // ReSharper disable once StaticMemberInGenericType
     private static readonly HashSet<VulnerablePackageStatus> RollingStatusesAfterUpdate = [
         VulnerablePackageStatus.FalsePositive,
+        VulnerablePackageStatus.Patchless,
+        VulnerablePackageStatus.Fixed,
     ];
     
     public async Task ScanAsync(long computerId, CancellationToken ct = default)
