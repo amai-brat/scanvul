@@ -1,12 +1,8 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
-import {
-  ChevronDown,
-  ChevronUp,
-  Package
-} from "lucide-react";
-import { agentsApi, type ScanSnapshotSummary } from "../../../api/agentsApi";
+import { ChevronDown, ChevronUp, Package } from "lucide-react";
+import { agentsApi, type PackageInfo, type ScanSnapshotSummary, type VulnerablePackage, type VulnerablePackageStatus } from "../../../api/agentsApi";
 import { Card } from "../../../components/Card";
 import { modalEffect } from "../../../utils/modal";
 
@@ -104,7 +100,6 @@ const StatBadge = ({
       className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-800/60 px-2.5 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700/50"
       title={tooltip}
     >
-      {/* Icon & Total count */}
       <div className="flex items-center space-x-1.5 border-r border-gray-200 dark:border-gray-700 pr-2">
         <span className="text-gray-500 dark:text-gray-400">{icon}</span>
         <span className="font-semibold text-gray-900 dark:text-gray-100">
@@ -112,7 +107,6 @@ const StatBadge = ({
         </span>
       </div>
 
-      {/* Diff counts */}
       {hasDiff ? (
         <div className="flex items-center space-x-2 text-xs font-bold font-mono tracking-tight">
           <span className={addedColor}>+{added}</span>
@@ -127,10 +121,10 @@ const StatBadge = ({
   );
 };
 
-const SnapshotSummaryRow: React.FC<{ summary: ScanSnapshotSummary; onClick: () => void }> = ({
-  summary,
-  onClick,
-}) => {  
+const SnapshotSummaryRow: React.FC<{
+  summary: ScanSnapshotSummary;
+  onClick: () => void;
+}> = ({ summary, onClick }) => {
   const date = new Intl.DateTimeFormat(navigator.language, {
     dateStyle: "medium",
     timeStyle: "short",
@@ -144,7 +138,7 @@ const SnapshotSummaryRow: React.FC<{ summary: ScanSnapshotSummary; onClick: () =
       <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
         {date}
       </div>
-      
+
       <div className="flex flex-wrap gap-3">
         <StatBadge
           icon={<Package size={16} />}
@@ -155,7 +149,7 @@ const SnapshotSummaryRow: React.FC<{ summary: ScanSnapshotSummary; onClick: () =
           titleKey="packages"
         />
         <StatBadge
-          icon={<p className="text-sm">CVE</p>}
+          icon={<p className="text-[11px] font-bold">CVE</p>}
           total={summary.payload.vulnerablePackages}
           added={summary.diff?.addedVulnerablePackages}
           removed={summary.diff?.removedVulnerablePackages}
@@ -163,7 +157,7 @@ const SnapshotSummaryRow: React.FC<{ summary: ScanSnapshotSummary; onClick: () =
           titleKey="cve"
         />
         <StatBadge
-          icon={<p className="text-sm">БДУ</p>}
+          icon={<p className="text-[11px] font-bold">БДУ</p>}
           total={summary.payload.bduVulnerablePackages}
           added={summary.diff?.addedBduVulnerablePackages}
           removed={summary.diff?.removedBduVulnerablePackages}
@@ -203,11 +197,11 @@ const SnapshotDetailModal: React.FC<{
       onClick={onClose}
     >
       <div
-        className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden border border-gray-200 dark:border-gray-800"
+        className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden border border-gray-200 dark:border-gray-800"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-800">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <div className="flex justify-between items-center p-5 border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
             {t("snapshots.modal_title")}
           </h3>
           <button
@@ -218,7 +212,7 @@ const SnapshotDetailModal: React.FC<{
           </button>
         </div>
 
-        <div className="p-4 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+        <div className="p-5 overflow-y-auto custom-scrollbar flex-1 space-y-8">
           {isDiffLoading ? (
             <p className="text-center text-gray-500 py-8">
               {t("common.loading")}
@@ -227,15 +221,15 @@ const SnapshotDetailModal: React.FC<{
             <>
               {/* DIFF SECTION */}
               <section>
-                <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                <h4 className="font-bold text-gray-800 dark:text-gray-200 mb-4 tracking-tight">
                   {t("snapshots.diff_section")}
                 </h4>
                 {!diffData?.diff ? (
-                  <p className="text-sm text-gray-500 italic bg-gray-50 dark:bg-gray-800 p-3 rounded">
+                  <p className="text-sm text-gray-500 italic bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-800">
                     {t("snapshots.no_diff")}
                   </p>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <DiffList
                       title={t("snapshots.added_packages")}
                       items={diffData.diff.addedPackages}
@@ -275,48 +269,50 @@ const SnapshotDetailModal: React.FC<{
               </section>
 
               {/* PAYLOAD ACCORDION */}
-              <section className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+              <section className="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-sm">
                 <button
                   onClick={() => setShowFullPayload(!showFullPayload)}
-                  className="w-full flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-750 transition-colors outline-none focus:ring-2 focus:ring-blue-500/50"
+                  className="w-full flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-750 transition-colors outline-none focus:ring-2 focus:ring-blue-500/50"
                 >
-                  <span className="font-semibold text-gray-700 dark:text-gray-300">
+                  <span className="font-semibold text-gray-800 dark:text-gray-200 tracking-tight">
                     {t("snapshots.full_payload")}
                   </span>
                   {showFullPayload ? (
-                    <ChevronUp size={18} />
+                    <ChevronUp size={20} />
                   ) : (
-                    <ChevronDown size={18} />
+                    <ChevronDown size={20} />
                   )}
                 </button>
 
                 {isPayloadLoading ? (
-                  <p className="text-center text-gray-500 py-4">
+                  <p className="text-center text-gray-500 py-6">
                     {t("common.loading")}
-                  </p>) 
-                  : showFullPayload 
-                    ? (payloadData?.payload == null || payloadData?.payload === undefined 
-                      ? (<p className="text-center text-gray-500 italic py-4">
-                          {t("snapshots.no_payload_data")}
-                        </p>) 
-                      : (
-                        <div className="p-4 space-y-4 bg-white dark:bg-gray-900">
-                          <PayloadList
-                            title={t("snapshots.total_packages")}
-                            items={payloadData.payload.packages}
-                          />
-                          <PayloadList
-                            title={t("snapshots.total_cve")}
-                            items={payloadData.payload.vulnerablePackages}
-                            isVuln
-                          />
-                          <PayloadList
-                            title={t("snapshots.total_bdu")}
-                            items={payloadData.payload.bduVulnerablePackages}
-                            isVuln
-                          />
-                        </div>)) 
-                    : null}
+                  </p>
+                ) : showFullPayload ? (
+                  payloadData?.payload == null ? (
+                    <p className="text-center text-gray-500 italic py-6 bg-white dark:bg-gray-900">
+                      {t("snapshots.no_payload_data")}
+                    </p>
+                  ) : (
+                    <div className="p-5 space-y-6 bg-white dark:bg-gray-900 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <PayloadList
+                        title={t("snapshots.total_packages")}
+                        items={payloadData.payload.packages}
+                        className="lg:col-span-2"
+                      />
+                      <PayloadList
+                        title={t("snapshots.total_cve")}
+                        items={payloadData.payload.vulnerablePackages}
+                        isVuln
+                      />
+                      <PayloadList
+                        title={t("snapshots.total_bdu")}
+                        items={payloadData.payload.bduVulnerablePackages}
+                        isVuln
+                      />
+                    </div>
+                  )
+                ) : null}
               </section>
             </>
           )}
@@ -326,75 +322,154 @@ const SnapshotDetailModal: React.FC<{
   );
 };
 
-const DiffList: React.FC<{
-  title: string;
-  items: any[];
-  type: "success" | "danger";
-  isVuln?: boolean;
-}> = ({ title, items, type, isVuln }) => {
-  if (!items || items.length === 0) return null;
-  const colorClass =
-    type === "success"
-      ? "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20"
-      : "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20";
+const StatusBadge: React.FC<{ status: VulnerablePackageStatus }> = ({
+  status,
+}) => {
+  const config: Record<
+    VulnerablePackageStatus,
+    { bg: string; text: string; label: string }
+  > = {
+    unknown: {
+      bg: "bg-gray-100 dark:bg-gray-800",
+      text: "text-gray-600 dark:text-gray-400",
+      label: "Unknown",
+    },
+    vulnerable: {
+      bg: "bg-red-100 dark:bg-red-900/40",
+      text: "text-red-700 dark:text-red-400",
+      label: "Vulnerable",
+    },
+    falsePositive: {
+      bg: "bg-yellow-100 dark:bg-yellow-900/40",
+      text: "text-yellow-700 dark:text-yellow-400",
+      label: "False Positive",
+    },
+    patchless: {
+      bg: "bg-purple-100 dark:bg-purple-900/40",
+      text: "text-purple-700 dark:text-purple-400",
+      label: "Patchless",
+    },
+    fixed: {
+      bg: "bg-green-100 dark:bg-green-900/40",
+      text: "text-green-700 dark:text-green-400",
+      label: "Fixed",
+    },
+  };
+  const { bg, text, label } = config[status] || config.unknown;
 
   return (
-    <div className={`p-3 rounded-lg border border-transparent ${colorClass}`}>
-      <h5 className="font-medium text-sm mb-2">
-        {title} ({items.length})
+    <span
+      className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider whitespace-nowrap ${bg} ${text}`}
+    >
+      {label}
+    </span>
+  );
+};
+
+const PackageListItem: React.FC<{ item: PackageInfo }> = ({ item }) => (
+  <li className="flex justify-between items-center py-2 border-b border-black/5 dark:border-white/5 last:border-0">
+    <span className="font-medium text-gray-800 dark:text-gray-200 truncate pr-2">
+      {item.name}
+    </span>
+    <span className="text-gray-500 dark:text-gray-400 font-mono text-xs bg-black/5 dark:bg-white/5 px-1.5 py-0.5 rounded">
+      v{item.version}
+    </span>
+  </li>
+);
+
+const VulnListItem: React.FC<{ item: VulnerablePackage }> = ({ item }) => (
+  <li className="flex flex-col py-2.5 border-b border-black/5 dark:border-white/5 last:border-0 gap-1.5">
+    <div className="flex justify-between items-start gap-2">
+      <span className="font-bold text-gray-900 dark:text-gray-100 break-all">
+        {item.vulnerabilityId}
+      </span>
+      <StatusBadge status={item.status} />
+    </div>
+    <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+      <span
+        className="truncate pr-2"
+        title={`Package ID: ${item.packageInfoId}`}
+      >
+        {item.packageName}
+      </span>
+      <span className="font-mono bg-black/5 dark:bg-white/5 px-1.5 py-0.5 rounded whitespace-nowrap">
+        v{item.packageVersion}
+      </span>
+    </div>
+  </li>
+);
+
+interface ListBaseProps { title: string; className?: string };
+type VulnListProps = ListBaseProps & {
+  isVuln: true;
+  items: VulnerablePackage[];
+};
+type PkgListProps = ListBaseProps & { isVuln?: false; items: PackageInfo[] };
+
+type DiffListProps = (VulnListProps | PkgListProps) & {
+  type: "success" | "danger";
+};
+type PayloadListProps = VulnListProps | PkgListProps;
+
+const DiffList = (props: DiffListProps) => {
+  if (!props.items || props.items.length === 0) return null;
+
+  const bgClasses =
+    props.type === "success"
+      ? "bg-green-50/50 dark:bg-green-900/10 border-green-200/60 dark:border-green-900/40"
+      : "bg-red-50/50 dark:bg-red-900/10 border-red-200/60 dark:border-red-900/40";
+
+  const textClasses =
+    props.type === "success"
+      ? "text-green-800 dark:text-green-400"
+      : "text-red-800 dark:text-red-400";
+
+  return (
+    <div
+      className={`p-4 rounded-xl border ${bgClasses} ${props.className ?? ""}`}
+    >
+      <h5
+        className={`font-semibold text-sm mb-3 flex items-center justify-between ${textClasses}`}
+      >
+        {props.title}
+        <span className="bg-white/50 dark:bg-black/20 px-2 py-0.5 rounded-full text-xs font-bold">
+          {props.items.length}
+        </span>
       </h5>
-      <ul className="text-xs space-y-1 max-h-32 overflow-y-auto pr-1">
-        {items.map((item) => (
-          <li key={item.id}>
-            {isVuln ? (
-              <span>
-                {item.vulnerabilityId}{" "}
-                <span className="opacity-70">
-                  (Pkg ID: {item.packageInfoId})
-                </span>
-              </span>
-            ) : (
-              <span>
-                {item.name} <span className="opacity-70">v{item.version}</span>
-              </span>
-            )}
-          </li>
-        ))}
+      <ul className="text-sm max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+        {props.isVuln
+          ? props.items.map((item) => (
+              <VulnListItem key={item.id} item={item} />
+            ))
+          : props.items.map((item) => (
+              <PackageListItem key={item.id} item={item} />
+            ))}
       </ul>
     </div>
   );
 };
 
-const PayloadList: React.FC<{
-  title: string;
-  items: any[];
-  isVuln?: boolean;
-}> = ({ title, items, isVuln }) => {
-  if (!items || items.length === 0) return null;
+const PayloadList = (props: PayloadListProps) => {
+  if (!props.items || props.items.length === 0) return null;
 
   return (
-    <div>
-      <h5 className="font-medium text-sm text-gray-600 dark:text-gray-400 mb-2">
-        {title} ({items.length})
+    <div
+      className={`bg-gray-50/50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-xl p-4 ${props.className ?? ""}`}
+    >
+      <h5 className="font-semibold text-sm text-gray-700 dark:text-gray-300 mb-3 flex items-center justify-between">
+        {props.title}
+        <span className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 py-0.5 px-2 rounded-full text-xs font-bold">
+          {props.items.length}
+        </span>
       </h5>
-      <ul className="text-xs space-y-1 max-h-40 overflow-y-auto bg-gray-50 dark:bg-gray-800/50 p-2 rounded border border-gray-100 dark:border-gray-800">
-        {items.map((item) => (
-          <li key={item.id} className="text-gray-700 dark:text-gray-300">
-            {isVuln ? (
-              <span>
-                {item.vulnerabilityId}{" "}
-                <span className="text-gray-400">
-                  - Pkg ID: {item.packageInfoId}
-                </span>
-              </span>
-            ) : (
-              <span>
-                {item.name}{" "}
-                <span className="text-gray-400">v{item.version}</span>
-              </span>
-            )}
-          </li>
-        ))}
+      <ul className="text-sm max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+        {props.isVuln
+          ? props.items.map((item) => (
+              <VulnListItem key={item.id} item={item} />
+            ))
+          : props.items.map((item) => (
+              <PackageListItem key={item.id} item={item} />
+            ))}
       </ul>
     </div>
   );
