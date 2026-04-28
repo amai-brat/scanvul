@@ -113,8 +113,9 @@ export interface VulnerablePackage {
   id: number;
   vulnerabilityId: string;
   packageInfoId: number;
-  isFalsePositive: boolean;
-  isPatchless: boolean;
+  packageName: string;
+  packageVersion: string;
+  status: VulnerablePackageStatus;
 }
 
 export interface ScanSnapshotPayloadSummary {
@@ -160,6 +161,9 @@ export interface ScanSnapshotDiffPayloadResponse {
 
 export interface GetScanSnapshotPayloadResponse {
   payload: ScanSnapshotPayloadResponse | null;
+}
+
+export interface GetScanSnapshotDiffResponse {
   diff: ScanSnapshotDiffPayloadResponse | null;
 }
 
@@ -244,13 +248,17 @@ export const agentsApi = {
       )
       .then((res) => res.data),
 
-  getSnapshotPayload: (snapshotId: string, includePayload = true) =>
+  getSnapshotPayload: (snapshotId: string) =>
     api
       .get<GetScanSnapshotPayloadResponse>(
-        `/api/v1/admin/agents/snapshots/${snapshotId}`,
-        {
-          params: { includePayload },
-        },
+        `/api/v1/admin/agents/snapshots/${snapshotId}/payload`,
+      )
+      .then((res) => res.data),
+
+  getSnapshotLastDiff: (snapshotId: string) =>
+    api
+      .get<GetScanSnapshotDiffResponse>(
+        `/api/v1/admin/agents/snapshots/${snapshotId}/diff`,
       )
       .then((res) => res.data),
 };

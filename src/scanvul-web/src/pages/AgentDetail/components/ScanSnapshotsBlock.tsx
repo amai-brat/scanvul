@@ -182,9 +182,15 @@ const SnapshotDetailModal: React.FC<{
   const { t } = useTranslation();
   const [showFullPayload, setShowFullPayload] = useState(false);
 
-  const { data, isLoading } = useQuery({
+  const { data: diffData, isLoading: isDiffLoading } = useQuery({
+    queryKey: ["snapshot-detail-diff", snapshotId],
+    queryFn: () => agentsApi.getSnapshotLastDiff(snapshotId),
+  });
+
+  const { data: payloadData, isLoading: isPayloadLoading } = useQuery({
     queryKey: ["snapshot-detail", snapshotId],
-    queryFn: () => agentsApi.getSnapshotPayload(snapshotId, true),
+    queryFn: () => agentsApi.getSnapshotPayload(snapshotId),
+    enabled: showFullPayload,
   });
 
   React.useEffect(() => {
@@ -213,7 +219,7 @@ const SnapshotDetailModal: React.FC<{
         </div>
 
         <div className="p-4 overflow-y-auto custom-scrollbar flex-1 space-y-6">
-          {isLoading ? (
+          {isDiffLoading ? (
             <p className="text-center text-gray-500 py-8">
               {t("common.loading")}
             </p>
@@ -224,7 +230,7 @@ const SnapshotDetailModal: React.FC<{
                 <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-3">
                   {t("snapshots.diff_section")}
                 </h4>
-                {!data?.diff ? (
+                {!diffData?.diff ? (
                   <p className="text-sm text-gray-500 italic bg-gray-50 dark:bg-gray-800 p-3 rounded">
                     {t("snapshots.no_diff")}
                   </p>
@@ -232,35 +238,35 @@ const SnapshotDetailModal: React.FC<{
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <DiffList
                       title={t("snapshots.added_packages")}
-                      items={data.diff.addedPackages}
+                      items={diffData.diff.addedPackages}
                       type="success"
                     />
                     <DiffList
                       title={t("snapshots.removed_packages")}
-                      items={data.diff.removedPackages}
+                      items={diffData.diff.removedPackages}
                       type="danger"
                     />
                     <DiffList
                       title={t("snapshots.added_cve")}
-                      items={data.diff.addedVulnerablePackages}
+                      items={diffData.diff.addedVulnerablePackages}
                       type="danger"
                       isVuln
                     />
                     <DiffList
                       title={t("snapshots.removed_cve")}
-                      items={data.diff.removedVulnerablePackages}
+                      items={diffData.diff.removedVulnerablePackages}
                       type="success"
                       isVuln
                     />
                     <DiffList
                       title={t("snapshots.added_cve")}
-                      items={data.diff.addedBduVulnerablePackages}
+                      items={diffData.diff.addedBduVulnerablePackages}
                       type="danger"
                       isVuln
                     />
                     <DiffList
                       title={t("snapshots.removed_cve")}
-                      items={data.diff.removedBduVulnerablePackages}
+                      items={diffData.diff.removedBduVulnerablePackages}
                       type="success"
                       isVuln
                     />
@@ -284,24 +290,33 @@ const SnapshotDetailModal: React.FC<{
                   )}
                 </button>
 
-                {showFullPayload && data?.payload && (
-                  <div className="p-4 space-y-4 bg-white dark:bg-gray-900">
-                    <PayloadList
-                      title={t("snapshots.total_packages")}
-                      items={data.payload.packages}
-                    />
-                    <PayloadList
-                      title={t("snapshots.total_cve")}
-                      items={data.payload.vulnerablePackages}
-                      isVuln
-                    />
-                    <PayloadList
-                      title={t("snapshots.total_bdu")}
-                      items={data.payload.bduVulnerablePackages}
-                      isVuln
-                    />
-                  </div>
-                )}
+                {isPayloadLoading ? (
+                  <p className="text-center text-gray-500 py-4">
+                    {t("common.loading")}
+                  </p>) 
+                  : showFullPayload 
+                    ? (payloadData?.payload == null || payloadData?.payload === undefined 
+                      ? (<p className="text-center text-gray-500 italic py-4">
+                          {t("snapshots.no_payload_data")}
+                        </p>) 
+                      : (
+                        <div className="p-4 space-y-4 bg-white dark:bg-gray-900">
+                          <PayloadList
+                            title={t("snapshots.total_packages")}
+                            items={payloadData.payload.packages}
+                          />
+                          <PayloadList
+                            title={t("snapshots.total_cve")}
+                            items={payloadData.payload.vulnerablePackages}
+                            isVuln
+                          />
+                          <PayloadList
+                            title={t("snapshots.total_bdu")}
+                            items={payloadData.payload.bduVulnerablePackages}
+                            isVuln
+                          />
+                        </div>)) 
+                    : null}
               </section>
             </>
           )}
