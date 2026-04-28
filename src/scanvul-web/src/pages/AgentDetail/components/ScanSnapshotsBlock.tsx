@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { agentsApi, type ScanSnapshotSummary } from "../../../api/agentsApi";
 import { Card } from "../../../components/Card";
+import { modalEffect } from "../../../utils/modal";
 
 interface ScanSnapshotsBlockProps {
   agentId: string;
@@ -26,7 +27,6 @@ export const ScanSnapshotsBlock: React.FC<ScanSnapshotsBlockProps> = ({
     queryFn: () => agentsApi.getSnapshotSummaries(agentId),
   });
 
-  // Sort summaries by creation time (latest first)
   const sortedSummaries =
     data?.summaries.sort(
       (a, b) =>
@@ -182,20 +182,13 @@ const SnapshotDetailModal: React.FC<{
   const { t } = useTranslation();
   const [showFullPayload, setShowFullPayload] = useState(false);
 
-  // Fetch payload details
   const { data, isLoading } = useQuery({
     queryKey: ["snapshot-detail", snapshotId],
     queryFn: () => agentsApi.getSnapshotPayload(snapshotId, true),
   });
 
   React.useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    modalEffect(onClose);
   }, [onClose]);
 
   return (
