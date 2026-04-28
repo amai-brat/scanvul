@@ -43,7 +43,7 @@ public record PackageInfo(
 /// <param name="VulnerabilityId">Vulnerability ID (e.g. CVE-2024-56738, BDU:2026-05547)</param>
 /// <param name="PackageInfoId">Package ID</param>
 /// <param name="PackageName">Package name</param>
-/// <param name="PackagerVersion">Package version</param>
+/// <param name="PackageVersion">Package version</param>
 /// <param name="Status">Status</param>
 [PublicAPI]
 public record VulnerablePackage(
@@ -51,5 +51,5 @@ public record VulnerablePackage(
     string VulnerabilityId, 
     long PackageInfoId, 
     string PackageName, 
-    string PackagerVersion,
+    string PackageVersion,
     VulnerablePackageStatus Status);

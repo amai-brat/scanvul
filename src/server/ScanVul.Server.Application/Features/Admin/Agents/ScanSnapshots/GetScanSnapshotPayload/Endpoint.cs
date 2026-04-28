@@ -13,7 +13,7 @@ public class GetScanSnapshotPayloadEndpoint(
     public override void Configure()
     {
         Version(1);
-        Get("api/{apiVersion}/admin/agents/snapshots/{snapshotId}");
+        Get("api/{apiVersion}/admin/agents/snapshots/{snapshotId}/payload");
         Summary(s =>
         {
             s.Summary = "Get scan snapshot payload";
