@@ -62,6 +62,7 @@ public class WingetPackagesSyncWorker(
         }
     }
 
+    [DapperAot(false)]
     private async Task SyncDataFromSqliteToPostgres(string sqlitePath, CancellationToken ct)
     {
         using var scope = serviceScopeFactory.CreateScope();
