@@ -11,6 +11,7 @@ public class ComputerRepository(AppDbContext dbContext) : IComputerRepository
         var computer = await dbContext.Computers
             .Include(x => x.Packages)
             .Include(x => x.VulnerablePackages)
+                .ThenInclude(x => x.PackageInfo)
             .AsSplitQuery()
             .FirstOrDefaultAsync(x => x.Id == computerId, ct);
 
@@ -22,6 +23,7 @@ public class ComputerRepository(AppDbContext dbContext) : IComputerRepository
         var computer = await dbContext.Computers
             .Include(x => x.Packages)
             .Include(x => x.BduVulnerablePackages)
+                .ThenInclude(x => x.PackageInfo)
             .AsSplitQuery()
             .FirstOrDefaultAsync(x => x.Id == computerId, ct);
 
