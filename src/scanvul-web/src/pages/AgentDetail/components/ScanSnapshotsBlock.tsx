@@ -253,13 +253,13 @@ const SnapshotDetailModal: React.FC<{
                       isVuln
                     />
                     <DiffList
-                      title={t("snapshots.added_cve")}
+                      title={t("snapshots.added_bdu")}
                       items={diffData.diff.addedBduVulnerablePackages}
                       type="danger"
                       isVuln
                     />
                     <DiffList
-                      title={t("snapshots.removed_cve")}
+                      title={t("snapshots.removed_bdu")}
                       items={diffData.diff.removedBduVulnerablePackages}
                       type="success"
                       isVuln

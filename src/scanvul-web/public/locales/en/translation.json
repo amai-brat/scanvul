@@ -127,6 +127,8 @@
     "removed_packages": "Removed Packages",
     "added_cve": "New Vulnerabilities (CVE)",
     "removed_cve": "Fixed Vulnerabilities (CVE)",
+    "added_bdu": "New Vulnerabilities (BDU)",
+    "removed_bdu": "Fixed Vulnerabilities (BDU)",
     "full_payload": "View Full Snapshot Payload",
     "no_payload_data": "Snapshot data is not available",
     "total_packages": "Total Installed Packages",
