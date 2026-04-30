@@ -13,6 +13,7 @@ public abstract class BaseVulnerablePackageScanner<TVulnPkg>(
 {
     // ReSharper disable once StaticMemberInGenericType
     private static readonly HashSet<VulnerablePackageStatus> RollingStatusesAfterUpdate = [
+        VulnerablePackageStatus.Vulnerable,
         VulnerablePackageStatus.FalsePositive,
         VulnerablePackageStatus.Patchless,
         VulnerablePackageStatus.Fixed,
@@ -58,6 +59,45 @@ public abstract class BaseVulnerablePackageScanner<TVulnPkg>(
         List<TVulnPkg> removedVulnerablePackages,
         List<TVulnPkg> addedVulnerablePackages, 
         CancellationToken ct = default);
+
+    /// <summary>
+    /// Get not rolling packages (rolling package means package that was existed on computer and updated) 
+    /// </summary>
+    /// <param name="removedVulnerablePackages">Removed vulnerable packages</param>
+    /// <param name="addedVulnerablePackages">Added vulnerable packages</param>
+    /// <param name="existingPackageStatuses">Dictionary with existing vulnerable packages: (name, vuln_id) => status</param>
+    /// <returns>Tuple with not rolling packages</returns>
+    private (
+        List<TVulnPkg> NotRollingRemoved,
+        List<TVulnPkg> NotRollingAdded
+        ) GetNotRollingPackages(
+            List<TVulnPkg> removedVulnerablePackages,
+            List<TVulnPkg> addedVulnerablePackages, 
+            Dictionary<(string PackageName, string VulnerabilityId), VulnerablePackageStatus> existingPackageStatuses)
+    {
+        List<TVulnPkg> notRollingRemoved = [];
+        foreach (var vulnPkg in removedVulnerablePackages)
+        {
+            // exists => rolling
+            if (existingPackageStatuses.TryGetValue((vulnPkg.PackageInfo.Name, vulnPkg.VulnerabilityId), out _)) 
+                continue;
+            
+            notRollingRemoved.Add(vulnPkg);
+        }
+        
+        List<TVulnPkg> notRollingAdded = [];
+        foreach (var vulnPkg in addedVulnerablePackages)
+        {
+            // exists => rolling
+            if (existingPackageStatuses.TryGetValue((vulnPkg.PackageInfo.Name, vulnPkg.VulnerabilityId), out _)) 
+                continue;
+            
+            notRollingAdded.Add(vulnPkg);
+        }
+        
+        return (notRollingRemoved, notRollingAdded);
+    }
+    
     
     private async Task ScanInternalAsync(long computerId, CancellationToken ct)
     {
@@ -113,7 +153,8 @@ public abstract class BaseVulnerablePackageScanner<TVulnPkg>(
 
         await unitOfWork.SaveChangesAsync(ct);
 
-        await SaveVulnerablePackagesChangesAsync(computerId, toRemove, toAdd, ct);
+        var notRolling = GetNotRollingPackages(toRemove, toAdd, existingPackageStatuses);
+        await SaveVulnerablePackagesChangesAsync(computerId, notRolling.NotRollingRemoved, notRolling.NotRollingAdded, ct);
         
         logger.LogInformation("Successfully scanned packages of computer {ComputerId} for vulnerabilities. " +
                               "Found {VulnerablePackagesCount} vulnerable packages", 

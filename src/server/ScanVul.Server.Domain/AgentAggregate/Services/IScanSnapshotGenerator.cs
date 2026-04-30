@@ -19,18 +19,6 @@ public class ScanSnapshotGenerator(
     IComputerRepository computerRepository,
     IUnitOfWork unitOfWork) : IScanSnapshotGenerator
 {
-    /// <summary>
-    /// Vulnerable package statuses that should be counted in diff payload
-    /// </summary>
-    /// <remarks>
-    /// This thing was added because if package was updated (=> new packageInfoId => new vulnerablePackageId),
-    /// fixed state (FalsePositive, Patchless, etc.) is ignored and go like new vulnerability.
-    /// </remarks>
-    private static readonly HashSet<VulnerablePackageStatus> DiffVulnerableStatuses =
-    [
-        VulnerablePackageStatus.Unknown,
-        VulnerablePackageStatus.Vulnerable,
-    ];
     
     public async Task GenerateAsync(long computerId, CancellationToken ct = default)
     {
@@ -93,7 +81,6 @@ public class ScanSnapshotGenerator(
         if (addedVulns is not null)
         {
             diffPayload.AddedVulnerablePackages = addedVulns
-                .Where(x => DiffVulnerableStatuses.Contains(x.Status))
                 .Select(ReducedVulnerablePackage.From)
                 .ToList();
         }
@@ -102,7 +89,6 @@ public class ScanSnapshotGenerator(
         if (removedVulns is not null)
         {
             diffPayload.RemovedVulnerablePackages = removedVulns
-                .Where(x => DiffVulnerableStatuses.Contains(x.Status))
                 .Select(ReducedVulnerablePackage.From)
                 .ToList();
         }
@@ -111,7 +97,6 @@ public class ScanSnapshotGenerator(
         if (addedBduVulns is not null)
         {
             diffPayload.AddedBduVulnerablePackages = addedBduVulns
-                .Where(x => DiffVulnerableStatuses.Contains(x.Status))
                 .Select(ReducedVulnerablePackage.From)
                 .ToList();
         }
@@ -120,7 +105,6 @@ public class ScanSnapshotGenerator(
         if (removedBduVulns is not null)
         {
             diffPayload.RemovedBduVulnerablePackages = removedBduVulns
-                .Where(x => DiffVulnerableStatuses.Contains(x.Status))
                 .Select(ReducedVulnerablePackage.From)
                 .ToList();
         }
