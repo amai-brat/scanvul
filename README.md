@@ -111,5 +111,5 @@
   - [x] frontend: block right to commands with snapshot summary + diff summary, when clicking to snapshot, modal with info
   - [ ] *snapshot diffs for all organization's agents (to pdf)*
 - [ ] choose version to update
-- [ ] scan inventarized packages without sending command
+- [x] scan inventarized packages without sending command
 

@@ -185,12 +185,12 @@ export const agentsApi = {
       .then((res) => res.data),
 
   getBduVulnPackages: (id: string, status?: VulnerablePackageStatus) =>
-      api
-          .get<ListBduVulnerablePackagesResponse>(
-              `/api/v1/admin/agents/${id}/bdu-vulnerable-packages`,
-              { params: { status } }
-          )
-          .then((res) => res.data),
+    api
+      .get<ListBduVulnerablePackagesResponse>(
+        `/api/v1/admin/agents/${id}/bdu-vulnerable-packages`,
+        { params: { status } },
+      )
+      .then((res) => res.data),
 
   changeVulnStatus: (
     vulnerablePackageId: number,
@@ -222,6 +222,11 @@ export const agentsApi = {
   sendReportPackages: (id: string) =>
     api
       .post(`/api/v1/admin/agents/${id}/commands/report-packages`)
+      .then((res) => res.data),
+
+  scanPackages: (id: string) =>
+    api
+      .post(`/api/v1/admin/agents/${id}/packages/scan`)
       .then((res) => res.data),
 
   sendUpgradePackage: (

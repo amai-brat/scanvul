@@ -13,6 +13,7 @@ import { UpgradePackageCommand } from "./components/commands/UpgradePackageComma
 import { useTranslation } from "react-i18next";
 import { BduVulnerablePackagesBlock } from "./components/BduVulnerablePackagesBlock";
 import { ScanSnapshotsBlock } from "./components/ScanSnapshotsBlock";
+import { ScanPackagesCommand } from "./components/commands/ScanPackagesCommand";
 
 export const AgentDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -50,6 +51,7 @@ export const AgentDetail = () => {
 
         <Card title={t("agent_details.commands")} className="h-full">
           <div className="space-y-3">
+            <ScanPackagesCommand agent={agent} isCommandsOpen={isCommandsOpen} />
             <p className="text-sm text-gray-500 mb-2">
               {t("agent_details.command_block_desc")}
             </p>
