@@ -1,7 +1,9 @@
+using System.Diagnostics;
 using ScanVul.Server.Domain.AgentAggregate.Enums;
 
 namespace ScanVul.Server.Domain.AgentAggregate.Entities;
 
+[DebuggerDisplay("{Id}: pkg_id={PackageInfoId}, vuln_id={VulnerabilityId}")]
 public abstract class BaseVulnerablePackage
 {
     /// <summary>
