@@ -49,15 +49,15 @@
   - [x] fix git 2.45.1 doesn't have [CVE](https://cti.wazuh.com/vulnerabilities/cves/CVE-2019-1003010). 
         Solution: vendor is jenkins with other version system, so I need to add feature to mark false positives   
   - [x] mark false positive vulnerabilities
-- [ ] agent
+- [x] agent
   - [x] scrape packages on windows
   - [x] scrape packages on linux (alt linux)
   - [x] task management (short pooling)
     - [x] task to scan
     - [x] task to upgrade package (via chocolatey)
     - [x] task to stop (remove)
-  - [ ] conditional compilation for different OSes
-  - [ ] in-memory queue = Channel 
+  - [ ] *conditional compilation for different OSes*
+  - [ ] *in-memory queue = Channel*
 - [x] frontend
   - [x] agent's pc info
   - [x] vulnerable packages
@@ -83,9 +83,9 @@
   - [x] bdu: BaseVersion with only numbers
   - [x] bdu: if BaseVersion with only numbers: i can check for equality
 - [ ] test
-  - [ ] has vulnerability → update → no vulnerability
+  - [x] has vulnerability → update → no vulnerability
   - [ ] version matching and comparing (unit tests)
-- [ ] links to package managers as options
+- [x] links to package managers as options **{not planned}**
 - [x] winget
   - [x] package manager searching
   - [x] installing packages on agent
@@ -104,10 +104,12 @@
   - [x] API to mark/unmark PatchExists, IsFalsePositive
   - [x] change IsFalsePositive and IsPatchless to status enum column
   - [x] blocks on frontend with not PatchExists and IsFalsePositive
-- [ ] snapshots
+- [x] snapshots
   - [x] entities for snapshot (vulnerable packages with scoring by cvss), diff between snapshots (what vulnerable package added, removed)
   - [x] snapshot for every scanning process (if no diff (changes), don't save??)
   - [x] snapshot and diff summary
-  - [ ] frontend: block right to commands with snapshot summary + diff summary, when clicking to snapshot, modal with info
-  - [ ] snapshot diffs for all organization's agents (to pdf)
+  - [x] frontend: block right to commands with snapshot summary + diff summary, when clicking to snapshot, modal with info
+  - [ ] *snapshot diffs for all organization's agents (to pdf)*
+- [ ] choose version to update
+- [ ] scan inventarized packages without sending command
 
