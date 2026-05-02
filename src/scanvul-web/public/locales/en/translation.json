@@ -46,7 +46,8 @@
     "memory": "MEMORY",
 
     "commands": "Commands",
-    "command_block_desc": "Send remote commands to the agent",
+    "command_server_block_desc": "Send commands to server",
+    "command_agent_block_desc": "Send remote commands to the agent",
     "command_report_packages_title": "Report and scan Packages",
     "command_report_packages_desc": "Request package list update and scan",
     "command_report_packages_toast_msg": "Report packages command will be sent to agent",
