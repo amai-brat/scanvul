@@ -18,6 +18,13 @@ export interface PackageResponse {
   version: string;
 }
 
+export type VulnerablePackageStatus =
+  | "unknown"
+  | "vulnerable"
+  | "falsePositive"
+  | "patchless"
+  | "fixed";
+
 export interface VulnerablePackageResponse {
   id: number;
   cveId: string;
@@ -28,7 +35,9 @@ export interface VulnerablePackageResponse {
   cvssV3_0: number | null;
   cvssV2_0: number | null;
   description: string | null;
+  status: VulnerablePackageStatus;
 }
+
 
 export interface Identifier {
   type: string;
@@ -62,6 +71,7 @@ export interface BduVulnerablePackageResponse {
   cvss3: number | null; // v3.0 / v3.1
   cvss4: number | null; // v4.0
   software: VulnerableSoftware[];
+  status: VulnerablePackageStatus;
 }
 
 export interface ListBduVulnerablePackagesResponse {
@@ -93,6 +103,70 @@ export interface ListCommandsResponse {
   commands: CommandResponse[];
 }
 
+export interface PackageInfo {
+  id: number;
+  name: string;
+  version: string;
+}
+
+export interface VulnerablePackage {
+  id: number;
+  vulnerabilityId: string;
+  packageInfoId: number;
+  packageName: string;
+  packageVersion: string;
+  status: VulnerablePackageStatus;
+}
+
+export interface ScanSnapshotPayloadSummary {
+  packages: number;
+  vulnerablePackages: number;
+  bduVulnerablePackages: number;
+}
+
+export interface ScanSnapshotDiffSummary {
+  addedPackages: number;
+  removedPackages: number;
+  addedVulnerablePackages: number;
+  removedVulnerablePackages: number;
+  addedBduVulnerablePackages: number;
+  removedBduVulnerablePackages: number;
+}
+
+export interface ScanSnapshotSummary {
+  snapshotId: string;
+  createdAt: string;
+  payload: ScanSnapshotPayloadSummary;
+  diff: ScanSnapshotDiffSummary | null;
+}
+
+export interface ListScanSnapshotSummariesResponse {
+  summaries: ScanSnapshotSummary[];
+}
+
+export interface ScanSnapshotPayloadResponse {
+  packages: PackageInfo[];
+  vulnerablePackages: VulnerablePackage[];
+  bduVulnerablePackages: VulnerablePackage[];
+}
+
+export interface ScanSnapshotDiffPayloadResponse {
+  addedPackages: PackageInfo[];
+  removedPackages: PackageInfo[];
+  addedVulnerablePackages: VulnerablePackage[];
+  removedVulnerablePackages: VulnerablePackage[];
+  addedBduVulnerablePackages: VulnerablePackage[];
+  removedBduVulnerablePackages: VulnerablePackage[];
+}
+
+export interface GetScanSnapshotPayloadResponse {
+  payload: ScanSnapshotPayloadResponse | null;
+}
+
+export interface GetScanSnapshotDiffResponse {
+  diff: ScanSnapshotDiffPayloadResponse | null;
+}
+
 export const agentsApi = {
   list: () =>
     api.get<ListAgentsResponse>("/api/v1/admin/agents").then((res) => res.data),
@@ -102,31 +176,41 @@ export const agentsApi = {
       .get<ListPackagesResponse>(`/api/v1/admin/agents/${id}/packages`)
       .then((res) => res.data),
 
-  getVulnPackages: (id: string) =>
+  getVulnPackages: (id: string, status?: VulnerablePackageStatus) =>
     api
       .get<ListVulnerablePackagesResponse>(
         `/api/v1/admin/agents/${id}/vulnerable-packages`,
+        { params: { status } },
       )
       .then((res) => res.data),
 
-  getBduVulnPackages: (id: string) =>
+  getBduVulnPackages: (id: string, status?: VulnerablePackageStatus) =>
     api
       .get<ListBduVulnerablePackagesResponse>(
         `/api/v1/admin/agents/${id}/bdu-vulnerable-packages`,
+        { params: { status } },
       )
       .then((res) => res.data),
 
-  markFalsePositive: (vulnerablePackageId: number) =>
+  changeVulnStatus: (
+    vulnerablePackageId: number,
+    status: VulnerablePackageStatus,
+  ) =>
     api
       .patch(
-        `/api/v1/admin/agents/vulnerable-packages/${vulnerablePackageId}/false-positive`,
+        `/api/v1/admin/agents/vulnerable-packages/${vulnerablePackageId}`,
+        { status },
       )
       .then((res) => res.data),
 
-  markFalsePositiveBdu: (bduVulnerablePackageId: number) =>
+  changeVulnStatusBdu: (
+    vulnerablePackageId: number,
+    status: VulnerablePackageStatus,
+  ) =>
     api
       .patch(
-        `/api/v1/admin/agents/bdu-vulnerable-packages/${bduVulnerablePackageId}/false-positive`,
+        `/api/v1/admin/agents/bdu-vulnerable-packages/${vulnerablePackageId}`,
+        { status },
       )
       .then((res) => res.data),
 
@@ -140,7 +224,16 @@ export const agentsApi = {
       .post(`/api/v1/admin/agents/${id}/commands/report-packages`)
       .then((res) => res.data),
 
-  sendUpgradePackage: (id: string, packageName: string, packageManager: string) =>
+  scanPackages: (id: string) =>
+    api
+      .post(`/api/v1/admin/agents/${id}/packages/scan`)
+      .then((res) => res.data),
+
+  sendUpgradePackage: (
+    id: string,
+    packageName: string,
+    packageManager: string,
+  ) =>
     api
       .post(`/api/v1/admin/agents/${id}/commands/upgrade-package`, {
         packageName,
@@ -151,5 +244,26 @@ export const agentsApi = {
   disableAgent: (id: string) =>
     api
       .post(`/api/v1/admin/agents/${id}/commands/disable-agent`)
+      .then((res) => res.data),
+
+  getSnapshotSummaries: (agentId: string) =>
+    api
+      .get<ListScanSnapshotSummariesResponse>(
+        `/api/v1/admin/agents/${agentId}/snapshots/summary`,
+      )
+      .then((res) => res.data),
+
+  getSnapshotPayload: (snapshotId: string) =>
+    api
+      .get<GetScanSnapshotPayloadResponse>(
+        `/api/v1/admin/agents/snapshots/${snapshotId}/payload`,
+      )
+      .then((res) => res.data),
+
+  getSnapshotLastDiff: (snapshotId: string) =>
+    api
+      .get<GetScanSnapshotDiffResponse>(
+        `/api/v1/admin/agents/snapshots/${snapshotId}/diff`,
+      )
       .then((res) => res.data),
 };

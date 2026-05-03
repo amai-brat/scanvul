@@ -26,6 +26,7 @@ public static class Entry
         services.AddScoped<IComputerRepository, ComputerRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IReportRepository, ReportRepository>();
+        services.AddScoped<ISnapshotRepository, SnapshotRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         
         return services;

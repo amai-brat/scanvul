@@ -47,9 +47,12 @@
 
     "commands": "Команды",
     "command_block_desc": "Отправить агенту команды",
-    "command_report_packages_title": "Сканировать ПО",
-    "command_report_packages_desc": "Обновить список установленного ПО",
+    "command_report_packages_title": "Инвентаризовать и сканировать ПО",
+    "command_report_packages_desc": "Обновить список установленного ПО и сканировать",
     "command_report_packages_toast_msg": "Команда на сканирование ПО будет отправлена агенту",
+    "command_scan_packages_title": "Сканировать инвентаризованное ПО",
+    "command_scan_packages_desc": "Найти уязвимости в установленном на конечном устройстве агента ПО на сервере",
+    "command_scan_packages_toast_msg": "Команда на сканирование ПО отправлена серверу",
     "command_upgrade_package_title": "Обновить ПО",
     "command_upgrade_package_desc": "Обновить ПО с помощью пакетного менеджера",
     "command_upgrade_package_toast_msg": "Команда на обновление ПО будет отправлена агенту",
@@ -59,13 +62,19 @@
     "search_results": "Результаты поиска",
     "no_packages_matching": "Не найдены ПО по запросу '{{pattern}}'",
 
+    "scan_snapshots": "Снапшоты сканирования",
+    "no_snapshots": "Снапшоты для этого агента отсутствуют.",
+
     "vulns": "Уязвимости ПО из CVE",
     "vulns_total": "Всего уязвимых ПО: {{amount}}",
     "no_vulns": "Нет уязвимостей",
     "max_cvss": "Макс. CVSS: {{score}}",
-    "mark_false_positive": "Пометить, как ложное срабатывание",
-    "mark_false_positive_desc": "Вы уверены, что хотите отметить данную уязвимость как <bold>ложное срабатывание</bold>? Она будет скрыта с отчёта об уязвимостях",
-    "mark_false_positive_confirm": "Да, пометить как ложное срабатывание",
+    "change_status": "Изменить статус...",
+    "status_vulnerable": "Уязвимые",
+    "status_falsePositive": "Ложное срабатывание",
+    "status_patchless": "Без патча",
+    "status_fixed": "Исправлено",
+    "status_unknown": "Неизвестно",
 
     "bdu_vulns": "Уязвимости ПО из БДУ",
     "bdu_vulns_total": "Всего уязвимых ПО: {{amount}}",
@@ -107,5 +116,31 @@
       "processing": "Обработка...",
       "cancel": "Отмена"
     }
+  },
+
+  "snapshots": {
+    "tooltips": {
+      "packages": "{{total}} пакетов (добавлено: {{added}}, удалено: {{removed}})",
+      "cve": "{{total}} уязвимых пакетов CVE (добавлено: {{added}}, удалено: {{removed}})",
+      "bdu": "{{total}} уязвимых пакетов BDU (добавлено: {{added}}, удалено: {{removed}})"
+    },
+    "modal_title": "Детали снапшота",
+    "diff_section": "Изменения с предыдущего снапшота",
+    "no_diff": "Изменений не обнаружено или это первый снапшот.",
+    "added_packages": "Добавленные пакеты",
+    "removed_packages": "Удаленные пакеты",
+    "added_cve": "Новые уязвимости (CVE)",
+    "removed_cve": "Исправленные уязвимости (CVE)",
+    "added_bdu": "Новые уязвимости (БДУ)",
+    "removed_bdu": "Исправленные уязвимости (БДУ)",
+    "full_payload": "Просмотр полного снапшота",
+    "no_payload_data": "Данные снапшота недоступны",
+    "total_packages": "Всего установленных пакетов",
+    "total_cve": "Всего уязвимостей (CVE)",
+    "total_bdu": "Всего уязвимостей (BDU)"
+  },
+  "common": {
+    "loading": "Загрузка...",
+    "error": "Ошибка при загрузке данных"
   }
 }

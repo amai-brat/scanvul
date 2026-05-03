@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScanVul.Server.API", "server\ScanVul.Server.API\ScanVul.Server.API.csproj", "{45839188-080E-4C1E-8636-ACA07991ECA8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "server", "server", "{CAF2DC1E-4D78-4657-A626-A36524A471AA}"
+    ProjectSection(SolutionItems) = preProject
+		server\Directory.Packages.props = server\Directory.Packages.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "agent", "agent", "{C24911BE-579E-48C7-95E1-A44390A95C00}"
 	ProjectSection(SolutionItems) = preProject

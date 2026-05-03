@@ -2,10 +2,12 @@ using System.Net;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.Caching.Memory;
 using ScanVul.Contracts.PackageInfos;
 using ScanVul.Server.Application.Services;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
+using ScanVul.Server.Domain.AgentAggregate.Services;
 using ScanVul.Server.Domain.Common;
 
 namespace ScanVul.Server.Application.Features.Agents.PackageInfos.ReportPackages;
@@ -14,6 +16,7 @@ public class ReportPackagesEndpoint(
     IAgentRepository agentRepository,
     IPackageInfoRepository packageInfoRepository,
     ScannerJobDispatcher scannerJobDispatcher,
+    IMemoryCache cache,
     IUnitOfWork unitOfWork) 
     : Endpoint<ReportPackagesRequestWrapper, Results<Ok, ProblemDetails>>
 {
@@ -77,6 +80,7 @@ public class ReportPackagesEndpoint(
                 existing.Version == inc.Version))
             .ToList();
 
+        List<PackageInfo> packagesToLink = [];
         if (newLinksNeeded.Count != 0)
         {
             var namesToLookUp = newLinksNeeded.Select(x => x.Name).ToList();
@@ -91,21 +95,46 @@ public class ReportPackagesEndpoint(
 
                 if (existingEntity != null)
                 {
-                    currentlyLinkedPackages.Add(existingEntity);
+                    packagesToLink.Add(existingEntity);
                 }
                 else
                 {
                     var newEntity = new PackageInfo(dto.Name, dto.Version);
-                    currentlyLinkedPackages.Add(newEntity);
+                    packagesToLink.Add(newEntity);
                 }
             }
+        }
+        
+        foreach (var pkg in packagesToLink)
+        {
+            currentlyLinkedPackages.Add(pkg);
         }
         
         agent.LastPackagesScrapingAt = DateTime.UtcNow;
         await unitOfWork.SaveChangesAsync(ct);
         
+        await SavePackagesChangesAsync(agent.Computer.Id, packagesToUnlink, packagesToLink, ct);
         scannerJobDispatcher.DispatchScan(agent.Computer.Id);
         
         return TypedResults.Ok();
+    }
+    
+    /// <summary>
+    /// Save changes of vulnerable packages (in cache) to use them later in <see cref="IScanSnapshotGenerator"/>
+    /// </summary>
+    /// <param name="computerId">Computer ID</param>
+    /// <param name="removedPackages">Removed ones</param>
+    /// <param name="addedPackages">Added ones</param>
+    /// <param name="ct">Cancellation token</param>
+    private Task SavePackagesChangesAsync(
+        long computerId,
+        List<PackageInfo> removedPackages,
+        List<PackageInfo> addedPackages,
+        CancellationToken ct = default)
+    {
+        cache.Set(CacheKeys.AddedVulnerablePackages(computerId), addedPackages);
+        cache.Set(CacheKeys.RemovedVulnerablePackages(computerId), removedPackages);
+        
+        return Task.CompletedTask;
     }
 }

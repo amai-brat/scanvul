@@ -1,5 +1,6 @@
 using System.Net;
 using JetBrains.Annotations;
+using ScanVul.Server.Domain.AgentAggregate.Entities.Snapshots;
 using OperatingSystem = ScanVul.Server.Domain.AgentAggregate.Enums.OperatingSystem;
 
 namespace ScanVul.Server.Domain.AgentAggregate.Entities;
@@ -26,4 +27,6 @@ public class Computer
 
     public List<VulnerablePackage> VulnerablePackages { get; set; } = [];
     public List<BduVulnerablePackage> BduVulnerablePackages { get; set; } = [];
+
+    public List<ScanSnapshot> Snapshots { get; set; } = [];
 }

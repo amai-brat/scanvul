@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
@@ -16,64 +17,23 @@ public class VulnerablePackageScanner(
     ILogger<VulnerablePackageScanner> logger,
     IOptions<ScanSettings> options,
     IUnitOfWork unitOfWork,
-    VersionMatcher versionMatcher) : IVulnerablePackageScanner
+    IMemoryCache cache,
+    VersionMatcher versionMatcher) : BaseVulnerablePackageScanner<VulnerablePackage>(unitOfWork, logger)
 {
-    public async Task ScanAsync(long computerId, CancellationToken ct = default)
+    protected override async Task<(
+        Computer? Computer, 
+        List<PackageInfo> Packages, 
+        List<VulnerablePackage> VulnerablePackages
+        )> GetComputerWithPackagesAsync(long computerId, CancellationToken ct)
     {
-        try
-        {
-            await ScanInternalAsync(computerId, ct);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error scanning vulnerable package of computer {ComputerId}", computerId);
-        }
+        var computer = await computerRepository.GetComputerWithCvePackagesAsync(computerId, ct);
+        return (computer, computer?.Packages ?? [], computer?.VulnerablePackages ?? []);
     }
 
-    private async Task ScanInternalAsync(long computerId, CancellationToken ct)
-    {
-        var computer = await computerRepository.GetComputerWithAllPackagesAsync(computerId, ct);
-        if (computer == null)
-        {
-            logger.LogError("Could not find computer {ComputerId}", computerId);
-            throw new Exception($"Could not find computer {computerId}");
-        }
-        logger.LogInformation("Scanning packages of computer {ComputerId} for vulnerabilities", computerId);
-
-        List<VulnerablePackage> vulnerablePackages = [];
-        foreach (var package in computer.Packages)
-        {
-            vulnerablePackages.AddRange(await ScanPackageAsync(computer, package, ct));
-        }
-
-        var uniqueVulnerablePackages = vulnerablePackages
-            .DistinctBy(x => (x.PackageInfoId, x.CveId))
-            .ToList();
-        
-        var incomingIds = new HashSet<(long PackageInfoId, string CveId)>(uniqueVulnerablePackages
-            .Select(x => (x.PackageInfoId, x.CveId)));
-        var existingIds = new HashSet<(long PackageInfoId, string CveId)>(computer.VulnerablePackages
-            .Select(x => (x.PackageInfoId, x.CveId)));
-        
-        // Remove not relevant vulnerable packages
-        var toRemove = computer.VulnerablePackages
-            .Where(x => !incomingIds.Contains((x.PackageInfoId, x.CveId)))
-            .ToList();
-        foreach (var item in toRemove) 
-            computer.VulnerablePackages.Remove(item);
-        
-        // Add new ones
-        var toAdd = uniqueVulnerablePackages
-            .Where(x => !existingIds.Contains((x.PackageInfoId, x.CveId)))
-            .ToList();
-        computer.VulnerablePackages.AddRange(toAdd);
-
-        await unitOfWork.SaveChangesAsync(ct);
-        
-        logger.LogInformation("Successfully scanned packages of computer {ComputerId} for vulnerabilities", computerId);
-    }
-
-    private async Task<List<VulnerablePackage>> ScanPackageAsync(Computer computer, PackageInfo package, CancellationToken ct = default)
+    protected override async Task<IReadOnlyCollection<VulnerablePackage>> ScanPackageAsync(
+        Computer computer, 
+        PackageInfo package, 
+        CancellationToken ct = default)
     {
         var possibleCves = await cveRepository.GetMatchedCveVersionDocumentsAsync(package, ct);
 
@@ -120,6 +80,15 @@ public class VulnerablePackageScanner(
         }
 
         return vulnerablePackages;
+    }
+
+    protected override Task SaveVulnerablePackagesChangesAsync(long computerId, List<VulnerablePackage> removedVulnerablePackages, List<VulnerablePackage> addedVulnerablePackages,
+        CancellationToken ct = default)
+    {
+        cache.Set(CacheKeys.AddedVulnerablePackages(computerId), addedVulnerablePackages);
+        cache.Set(CacheKeys.RemovedVulnerablePackages(computerId), removedVulnerablePackages);
+        
+        return Task.CompletedTask;
     }
 
     private static bool IsPackageAffectedItem(PackageInfo computerPackage, string cvePackageName)

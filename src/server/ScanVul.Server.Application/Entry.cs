@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ScanVul.Server.Application.Options;
 using ScanVul.Server.Application.Services;
+using ScanVul.Server.Domain.AgentAggregate.Services;
 using ScanVul.Server.Domain.Cve.Options;
 using ScanVul.Server.Domain.Cve.Services;
 using ScanVul.Server.Domain.UserAggregate.Services;
@@ -14,6 +15,7 @@ public static class Entry
     public static IServiceCollection AddFeatures(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddFastEndpoints();
+        services.AddMemoryCache();
         
         services.Configure<ScanSettings>(configuration.GetSection("Scan"));
         
@@ -21,7 +23,8 @@ public static class Entry
         services.AddScoped<IVulnerablePackageScanner, VulnerablePackageScanner>();
         services.AddScoped<IVulnerablePackageScanner, BduVulnerablePackageScanner>();
         services.AddScoped<IVulnerablePackageScanner, BduVulnerablePackageScannerV2>();
-        
+
+        services.AddScoped<IScanSnapshotGenerator, ScanSnapshotGenerator>();
         services.AddScoped<VersionMatcher>();
 
         services.Configure<JwtOptions>(options =>

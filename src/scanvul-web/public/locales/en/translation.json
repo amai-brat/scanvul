@@ -37,7 +37,7 @@
     "disable_agent_toast_msg": "Disable agent command will be sent to agent"
   },
   "agent_details": {
-    "click_to_load": "Click to load commands",
+    "click_to_load": "Click to load",
 
     "computer_info": "Computer Info",
     "last_ping": "Last ping: {{time}}",
@@ -47,9 +47,12 @@
 
     "commands": "Commands",
     "command_block_desc": "Send remote commands to the agent",
-    "command_report_packages_title": "Scan Packages",
-    "command_report_packages_desc": "Request package list update",
+    "command_report_packages_title": "Report and scan Packages",
+    "command_report_packages_desc": "Request package list update and scan",
     "command_report_packages_toast_msg": "Report packages command will be sent to agent",
+    "command_scan_packages_title": "Scan inventarized packages",
+    "command_scan_packages_desc": "Scan agent's installed packages on server",
+    "command_scan_packages_toast_msg": "Scan agent's packages command sent to server",
     "command_upgrade_package_title": "Upgrade Package",
     "command_upgrade_package_desc": "Upgrade specific software",
     "command_upgrade_package_toast_msg": "Upgrade package command will be sent to agent",
@@ -59,16 +62,22 @@
     "search_results": "Search Results",
     "no_packages_matching": "No packages found matching '{{pattern}}'",
 
+    "scan_snapshots": "Scan Snapshots",
+    "no_snapshots": "No snapshots available for this agent.",
+
     "vulns": "Vulnerabilities from CVE",
-    "vulns_total": "Total vulnerable software: {{amount}}",
+    "vulns_total": "{{amount}} packages",
     "no_vulns": "No vulnerabilities found",
     "max_cvss": "Max CVSS: {{score}}",
-    "mark_false_positive": "Mark False Positive",
-    "mark_false_positive_desc": "Are you sure you want to mark this package as a <bold>False Positive</bold>? It will be hidden from the vulnerability report",
-    "mark_false_positive_confirm": "Yes, Mark False Positive",
+    "change_status": "Change status...",
+    "status_vulnerable": "Vulnerable",
+    "status_falsePositive": "False Positive",
+    "status_patchless": "Patchless",
+    "status_fixed": "Fixed",
+    "status_unknown": "Unknown",
 
     "bdu_vulns": "Vulnerabilities from BDU",
-    "bdu_vulns_total": "Total vulnerable software: {{amount}}",
+    "bdu_vulns_total": "{{amount}} packages",
     "bdu_vulns_warning_title": "Package versions are not checked automatically against vulnerabilities from BDU. Please verify according to affected software listed in each vulnerability",
     "no_bdu_vulns": "No vulnerabilities from BDU",
     "affected_software": "Affected software",
@@ -107,5 +116,30 @@
       "processing": "Processing...",
       "cancel": "Cancel"
     }
+  },
+  "snapshots": {
+    "tooltips": {
+      "packages": "{{total}} packages ({{added}} added, {{removed}} removed)",
+      "cve": "{{total}} CVE vulnerable packages ({{added}} added, {{removed}} removed)",
+      "bdu": "{{total}} BDU vulnerable packages ({{added}} added, {{removed}} removed)"
+    },
+    "modal_title": "Snapshot Details",
+    "diff_section": "Changes since previous snapshot",
+    "no_diff": "No changes detected or this is the first snapshot.",
+    "added_packages": "Added Packages",
+    "removed_packages": "Removed Packages",
+    "added_cve": "New Vulnerabilities (CVE)",
+    "removed_cve": "Fixed Vulnerabilities (CVE)",
+    "added_bdu": "New Vulnerabilities (BDU)",
+    "removed_bdu": "Fixed Vulnerabilities (BDU)",
+    "full_payload": "View Full Snapshot Payload",
+    "no_payload_data": "Snapshot data is not available",
+    "total_packages": "Total Installed Packages",
+    "total_cve": "Total Vulnerabilities (CVE)",
+    "total_bdu": "Total Vulnerabilities (BDU)"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Failed to load data"
   }
 }
