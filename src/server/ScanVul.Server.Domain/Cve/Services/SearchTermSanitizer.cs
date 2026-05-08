@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace ScanVul.Server.Domain.Cve.Services;
 
-public partial class SearchTermSanitizer
+public partial class SearchTermSanitizer : ISearchTermSanitizer
 {
     private static readonly char[] TrimmedAffixes = ['-', '_', ' '];
     
@@ -15,7 +15,7 @@ public partial class SearchTermSanitizer
     [GeneratedRegex(@"\s+v?\d+(?:\.\d+)*$")]
     private static partial Regex VersionLikeRegex { get; }
     
-    public static string SanitizePackageName(string? name)
+    public string SanitizePackageName(string? name)
     {
         if (string.IsNullOrWhiteSpace(name))
             return name ?? string.Empty;

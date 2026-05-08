@@ -7,7 +7,10 @@ namespace ScanVul.Server.Application.Features.Admin.Agents.VulnerablePackages.Li
 
 public static class Mapping
 {
-    public static BduVulnerablePackageResponse MapToResponse(this BduVulnerablePackage p, BduDescriptionDocument doc)
+    public static BduVulnerablePackageResponse MapToResponse(
+        this BduVulnerablePackage p, 
+        BduDescriptionDocument doc, 
+        ISearchTermSanitizer sanitizer)
     {
         double? cvssScore = double.TryParse(doc.Cvss?.Vector.Score, NumberStyles.Any, CultureInfo.InvariantCulture, out var score) 
             ? score 
@@ -37,15 +40,16 @@ public static class Mapping
             Cvss3: cvss3Score,
             Cvss4: cvss4Score,
             Software: doc.VulnerableSoftware.Soft
-                .SelectSimilarPackage(p.PackageInfo.Name),
+                .SelectSimilarPackage(p.PackageInfo.Name, sanitizer),
             Status: p.Status);
     }
 
     private static IEnumerable<VulnerableSoftware> SelectSimilarPackage(
         this IEnumerable<BduSoft> soft,
-        string packageName)
+        string packageName,
+        ISearchTermSanitizer sanitizer)
     {
-        var sanitized = SearchTermSanitizer.SanitizePackageName(packageName).ToLowerInvariant();
+        var sanitized = sanitizer.SanitizePackageName(packageName).ToLowerInvariant();
 
         return soft
             .Where(x => x.Name.Trim().Contains(sanitized, StringComparison.InvariantCultureIgnoreCase))

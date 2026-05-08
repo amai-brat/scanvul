@@ -10,6 +10,7 @@ using ScanVul.Server.Domain.Cve.ValueObjects.Versions;
 namespace ScanVul.Server.Domain.Cve.Services;
 
 public class BduVulnerablePackageScanner(
+    ISearchTermSanitizer sanitizer,
     IBduRepository bduRepository,
     IComputerRepository computerRepository,
     ILogger<BduVulnerablePackageScanner> logger,
@@ -62,9 +63,9 @@ public class BduVulnerablePackageScanner(
         return Task.CompletedTask;
     }
 
-    private static bool IsPackageNameAffected(PackageInfo computerPackage, string bduPackageName)
+    private bool IsPackageNameAffected(PackageInfo computerPackage, string bduPackageName)
     {
-        var sanitizePackageName = SearchTermSanitizer.SanitizePackageName(computerPackage.Name).ToLowerInvariant();
+        var sanitizePackageName = sanitizer.SanitizePackageName(computerPackage.Name).ToLowerInvariant();
         return bduPackageName.Trim().Contains(sanitizePackageName, StringComparison.InvariantCultureIgnoreCase);
     }
     

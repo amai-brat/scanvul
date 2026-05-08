@@ -12,6 +12,7 @@ using ScanVul.Server.Domain.Cve.ValueObjects.Versions;
 namespace ScanVul.Server.Domain.Cve.Services;
 
 public class VulnerablePackageScanner(
+    ISearchTermSanitizer sanitizer,
     ICveRepository cveRepository,
     IComputerRepository computerRepository,
     ILogger<VulnerablePackageScanner> logger,
@@ -91,9 +92,9 @@ public class VulnerablePackageScanner(
         return Task.CompletedTask;
     }
 
-    private static bool IsPackageAffectedItem(PackageInfo computerPackage, string cvePackageName)
+    private bool IsPackageAffectedItem(PackageInfo computerPackage, string cvePackageName)
     {
-        var sanitizePackageName = SearchTermSanitizer.SanitizePackageName(computerPackage.Name).ToLowerInvariant();
+        var sanitizePackageName = sanitizer.SanitizePackageName(computerPackage.Name).ToLowerInvariant();
         return cvePackageName.Trim().Contains(sanitizePackageName, StringComparison.InvariantCultureIgnoreCase);
     }
     

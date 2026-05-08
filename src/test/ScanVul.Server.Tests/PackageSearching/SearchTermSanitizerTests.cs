@@ -4,6 +4,8 @@ namespace ScanVul.Server.Tests.PackageSearching;
 
 public class SearchTermSanitizerTests
 {
+    private readonly SearchTermSanitizer _sut = new();
+
     [Theory(DisplayName = "Package name should be sanitized")]
     [InlineData("   ", "")]
     [InlineData("", "")]
@@ -20,7 +22,7 @@ public class SearchTermSanitizerTests
     public void SanitizePackageName_NameGiven_Sanitized(string? packageName, string expected)
     {
         // act
-        var actual = SearchTermSanitizer.SanitizePackageName(packageName);
+        var actual = _sut.SanitizePackageName(packageName);
         
         // assert
         Assert.Equal(expected, actual);
