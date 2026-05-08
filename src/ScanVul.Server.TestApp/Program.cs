@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
+using ScanVul.Server.Application;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
 using ScanVul.Server.Domain.Cve.Repositories;
+using ScanVul.Server.Domain.Cve.Services;
 using ScanVul.Server.Infrastructure.OpenSearch;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddTransient<ISearchTermSanitizer, SearchTermSanitizerV2>();
 builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenSearch(builder.Environment, 

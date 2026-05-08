@@ -33,8 +33,11 @@ public static class Entry
         
         services.AddSingleton<IOpenSearchClient>(_ => new OpenSearchClient(settings));
         services.AddScoped<IOpenSearchFiller, OpenSearchFiller>();
-        services.AddScoped<ICveRepository, CveRepository>();
+        services.AddScoped<ICveRepository, CveRepositoryV2>();
         services.AddScoped<IBduRepository, BduRepository>();
+
+        // TODO: create app to execute this
+        // services.AddHostedService<OpenSearchInitializer>();
         
         return services;
     }

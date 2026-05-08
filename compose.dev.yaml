@@ -60,6 +60,7 @@ services:
         hard: 65536
     volumes:
       - ./storage/opensearch:/usr/share/opensearch/data
+      - ./config/opensearch/synonyms.txt:/usr/share/opensearch/config/synonyms.txt:ro
     ports:
       - "9200:9200"
 

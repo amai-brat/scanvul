@@ -77,7 +77,8 @@
   - [x] endpoint like for CVE
   - [x] block on frontend with BDU
 - [x] change format of BDU documents' soft version info to like CVE documents'
-- [ ] find more appropriate package searching method [link](https://docs.opensearch.org/latest/query-dsl/term/index/)
+- [x] find more appropriate package searching method [link](https://docs.opensearch.org/latest/query-dsl/term/index/)
+  - [ ] *sanitizer should return more variants*
 - [ ] rework version matching and comparing
   - [x] bdu: check package name firstly, after version
   - [x] bdu: BaseVersion with only numbers
