@@ -13,7 +13,7 @@ public class ScannerJobDispatcher(
     /// <param name="computerId">Computer ID</param>
     public void DispatchScan(long computerId)
     {
-        var jobId1 = backgroundJobClient.Enqueue<VulnerablePackageScanner>(
+        var jobId1 = backgroundJobClient.Enqueue<VulnerablePackageScannerV2>(
             scanner => scanner.ScanAsync(computerId, CancellationToken.None));
 
         var jobId2 = backgroundJobClient.ContinueJobWith<BduVulnerablePackageScannerV2>(jobId1,

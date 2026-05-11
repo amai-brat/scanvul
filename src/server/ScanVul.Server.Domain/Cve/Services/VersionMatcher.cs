@@ -80,6 +80,20 @@ public class VersionMatcher(ILogger<VersionMatcher> logger)
 
         return versionObjectA.CompareTo(versionObjectB);
     }
+    
+    public int Compare(IVersion versionObjectA, IVersion versionObjectB)
+    {
+        if (versionObjectA.Type == VersionType.Base)
+            return versionObjectA.CompareTo(versionObjectB);
+        
+        if (versionObjectB.Type == VersionType.Base)
+            return -versionObjectB.CompareTo(versionObjectA);
+        
+        if (versionObjectA.GetType() != versionObjectB.GetType())
+            throw new ArgumentException($"Cannot compare different version types: {versionObjectA.Type} vs {versionObjectB.Type}");
+
+        return versionObjectA.CompareTo(versionObjectB);
+    }
 
     public bool Match(string version, VersionMatchType type)
     {

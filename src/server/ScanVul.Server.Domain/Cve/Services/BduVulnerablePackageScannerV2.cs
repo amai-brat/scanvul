@@ -60,8 +60,11 @@ public class BduVulnerablePackageScannerV2(
 
     private bool IsPackageNameAffected(PackageInfo computerPackage, string bduPackageName)
     {
-        var sanitizePackageName = sanitizer.SanitizePackageName(computerPackage.Name).ToLowerInvariant();
-        return bduPackageName.Trim().Contains(sanitizePackageName, StringComparison.InvariantCultureIgnoreCase);
+        var sanitizedPackageName = sanitizer.SanitizePackageName(computerPackage.Name).ToLowerInvariant().Trim();
+        var product = bduPackageName.ToLowerInvariant().Trim();
+        
+        return product.Contains(sanitizedPackageName, StringComparison.OrdinalIgnoreCase) ||
+               sanitizedPackageName.Contains(product, StringComparison.OrdinalIgnoreCase);
     }
     
     /// <summary>

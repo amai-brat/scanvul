@@ -79,7 +79,7 @@
 - [x] change format of BDU documents' soft version info to like CVE documents'
 - [x] find more appropriate package searching method [link](https://docs.opensearch.org/latest/query-dsl/term/index/)
   - [ ] *sanitizer should return more variants*
-- [ ] rework version matching and comparing
+- [x] rework version matching and comparing
   - [x] bdu: check package name firstly, after version
   - [x] bdu: BaseVersion with only numbers
   - [x] bdu: if BaseVersion with only numbers: i can check for equality

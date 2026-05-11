@@ -22,6 +22,8 @@ public class ScanSnapshotGenerator(
     
     public async Task GenerateAsync(long computerId, CancellationToken ct = default)
     {
+        using var logScope = logger.BeginScope("Generating scan snapshot for computer {ComputerId}", computerId);
+        
         var computer = await computerRepository.GetComputerWithAllPackagesAndLastSnapshotAsync(computerId, ct);
         if (computer == null)
         {
@@ -50,6 +52,7 @@ public class ScanSnapshotGenerator(
             if (diffPayload.IsEmpty)
             {
                 // there is last snapshot, but diff is empty => skip, no need to save same snapshot
+                logger.LogInformation("Diff is empty => not saving new snapshot");
                 return;
             }
             
