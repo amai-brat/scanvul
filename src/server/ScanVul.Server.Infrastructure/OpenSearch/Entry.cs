@@ -35,9 +35,6 @@ public static class Entry
         services.AddScoped<IOpenSearchFiller, OpenSearchFiller>();
         services.AddScoped<ICveRepository, CveRepositoryV2>();
         services.AddScoped<IBduRepository, BduRepository>();
-
-        // TODO: create app to execute this
-        // services.AddHostedService<OpenSearchInitializer>();
         
         return services;
     }
