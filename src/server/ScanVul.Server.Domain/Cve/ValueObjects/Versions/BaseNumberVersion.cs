@@ -30,7 +30,6 @@ public class BaseNumberVersion : IVersion
         
         if (strSegments.Length == 0)
             return false;
-
         
         List<long> segments = [];
         foreach (var strSegment in strSegments)

@@ -1,6 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using ScanVul.Server.Domain.Cve.Enums;
+using ScanVul.Server.Domain.Cve.Options;
 using ScanVul.Server.Domain.Cve.ValueObjects.Versions;
 
 namespace ScanVul.Server.Domain.Cve.Services;
@@ -24,8 +27,28 @@ public enum VersionMatchType
     BaseNumber = 210
 }
 
-public class VersionMatcher(ILogger<VersionMatcher> logger)
+public record struct VersionCreation(string Version, string VersionType, bool Success);
+public class VersionCreationComparer : IComparer<VersionCreation>
 {
+    public int Compare(VersionCreation x, VersionCreation y)
+    {
+        var versionComparison = string.Compare(x.Version, y.Version, StringComparison.OrdinalIgnoreCase);
+        if (versionComparison != 0) return versionComparison;
+        var versionTypeComparison = string.Compare(x.VersionType, y.VersionType, StringComparison.OrdinalIgnoreCase);
+        return versionTypeComparison != 0 ? versionTypeComparison : x.Success.CompareTo(y.Success);
+    }
+}
+
+public class VersionMatcher(ILogger<VersionMatcher> logger, IOptionsMonitor<ScanSettings> settingsMonitor)
+{
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+    {
+        WriteIndented = true
+    };
+    
+    private readonly SortedSet<VersionCreation> _versionCreationRecords = new(new VersionCreationComparer());
+    private readonly ScanSettings _scanSettings = settingsMonitor.CurrentValue;
+    
     public bool TryCreateVersionObject(string version, VersionMatchType type, [NotNullWhen(true)] out IVersion? versionObject)
     {
         versionObject = null;
@@ -35,6 +58,11 @@ public class VersionMatcher(ILogger<VersionMatcher> logger)
         try
         {
             versionObject = CreateVersionObjectInternal(version, type);
+            if (versionObject == null && _scanSettings.TryCreateBaseVersion)
+            {
+                versionObject = CreateVersionObjectInternal(version, VersionMatchType.Base);
+            }
+            
             return versionObject != null;
         }
         catch (Exception ex) when (ex is ArgumentException or FormatException)
@@ -100,7 +128,7 @@ public class VersionMatcher(ILogger<VersionMatcher> logger)
         return TryCreateVersionObject(version, type, out _);
     }
 
-    private static IVersion? CreateVersionObjectInternal(string version, VersionMatchType type)
+    private IVersion? CreateVersionObjectInternal(string version, VersionMatchType type)
     {
         return type switch
         {
@@ -119,7 +147,7 @@ public class VersionMatcher(ILogger<VersionMatcher> logger)
         };
     }
 
-    private static IVersion? CreateUnspecified(string version)
+    private IVersion? CreateUnspecified(string version)
     {
         return CreateByType(version, VersionMatchType.SemVer) ??
                CreateByType(version, VersionMatchType.MajorMinor) ??
@@ -127,12 +155,13 @@ public class VersionMatcher(ILogger<VersionMatcher> logger)
                CreateByType(version, VersionMatchType.Dpkg) ??
                CreateByType(version, VersionMatchType.Rpm) ??
                CreateByType(version, VersionMatchType.Pep440) ??
+               CreateByType(version, VersionMatchType.BaseNumber) ?? 
                CreateByType(version, VersionMatchType.Base);
     }
 
-    private static IVersion? CreateByType(string version, VersionMatchType type)
+    private IVersion? CreateByType(string version, VersionMatchType type)
     {
-        return type switch
+        IVersion? versionObject = type switch
         {
             VersionMatchType.CalVer => CalVer.TryParse(version, out var calVer) ? calVer : null,
             VersionMatchType.Pep440 => Pep440.TryParse(version, out var pep440) ? pep440 : null,
@@ -144,5 +173,20 @@ public class VersionMatcher(ILogger<VersionMatcher> logger)
             VersionMatchType.BaseNumber => BaseNumberVersion.TryParse(version, out var baseNumber) ? baseNumber : null,
             _ => throw new ArgumentException($"Unsupported version type: {type}")
         };
+        
+        _versionCreationRecords.Add(new VersionCreation(version, type.ToString(), versionObject is not null));
+        
+        return versionObject;
+    }
+    
+    /// <summary>
+    /// Save how versions are created to file
+    /// </summary>
+    /// <param name="filename">Filename</param>
+    /// <param name="ct">Cancellation token</param>
+    public async Task DumpVersionCreationRecordsAsync(string filename, CancellationToken ct = default)
+    {
+        await using var fileStream = File.OpenWrite(filename);
+        await JsonSerializer.SerializeAsync(fileStream, _versionCreationRecords, JsonSerializerOptions, cancellationToken: ct);
     }
 }

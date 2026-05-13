@@ -16,7 +16,7 @@ public class VulnerablePackageScannerV2(
     ICveRepository cveRepository,
     IComputerRepository computerRepository,
     ILogger<VulnerablePackageScanner> logger,
-    IOptions<ScanSettings> options,
+    IOptionsMonitor<ScanSettings> options,
     IUnitOfWork unitOfWork,
     IMemoryCache cache,
     VersionMatcher versionMatcher) : BaseVulnerablePackageScanner<VulnerablePackage>(unitOfWork, logger)
@@ -46,7 +46,6 @@ public class VulnerablePackageScannerV2(
             foreach (var affectedItem in cve.Payload.Containers?.Cna?.Affected ?? [])
             {
                 if (!IsPackageAffectedItem(package, affectedItem.Product)) continue;
-                if (!IsPackageAffectedItem(package, affectedItem.Product)) continue;
                 if (!IsPackageVersionAffected(package.Version, affectedItem)) continue;
                      
                 var vulnerablePackage = new VulnerablePackage(cve.Payload.CveMetadata.CveId, package, computer);
@@ -54,7 +53,7 @@ public class VulnerablePackageScannerV2(
             }
         }
         
-        if (options.Value.AdpScan)
+        if (options.CurrentValue.AdpScan)
         {
             // check ADP (тут должна быть очень сложная логика, учитывающая ОС, пакетные менеджеры...)
             foreach (var cve in possibleCves)
@@ -85,6 +84,15 @@ public class VulnerablePackageScannerV2(
         cache.Set(CacheKeys.RemovedVulnerablePackages(computerId), removedVulnerablePackages);
         
         return Task.CompletedTask;
+    }
+
+    protected override async Task PostScanAsync(long computerId, CancellationToken ct)
+    {
+        if (options.CurrentValue.DumpVersionCreationRecords)
+        {
+            var filename = $"versions_comp{computerId}_{DateTime.UtcNow:O}.json";
+            await versionMatcher.DumpVersionCreationRecordsAsync(filename, ct);
+        }
     }
 
     private bool IsPackageAffectedItem(PackageInfo computerPackage, string cveProduct)

@@ -4,7 +4,7 @@ namespace ScanVul.Server.Tests.PackageSearching;
 
 public class SearchTermSanitizerTests
 {
-    private readonly SearchTermSanitizer _sut = new();
+    private readonly SearchTermSanitizerV2 _sut = new();
 
     [Theory(DisplayName = "Package name should be sanitized")]
     [InlineData("   ", "")]

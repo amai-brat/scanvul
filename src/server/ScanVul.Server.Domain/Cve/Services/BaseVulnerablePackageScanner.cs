@@ -24,6 +24,8 @@ public abstract class BaseVulnerablePackageScanner<TVulnPkg>(
         try
         {
             await ScanInternalAsync(computerId, ct);
+            
+            await PostScanAsync(computerId, ct);
         }
         catch (Exception ex)
         {
@@ -61,13 +63,23 @@ public abstract class BaseVulnerablePackageScanner<TVulnPkg>(
         CancellationToken ct = default);
 
     /// <summary>
+    /// Things to do after scan
+    /// </summary>
+    /// <param name="computerId">Computer ID</param>
+    /// <param name="ct">Cancellation token</param>
+    protected virtual Task PostScanAsync(long computerId, CancellationToken ct)
+    {
+        return Task.CompletedTask;
+    }
+    
+    /// <summary>
     /// Get not rolling packages (rolling package means package that was existed on computer and updated) 
     /// </summary>
     /// <param name="removedVulnerablePackages">Removed vulnerable packages</param>
     /// <param name="addedVulnerablePackages">Added vulnerable packages</param>
     /// <param name="existingPackageStatuses">Dictionary with existing vulnerable packages: (name, vuln_id) => status</param>
     /// <returns>Tuple with not rolling packages</returns>
-    private (
+    private static (
         List<TVulnPkg> NotRollingRemoved,
         List<TVulnPkg> NotRollingAdded
         ) GetNotRollingPackages(
