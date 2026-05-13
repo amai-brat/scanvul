@@ -9,7 +9,7 @@ public partial class SearchTermSanitizerV2 : ISearchTermSanitizer
     [GeneratedRegex(@"\s*\([^)]*\)")]
     private static partial Regex ParenthesesWithContentRegex { get; }
     
-    [GeneratedRegex(@"[\s-]+(?i)(x64|x86|64-bit|32-bit|multilingual|amd64|i386)\b")]
+    [GeneratedRegex(@"[\s-]+(?i)(x64|x86|64-bit|32-bit|amd64|i386)\b")]
     private static partial Regex ArchRegex { get; }
     
     [GeneratedRegex(@"\s+(?i)([a-z]{2}[-_][A-Z]{2}|multilingual)\b")]
