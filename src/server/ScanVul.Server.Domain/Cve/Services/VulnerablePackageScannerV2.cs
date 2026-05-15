@@ -45,7 +45,7 @@ public class VulnerablePackageScannerV2(
         {
             foreach (var affectedItem in cve.Payload.Containers?.Cna?.Affected ?? [])
             {
-                if (!IsPackageAffectedItem(package, affectedItem.Product)) continue;
+                if (!IsPackageAffectedItem(package, affectedItem.Product, computer)) continue;
                 if (!IsPackageVersionAffected(package.Version, affectedItem)) continue;
                      
                 var vulnerablePackage = new VulnerablePackage(cve.Payload.CveMetadata.CveId, package, computer);
@@ -62,7 +62,7 @@ public class VulnerablePackageScannerV2(
                 {
                     foreach (var affectedItem in adp.Affected)
                     {
-                        if (!IsPackageAffectedItem(package, affectedItem.Product)) continue;
+                        if (!IsPackageAffectedItem(package, affectedItem.Product, computer)) continue;
                         if (!IsPackageVersionAffected(package.Version, affectedItem)) continue;
                      
                         var vulnerablePackage = new VulnerablePackage(cve.Payload.CveMetadata.CveId, package, computer);
@@ -95,13 +95,94 @@ public class VulnerablePackageScannerV2(
         }
     }
 
-    private bool IsPackageAffectedItem(PackageInfo computerPackage, string cveProduct)
+    private bool IsPackageAffectedItem(PackageInfo computerPackage, string cveProduct, Computer computer)
     {
         var sanitizedPackageName = sanitizer.SanitizePackageName(computerPackage.Name).ToLowerInvariant().Trim();
         var product = cveProduct.ToLowerInvariant().Trim();
         
-        return product.Contains(sanitizedPackageName, StringComparison.OrdinalIgnoreCase) ||
-               sanitizedPackageName.Contains(product, StringComparison.OrdinalIgnoreCase);
+        if (SystemsWithRelaxedPackageNames.Contains(computer.OperatingSystem))
+        {
+            return product.Contains(sanitizedPackageName, StringComparison.OrdinalIgnoreCase) ||
+                   sanitizedPackageName.Contains(product, StringComparison.OrdinalIgnoreCase);
+        }
+        
+        var maxDistance = options.CurrentValue.MaxLevenshteinDistance; 
+        if (Math.Abs(sanitizedPackageName.Length - product.Length) > maxDistance)
+        {
+            return false;
+        }
+        
+        var distance = CalculateBoundedLevenshteinDistance(sanitizedPackageName.AsSpan(), product.AsSpan(), maxDistance);
+        return distance <= maxDistance;
+    }
+    
+    private static int CalculateBoundedLevenshteinDistance(
+        ReadOnlySpan<char> source,
+        ReadOnlySpan<char> target,
+        int maxDistance)
+    {
+        if (source.Length == 0) return target.Length;
+        if (target.Length == 0) return source.Length;
+        
+        if (source.Length > target.Length)
+        {
+            var temp = source;
+            source = target;
+            target = temp;
+        }
+
+        var length = source.Length;
+        
+        var distances = length <= 256 
+            ? stackalloc int[length + 1] 
+            : new int[length + 1];
+        
+        for (var i = 0; i <= length; i++)
+        {
+            distances[i] = i;
+        }
+
+        for (var i = 0; i < target.Length; i++)
+        {
+            var previousDiagonal = distances[0];
+            distances[0] = i + 1;
+            
+            var currentMinDistance = distances[0];
+
+            for (var j = 0; j < length; j++)
+            {
+                var previousDiagonalSave = distances[j + 1];
+
+                if (target[i] == source[j])
+                {
+                    distances[j + 1] = previousDiagonal;
+                }
+                else
+                {
+                    distances[j + 1] = Math.Min(
+                        Math.Min(
+                            distances[j],       // Insertion
+                            distances[j + 1]    // Deletion
+                        ),
+                        previousDiagonal        // Substitution
+                    ) + 1;
+                }
+
+                if (distances[j + 1] < currentMinDistance)
+                {
+                    currentMinDistance = distances[j + 1];
+                }
+
+                previousDiagonal = previousDiagonalSave;
+            }
+
+            if (currentMinDistance > maxDistance)
+            {
+                return maxDistance + 1; 
+            }
+        }
+
+        return distances[length];
     }
     
     private bool IsPackageVersionAffected(string packageVersionStr, AffectedItem affectedItem)

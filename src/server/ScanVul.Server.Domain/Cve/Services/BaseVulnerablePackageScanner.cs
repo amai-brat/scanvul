@@ -3,6 +3,7 @@ using ScanVul.Server.Domain.AgentAggregate.Entities;
 using ScanVul.Server.Domain.AgentAggregate.Enums;
 using ScanVul.Server.Domain.AgentAggregate.Services;
 using ScanVul.Server.Domain.Common;
+using OperatingSystem = ScanVul.Server.Domain.AgentAggregate.Enums.OperatingSystem;
 
 namespace ScanVul.Server.Domain.Cve.Services;
 
@@ -18,6 +19,15 @@ public abstract class BaseVulnerablePackageScanner<TVulnPkg>(
         VulnerablePackageStatus.Patchless,
         VulnerablePackageStatus.Fixed,
     ];
+
+    /// <summary>
+    /// OSes with relaxed (not strict) package names (e.g. in Linux distributions package managers have strict package names, but Uninstall registers on Windows - not)
+    /// </summary>
+    // ReSharper disable once StaticMemberInGenericType
+    protected static readonly IReadOnlySet<OperatingSystem> SystemsWithRelaxedPackageNames = new HashSet<OperatingSystem>
+    {
+        OperatingSystem.Windows,
+    };
     
     public async Task ScanAsync(long computerId, CancellationToken ct = default)
     {

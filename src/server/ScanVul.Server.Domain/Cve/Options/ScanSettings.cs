@@ -16,4 +16,9 @@ public class ScanSettings
     /// Even if version type specified and couldn't create of that type, try create base version
     /// </summary>
     public bool TryCreateBaseVersion { get; set; }
+
+    /// <summary>
+    /// Max Levenshtein distance of inventarized package and product from CVE document that was got from OpenSearch
+    /// </summary>
+    public int MaxLevenshteinDistance { get; set; } = 3;
 }
