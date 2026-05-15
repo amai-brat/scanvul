@@ -80,13 +80,11 @@ public class OpenSearchInitializer(
                         )
                     )
                     .Analyzers(an => an
-                        // 1. Анализатор для сохранения документов (БЕЗ синонимов)
                         .Custom("software_index_analyzer", ca => ca
                             .CharFilters("punctuation_remover")
                             .Tokenizer("standard")
                             .Filters("lowercase", "software_stopwords")
                         )
-                        // 2. Анализатор для поисковых запросов (С синонимами)
                         .Custom("software_search_analyzer", ca => ca
                             .CharFilters("punctuation_remover")
                             .Tokenizer("standard")
