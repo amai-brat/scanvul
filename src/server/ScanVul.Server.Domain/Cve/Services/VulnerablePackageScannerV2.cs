@@ -1,10 +1,10 @@
+using System.Text.Json;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ScanVul.Server.Domain.AgentAggregate.Entities;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
 using ScanVul.Server.Domain.Common;
-using ScanVul.Server.Domain.Cve.Enums;
 using ScanVul.Server.Domain.Cve.Options;
 using ScanVul.Server.Domain.Cve.Repositories;
 using ScanVul.Server.Domain.Cve.ValueObjects.Versions;
@@ -45,9 +45,17 @@ public class VulnerablePackageScannerV2(
         {
             foreach (var affectedItem in cve.Payload.Containers?.Cna?.Affected ?? [])
             {
-                if (!IsPackageAffectedItem(package, affectedItem.Product, computer)) continue;
-                if (!IsPackageVersionAffected(package.Version, affectedItem)) continue;
-                     
+                try
+                {
+                    if (!IsPackageAffectedItem(package, affectedItem.Product, computer)) continue;
+                    if (!IsPackageVersionAffected(package.Version, affectedItem)) continue;
+                }
+                catch (Exception e)
+                {
+                    logger.LogInformation(e, "Error when scanning package {PackageId} {PackageName} {PackageVersion} with {AffectedItem}", 
+                        package.Id, package.Name, package.Version, JsonSerializer.Serialize(affectedItem));
+                }
+                
                 var vulnerablePackage = new VulnerablePackage(cve.Payload.CveMetadata.CveId, package, computer);
                 vulnerablePackages.Add(vulnerablePackage);
             }
@@ -62,8 +70,16 @@ public class VulnerablePackageScannerV2(
                 {
                     foreach (var affectedItem in adp.Affected)
                     {
-                        if (!IsPackageAffectedItem(package, affectedItem.Product, computer)) continue;
-                        if (!IsPackageVersionAffected(package.Version, affectedItem)) continue;
+                        try
+                        {
+                            if (!IsPackageAffectedItem(package, affectedItem.Product, computer)) continue;
+                            if (!IsPackageVersionAffected(package.Version, affectedItem)) continue;
+                        }
+                        catch (Exception e)
+                        {
+                            logger.LogInformation(e, "Error when scanning package {PackageId} {PackageName} {PackageVersion} with {AffectedItem}", 
+                                package.Id, package.Name, package.Version, JsonSerializer.Serialize(affectedItem));
+                        }
                      
                         var vulnerablePackage = new VulnerablePackage(cve.Payload.CveMetadata.CveId, package, computer);
                         vulnerablePackages.Add(vulnerablePackage);
@@ -187,40 +203,61 @@ public class VulnerablePackageScannerV2(
     
     private bool IsPackageVersionAffected(string packageVersionStr, AffectedItem affectedItem)
     {
-        if (!versionMatcher.TryCreateVersionObject(packageVersionStr, VersionMatchType.Unspecified, out var v))
-            return false;
-        
+        versionMatcher.TryCreateVersionObject(packageVersionStr, VersionMatchType.Unspecified, out var defaultV);
+
         foreach (var entry in affectedItem.Versions)
         {
-            // Setup lower bound (entry.version). "0" conventionally denotes earliest possible version.
-            // If entry.Version is "unspecified" or "*", we treat it as matching the lowest possible.
-            var isLowerBoundMet = true; 
-            if (!string.IsNullOrEmpty(entry.Version) && entry.Version != "0" && entry.Version != "*")
+            // 1: Determine the correct version match type based on the CVE entry's schema
+            var matchType = GetMatchTypeFromCve(entry.VersionType);
+
+            if (!versionMatcher.TryCreateVersionObject(packageVersionStr, matchType, out var v))
             {
-                if (versionMatcher.TryCreateVersionObject(entry.Version, v.Type.ToVersionMatchType(), out var lowerBound))
-                {
-                    isLowerBoundMet = versionMatcher.Compare(lowerBound, v) <= 0; // lowerBound <= v
-                }
+                v = defaultV;
+                if (v == null) continue; // Unparsable target version
             }
 
-            // 1: Exact Version Match
-            if (string.IsNullOrEmpty(entry.LessThan) && string.IsNullOrEmpty(entry.LessThanOrEqual))
+            // Determine if this is an exact match or a range match
+            var isRange = !string.IsNullOrEmpty(entry.LessThan) || !string.IsNullOrEmpty(entry.LessThanOrEqual);
+
+            // 2: Evaluate Lower Bound (entry.Version)
+            bool isLowerBoundMet;
+            var isExactMatchMet = false;
+
+            // "0" conventionally denotes the earliest possible version. "*" means arbitrarily small/large.
+            if (string.IsNullOrEmpty(entry.Version) || entry.Version == "0" || entry.Version == "*")
             {
-                if (versionMatcher.TryCreateVersionObject(entry.Version, v.Type.ToVersionMatchType(), out var exactVer))
-                {
-                    if (versionMatcher.Compare(v, exactVer) == 0)
-                        return entry.Status.Equals("affected", StringComparison.OrdinalIgnoreCase);
-                }
+                isLowerBoundMet = true;
+            }
+            else if (versionMatcher.TryCreateVersionObject(entry.Version, matchType, out var lowerBound))
+            {
+                var comparison = versionMatcher.Compare(lowerBound, v); // lowerBound vs v
+                isLowerBoundMet = comparison <= 0; // lowerBound <= v
+                isExactMatchMet = comparison == 0; // lowerBound == v
+            }
+            else
+            {
+                continue; // Invalid version string in CVE, skip to next rule
+            }
+
+            // 3: Handle Exact Match Scenario (No LessThan and No LessThanOrEqual)
+            if (!isRange)
+            {
+                if (isExactMatchMet)
+                    return entry.Status.Equals("affected", StringComparison.OrdinalIgnoreCase);
+                
                 continue;
             }
 
-            // 2: Range Match
+            // 4: Handle Range Match Upper Bound
+            if (!isLowerBoundMet)
+                continue; // Not in range, skip to next rule
+
             var isUpperBoundMet = false;
-            
+
             // Check lessThan (exclusive)
             if (!string.IsNullOrEmpty(entry.LessThan) && entry.LessThan != "*")
             {
-                if (versionMatcher.TryCreateVersionObject(entry.LessThan, v.Type.ToVersionMatchType(), out var upperBound))
+                if (versionMatcher.TryCreateVersionObject(entry.LessThan, matchType, out var upperBound))
                 {
                     isUpperBoundMet = versionMatcher.Compare(v, upperBound) < 0; // v < lessThan
                 }
@@ -228,7 +265,7 @@ public class VulnerablePackageScannerV2(
             // Check lessThanOrEqual (inclusive)
             else if (!string.IsNullOrEmpty(entry.LessThanOrEqual) && entry.LessThanOrEqual != "*")
             {
-                if (versionMatcher.TryCreateVersionObject(entry.LessThanOrEqual, v.Type.ToVersionMatchType(), out var upperBound))
+                if (versionMatcher.TryCreateVersionObject(entry.LessThanOrEqual, matchType, out var upperBound))
                 {
                     isUpperBoundMet = versionMatcher.Compare(v, upperBound) <= 0; // v <= lessThanOrEqual
                 }
@@ -239,31 +276,60 @@ public class VulnerablePackageScannerV2(
                 isUpperBoundMet = true; 
             }
 
-            // If version is within the defined range
+            // 5: Evaluate Status and Status Changes if within bounds
             if (isLowerBoundMet && isUpperBoundMet)
             {
                 var status = entry.Status;
 
-                if (entry.Changes == null) 
-                    return status.Equals("affected", StringComparison.OrdinalIgnoreCase);
-                
-                var sortedChanges = entry.Changes.OrderBy(c => c.At).ToList(); 
-                foreach (var change in sortedChanges)
+                if (entry.Changes is { Count: > 0 })
                 {
-                    if (versionMatcher.TryCreateVersionObject(change.At, v.Type.ToVersionMatchType(), out var changeVer))
+                    // Parse changes into valid version objects so we can sort them correctly
+                    var parsedChanges = entry.Changes
+                        .Select(c => new 
+                        { 
+                            Change = c, 
+                            Success = versionMatcher.TryCreateVersionObject(c.At, matchType, out var parsedAt),
+                            ParsedAt = parsedAt 
+                        })
+                        .Where(c => c.Success)
+                        .ToList();
+
+                    parsedChanges.Sort((a, b) => versionMatcher.Compare(a.ParsedAt!, b.ParsedAt!));
+
+                    foreach (var changeData in parsedChanges)
                     {
-                        if (versionMatcher.Compare(changeVer, v) <= 0) // change.at <= v
+                        if (versionMatcher.Compare(changeData.ParsedAt!, v) <= 0) // change.at <= v
                         {
-                            status = change.Status;
+                            status = changeData.Change.Status;
                         }
                     }
                 }
 
+                // Return true if the final status in this matching range is "affected"
                 return status.Equals("affected", StringComparison.OrdinalIgnoreCase);
             }
         }
 
-        // Fallback: return product.defaultStatus
+        // 6: Fallback: return product.defaultStatus ("unknown" evaluates to false)
         return (affectedItem.DefaultStatus ?? "unknown").Equals("affected", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static VersionMatchType GetMatchTypeFromCve(string? cveVersionType)
+    {
+        if (string.IsNullOrWhiteSpace(cveVersionType))
+            return VersionMatchType.Unspecified;
+
+        return cveVersionType.ToLowerInvariant() switch
+        {
+            "semver" => VersionMatchType.SemVer,
+            "python" => VersionMatchType.Pep440,
+            "maven" => VersionMatchType.Base,
+            "rpm" => VersionMatchType.Rpm,
+            "dpkg" => VersionMatchType.Dpkg,
+            "apk" => VersionMatchType.Apk,
+            "custom" => VersionMatchType.Unspecified,
+            "pacman" => VersionMatchType.Pacman,
+            _ => VersionMatchType.Unspecified
+        };
     }
 }

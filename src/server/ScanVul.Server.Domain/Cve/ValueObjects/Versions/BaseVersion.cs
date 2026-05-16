@@ -9,6 +9,7 @@ public class BaseVersion : IVersion
     private static readonly char[] Separators = [',', '.', '~', '-', ':', ' ', '\t', '\n', '\r'];
     private static readonly StringComparer SegmentComparer = StringComparer.OrdinalIgnoreCase;
 
+    public string OriginalVersionString { get; private init; } = string.Empty;
     public VersionType Type => VersionType.Base;
     public IReadOnlyList<string> Segments { get; }
 
@@ -31,7 +32,10 @@ public class BaseVersion : IVersion
         if (segments.Length == 0)
             return false;
 
-        output = new BaseVersion(segments);
+        output = new BaseVersion(segments)
+        {
+            OriginalVersionString = version
+        };
         return true;
     }
 

@@ -37,23 +37,30 @@ public class CveRepositoryV2(
                 {
                     new MultiMatchQuery
                     {
+                        Type = TextQueryType.CrossFields,
                         Fields = new[] 
                         {
-                            "payload.containers.cna.affected.product",
-                            "payload.containers.adp.affected.product"
-                        },
-                        Query = sanitizedPackageName,
-                        Operator = Operator.And 
-                    },
-                    new MultiMatchQuery
-                    {
-                        Fields = new[] 
-                        {
+                            "payload.containers.cna.affected.product^3",
+                            "payload.containers.adp.affected.product^3",
                             "payload.containers.cna.affected.vendor",
                             "payload.containers.adp.affected.vendor"
                         },
                         Query = sanitizedPackageName,
-                        Operator = Operator.And
+                        Operator = Operator.And,
+                        Boost = 2.0
+                    },
+                    new MultiMatchQuery
+                    {
+                        Type = TextQueryType.CrossFields,
+                        Fields = new[] 
+                        {
+                            "payload.containers.cna.affected.product^3",
+                            "payload.containers.adp.affected.product^3",
+                            "payload.containers.cna.affected.vendor",
+                            "payload.containers.adp.affected.vendor"
+                        },
+                        Query = sanitizedPackageName,
+                        MinimumShouldMatch = "2<75%" 
                     }
                 },
                 MinimumShouldMatch = 1
@@ -70,7 +77,7 @@ public class CveRepositoryV2(
             }
         };
         
-        var response = await client.SearchAsync<CveVersionDocument>(searchRequest, ct).ConfigureAwait(false);
+        var response = await client.SearchAsync<CveVersionDocument>(searchRequest, ct);
         return response.IsValid
             ? response.Documents
             : throw new AggregateException("Error when sending request to OpenSearch", response.OriginalException);
@@ -105,7 +112,7 @@ public class CveRepositoryV2(
             }
         };
         
-        var response = await client.SearchAsync<CveDescriptionDocument>(searchRequest, ct).ConfigureAwait(false);
+        var response = await client.SearchAsync<CveDescriptionDocument>(searchRequest, ct);
         return response.IsValid
             ? response.Documents
             : throw new AggregateException("Error when sending request to OpenSearch", response.OriginalException);

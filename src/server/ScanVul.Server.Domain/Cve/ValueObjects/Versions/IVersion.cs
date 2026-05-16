@@ -4,5 +4,6 @@ namespace ScanVul.Server.Domain.Cve.ValueObjects.Versions;
 
 public interface IVersion : IComparable<IVersion>
 {
+    string OriginalVersionString { get; }
     VersionType Type { get; }
 }

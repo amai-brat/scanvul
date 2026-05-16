@@ -9,6 +9,7 @@ public sealed partial class CalVer : IVersion
     [GeneratedRegex(@"^(\d{2}|\d{4})(\.\d{1,2})?(\.\d{1,2})?(\.\d+)?$", RegexOptions.Compiled)]
     private static partial Regex CalVerRegex();
     
+    public string OriginalVersionString { get; private init; } = string.Empty;
     public VersionType Type => VersionType.CalVer;
  
     public ushort Year { get; private init; }
@@ -84,6 +85,7 @@ public sealed partial class CalVer : IVersion
 
         output = new CalVer
         {
+            OriginalVersionString = version,
             Year = year,
             Month = month,
             Day = day,

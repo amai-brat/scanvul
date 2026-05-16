@@ -9,6 +9,7 @@ public sealed partial class MajorMinor : IVersion
     [GeneratedRegex(@"^(\d+)[.-](\d+)$", RegexOptions.Compiled | RegexOptions.CultureInvariant)]
     private static partial Regex MajorMinorRegex();
     
+    public string OriginalVersionString { get; private init; } = string.Empty;
     public VersionType Type => VersionType.MajorMinor;
 
     public uint Major { get; private init; }
@@ -30,6 +31,7 @@ public sealed partial class MajorMinor : IVersion
 
         output = new MajorMinor
         {
+            OriginalVersionString = version,
             Major = major,
             Minor = minor
         };

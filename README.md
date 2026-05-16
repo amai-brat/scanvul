@@ -83,9 +83,9 @@
   - [x] bdu: check package name firstly, after version
   - [x] bdu: BaseVersion with only numbers
   - [x] bdu: if BaseVersion with only numbers: i can check for equality
-- [ ] test
+- [x] test
   - [x] has vulnerability → update → no vulnerability
-  - [ ] version matching and comparing (unit tests)
+  - [x] version matching and comparing
 - [x] links to package managers as options **{not planned}**
 - [x] winget
   - [x] package manager searching
@@ -113,4 +113,5 @@
   - [ ] *snapshot diffs for all organization's agents (to pdf)*
 - [ ] choose version to update
 - [x] scan inventarized packages without sending command
+- [ ] bulk change status of vulnerable package only by package (currently for all vulnerability you need to change status)
 

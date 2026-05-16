@@ -10,7 +10,8 @@ public sealed partial class SemVer : IVersion
         @"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$",
         RegexOptions.Compiled | RegexOptions.CultureInvariant)]
     private static partial Regex SemVerRegex();
-    
+
+    public string OriginalVersionString { get; private init; } = string.Empty;
     public VersionType Type => VersionType.SemVer;
 
     public uint Major { get; private init; }
@@ -41,6 +42,7 @@ public sealed partial class SemVer : IVersion
 
         output = new SemVer
         {
+            OriginalVersionString = version,
             Major = major,
             Minor = minor,
             Patch = patch,

@@ -118,7 +118,19 @@ public class VersionMatcher(ILogger<VersionMatcher> logger, IOptionsMonitor<Scan
             return -versionObjectB.CompareTo(versionObjectA);
         
         if (versionObjectA.GetType() != versionObjectB.GetType())
-            throw new ArgumentException($"Cannot compare different version types: {versionObjectA.Type} vs {versionObjectB.Type}");
+        {
+            if (_scanSettings.TryCreateBaseVersion)
+            {
+                if (BaseVersion.TryParse(versionObjectA.OriginalVersionString, out var a) &&
+                    BaseVersion.TryParse(versionObjectB.OriginalVersionString, out var b))
+                {
+                    return a.CompareTo(b);
+                }
+            }
+            
+            throw new ArgumentException(
+                $"Cannot compare different version types: {versionObjectA.Type} vs {versionObjectB.Type}");
+        }
 
         return versionObjectA.CompareTo(versionObjectB);
     }

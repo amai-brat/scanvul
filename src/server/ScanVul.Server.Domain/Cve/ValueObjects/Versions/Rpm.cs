@@ -6,6 +6,7 @@ namespace ScanVul.Server.Domain.Cve.ValueObjects.Versions;
 
 public sealed partial class Rpm : IVersion
 {
+    public string OriginalVersionString { get; private init; } = string.Empty;
     public VersionType Type => VersionType.Rpm;
 
     public uint Epoch { get; private init; }
@@ -51,6 +52,7 @@ public sealed partial class Rpm : IVersion
 
         output = new Rpm
         {
+            OriginalVersionString = version,
             Epoch = epoch,
             Version = versionPart,
             Release = releasePart
