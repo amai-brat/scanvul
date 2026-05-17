@@ -113,5 +113,5 @@
   - [ ] *snapshot diffs for all organization's agents (to pdf)*
 - [ ] choose version to update
 - [x] scan inventarized packages without sending command
-- [ ] bulk change status of vulnerable package only by package (currently for all vulnerability you need to change status)
+- [x] bulk change status of vulnerable package only by package (currently for all vulnerability you need to change status)
 

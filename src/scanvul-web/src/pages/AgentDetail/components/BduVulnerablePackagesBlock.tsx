@@ -68,6 +68,19 @@ export const BduVulnerablePackagesBlock = ({
     },
   });
 
+  const changeStatusBulkMutation = useMutation({
+    mutationFn: ({
+      ids,
+      status,
+    }: {
+      ids: number[];
+      status: VulnerablePackageStatus;
+    }) => agentsApi.changeBulkVulnStatusBdu(ids, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["vulns-bdu", agentId] });
+    },
+  });
+
   const organizedVulns = useMemo(() => {
     if (!vulnData?.packages) return [];
 
@@ -199,12 +212,43 @@ export const BduVulnerablePackagesBlock = ({
                           </span>
                         </div>
                       </div>
-                      <span className="text-xs font-bold text-gray-500 whitespace-nowrap ml-2">
-                        {t("agent_details.max_cvss", {
-                          score: pkg.maxScore.toFixed(1),
-                          defaultValue: `Max CVSS: ${pkg.maxScore.toFixed(1)}`,
-                        })}
-                      </span>
+                      <div className="flex flex-row items-center gap-2">
+                        <select
+                          title={t("agent_details.change_status_bulk")}
+                          value="" // Empty string acts as placeholder
+                          onClick={(e) => e.stopPropagation()}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            const selectedStatus = e.target
+                              .value as VulnerablePackageStatus;
+                            if (selectedStatus) {
+                              changeStatusBulkMutation.mutate({
+                                ids: Object.values(pkg.buckets).flatMap((arr) =>
+                                  arr.map((item) => item.id),
+                                ),
+                                status: selectedStatus,
+                              });
+                            }
+                          }}
+                          disabled={changeStatusMutation.isPending}
+                          className="text-xs font-medium bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded transition-colors border-none cursor-pointer focus:ring-2 focus:ring-blue-500/50 outline-none"
+                        >
+                          <option value="" disabled>
+                            {t("agent_details.change_status")}
+                          </option>
+                          {TABS.filter((s) => s !== activeTab).map((s) => (
+                            <option key={s} value={s}>
+                              {/* Use the translation key directly */}
+                              {t(`agent_details.status_${s}`)}
+                            </option>
+                          ))}
+                        </select>
+                        <span className="text-xs font-bold text-gray-400">
+                          {t("agent_details.max_cvss", {
+                            score: pkg.maxScore.toFixed(1),
+                          })}
+                        </span>
+                      </div>
                     </div>
 
                     {/* Severity Intervals */}

@@ -71,6 +71,7 @@
     "no_vulns": "No vulnerabilities found",
     "max_cvss": "Max CVSS: {{score}}",
     "change_status": "Change status...",
+    "change_status_bulk": "Change the status for the vulnerabilities listed below in this software",
     "status_vulnerable": "Vulnerable",
     "status_falsePositive": "False Positive",
     "status_patchless": "Patchless",

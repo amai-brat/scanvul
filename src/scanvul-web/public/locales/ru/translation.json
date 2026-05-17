@@ -71,6 +71,7 @@
     "no_vulns": "Нет уязвимостей",
     "max_cvss": "Макс. CVSS: {{score}}",
     "change_status": "Изменить статус...",
+    "change_status_bulk": "Изменить статус для перечисленных ниже уязвимостей этого ПО",
     "status_vulnerable": "Уязвимо",
     "status_falsePositive": "Ложное срабатывание",
     "status_patchless": "Без патча",
