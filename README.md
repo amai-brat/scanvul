@@ -111,7 +111,7 @@
   - [x] snapshot and diff summary
   - [x] frontend: block right to commands with snapshot summary + diff summary, when clicking to snapshot, modal with info
   - [ ] *snapshot diffs for all organization's agents (to pdf)*
-- [ ] choose version to update
+- [x] choose version to update
 - [x] scan inventarized packages without sending command
 - [x] bulk change status of vulnerable package only by package (currently for all vulnerability you need to change status)
 
