@@ -62,6 +62,7 @@
     "detected_vuln_pkgs": "Detected Vulnerable Packages",
     "search_results": "Search Results",
     "no_packages_matching": "No packages found matching '{{pattern}}'",
+    "versions": "Versions",
 
     "scan_snapshots": "Scan Snapshots",
     "no_snapshots": "No snapshots available for this agent.",

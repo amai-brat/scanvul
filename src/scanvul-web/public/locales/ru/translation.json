@@ -62,6 +62,7 @@
     "detected_vuln_pkgs": "Уязвимые ПО",
     "search_results": "Результаты поиска",
     "no_packages_matching": "Не найдены ПО по запросу '{{pattern}}'",
+    "versions": "Версии",
 
     "scan_snapshots": "Снапшоты сканирования",
     "no_snapshots": "Снапшоты для этого агента отсутствуют.",

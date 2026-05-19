@@ -9,3 +9,7 @@ export const getPackageManagers = (operatingSystem: string) : PackageManager[] =
 
   return [];
 }
+
+export const isVersionsSupported = (packageManager: PackageManager) : boolean => {
+  return ["winget", "choco"].includes(packageManager);
+}

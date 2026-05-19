@@ -255,10 +255,12 @@ export const agentsApi = {
     id: string,
     packageName: string,
     packageManager: string,
+    packageVersion?: string,
   ) =>
     api
       .post(`/api/v1/admin/agents/${id}/commands/upgrade-package`, {
         packageName,
+        packageVersion,
         packageManager,
       })
       .then((res) => res.data),

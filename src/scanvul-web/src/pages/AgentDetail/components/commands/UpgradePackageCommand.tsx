@@ -11,6 +11,8 @@ import {
   Package,
   ExternalLink,
   Settings,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 import { agentsApi, type AgentResponse } from "../../../../api/agentsApi";
 import {
@@ -19,6 +21,7 @@ import {
 } from "../../../../api/packageManagerApi";
 import {
   getPackageManagers,
+  isVersionsSupported,
   type PackageManager,
 } from "../../../../utils/packageManager";
 import { modalEffect } from "../../../../utils/modal";
@@ -78,7 +81,12 @@ const UpgradePackageModal = ({
 }) => {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
+
   const [upgradePackageName, setUpgradePackageName] = useState("");
+  const [upgradePackageVersion, setUpgradePackageVersion] = useState<
+    string | undefined
+  >();
+  const [expandedPackage, setExpandedPackage] = useState<string | null>(null);
   const [searchResults, setSearchResults] = useState<PackageMetadata[]>([]);
   const [packageManager, setPackageManager] = useState<
     PackageManager | string
@@ -116,6 +124,12 @@ const UpgradePackageModal = ({
       : undefined;
   }, [packageManager, availablePackageManagers]);
 
+  const versionsSupported = useMemo(() => {
+    return activePackageManager
+      ? isVersionsSupported(activePackageManager as PackageManager)
+      : false;
+  }, [activePackageManager]);
+
   const searchPackageMutation = useMutation({
     mutationFn: async () => {
       if (!activePackageManager) {
@@ -128,6 +142,7 @@ const UpgradePackageModal = ({
     },
     onSuccess: (data) => {
       setSearchResults(data.packages);
+      setExpandedPackage(null);
     },
     onError: (err) => {
       console.error("Failed to search packages", err);
@@ -145,6 +160,7 @@ const UpgradePackageModal = ({
         agent.id.toString(),
         pkgName,
         activePackageManager!,
+        upgradePackageVersion,
       ),
     onSuccess: () => {
       if (isCommandsOpen)
@@ -158,11 +174,15 @@ const UpgradePackageModal = ({
 
   const handleVulnClick = (name: string) => {
     setUpgradePackageName(name);
+    setUpgradePackageVersion(undefined);
     setTimeout(() => searchPackageMutation.mutate(), 0);
   };
 
   const handleResultClick = (name: string) => {
-    setUpgradePackageName(name);
+    if (upgradePackageName !== name) {
+      setUpgradePackageName(name);
+      setUpgradePackageVersion(undefined);
+    }
   };
 
   return (
@@ -229,6 +249,8 @@ const UpgradePackageModal = ({
                       setPackageManager(pm);
                       setSearchResults([]);
                       setUpgradePackageName("");
+                      setUpgradePackageVersion(undefined);
+                      setExpandedPackage(null);
                     }}
                     className={`px-3 py-1.5 text-xs font-medium rounded-md border transition-all ${
                       activePackageManager === pm
@@ -276,7 +298,10 @@ const UpgradePackageModal = ({
                 <input
                   type="text"
                   value={upgradePackageName}
-                  onChange={(e) => setUpgradePackageName(e.target.value)}
+                  onChange={(e) => {
+                    setUpgradePackageName(e.target.value);
+                    setUpgradePackageVersion(undefined);
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") searchPackageMutation.mutate();
                   }}
@@ -309,7 +334,7 @@ const UpgradePackageModal = ({
               <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                 {t("agent_details.search_results")}
               </h4>
-              <div className="space-y-2 max-h-60 pr-1">
+              <div className="space-y-2 max-h-72 overflow-y-auto pr-1 custom-scrollbar">
                 {searchResults.map((pkg) => (
                   <div
                     key={`${pkg.name}`}
@@ -347,6 +372,61 @@ const UpgradePackageModal = ({
                         {pkg.summary}
                       </p>
                     )}
+
+                    {/* Versions Accordion */}
+                    {versionsSupported &&
+                      pkg.versions &&
+                      pkg.versions.length > 0 && (
+                        <div
+                          className="mt-3 border-t border-gray-200 dark:border-gray-700 pt-2"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedPackage(
+                                expandedPackage === pkg.name ? null : pkg.name,
+                              );
+                            }}
+                            className="flex items-center gap-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
+                          >
+                            {expandedPackage === pkg.name ? (
+                              <ChevronDown className="w-3 h-3" />
+                            ) : (
+                              <ChevronRight className="w-3 h-3" />
+                            )}
+                            {t("agent_details.versions", "Versions")}
+                          </button>
+
+                          {expandedPackage === pkg.name && (
+                            <div className="mt-2 flex flex-wrap gap-2 max-h-40 overflow-y-auto custom-scrollbar p-1">
+                              {pkg.versions.map((v) => (
+                                <button
+                                  key={v}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setUpgradePackageName(pkg.name);
+                                    setUpgradePackageVersion(
+                                      upgradePackageVersion === v
+                                        ? undefined
+                                        : v,
+                                    );
+                                  }}
+                                  className={`px-2 py-1 text-xs rounded border transition-colors ${
+                                    upgradePackageName === pkg.name &&
+                                    upgradePackageVersion === v
+                                      ? "bg-blue-600 border-blue-600 text-white"
+                                      : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                                  }`}
+                                >
+                                  {v}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
                   </div>
                 ))}
               </div>
