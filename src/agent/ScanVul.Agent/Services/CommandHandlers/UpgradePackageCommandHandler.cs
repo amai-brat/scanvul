@@ -16,7 +16,7 @@ public class UpgradePackageCommandHandler(
         {
             var packageManager = packageManagerFactory(command.PackageManager);
             
-            await packageManager.UpgradePackageAsync(command.PackageName, ct);
+            await packageManager.UpgradePackageAsync(command.PackageName, command.PackageVersion, ct);
         }
         catch (InvalidOperationException) 
         {

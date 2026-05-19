@@ -100,4 +100,16 @@ public class WingetCommandBuilder
         Params.Add("--include-unknown");
         return this;
     }
+    
+    /// <summary>
+    /// Version
+    /// </summary>
+    /// <param name="version">Version. If null or empty, not added</param>
+    public WingetCommandBuilder WithVersion(string? version)
+    {
+        if (string.IsNullOrWhiteSpace(version)) return this;
+        
+        Params.Add($"--version {version}");
+        return this;
+    }
 }

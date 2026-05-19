@@ -214,6 +214,28 @@ export const agentsApi = {
       )
       .then((res) => res.data),
 
+  changeBulkVulnStatus: (
+    vulnerablePackageIds: number[],
+    status: VulnerablePackageStatus,
+  ) =>
+    api
+      .patch(`/api/v1/admin/agents/vulnerable-packages`, {
+        vulnerablePackageIds,
+        status,
+      })
+      .then((res) => res.data),
+
+  changeBulkVulnStatusBdu: (
+    vulnerablePackageIds: number[],
+    status: VulnerablePackageStatus,
+  ) =>
+    api
+      .patch(
+        `/api/v1/admin/agents/bdu-vulnerable-packages`,
+        { vulnerablePackageIds, status },
+      )
+      .then((res) => res.data),
+
   getCommands: (id: string) =>
     api
       .get<ListCommandsResponse>(`/api/v1/admin/agents/${id}/commands`)
@@ -233,10 +255,12 @@ export const agentsApi = {
     id: string,
     packageName: string,
     packageManager: string,
+    packageVersion?: string,
   ) =>
     api
       .post(`/api/v1/admin/agents/${id}/commands/upgrade-package`, {
         packageName,
+        packageVersion,
         packageManager,
       })
       .then((res) => res.data),

@@ -22,7 +22,7 @@ public class CveSnapshotDownloadWorker(
 {
     private const string LastSyncFile = "cve_snapshot_last_sync.json";
     private const string CveSnapshotCheckUrl = "api/v1/catalog/contexts/vd_1.0.0/consumers/vd_4.8.0";
-    private const string IndexName = "cve-index";
+    private const string IndexName = "cve-ng-index";
     private const int BulkBatchSize = 250; // найдено эмпирически
     
     [JobDisplayName("Download CVE snapshot from Wazuh CTI")]
@@ -68,7 +68,7 @@ public class CveSnapshotDownloadWorker(
             // Extract zip content
             tempExtractDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(tempExtractDir);
-            ZipFile.ExtractToDirectory(tempZipFile, tempExtractDir);
+            await ZipFile.ExtractToDirectoryAsync(tempZipFile, tempExtractDir, ct);
 
             // Locate JSON file (assuming single JSON file in archive)
             var jsonFiles = Directory.GetFiles(tempExtractDir, "*.json");

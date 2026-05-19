@@ -39,7 +39,7 @@ public class WingetPackagesSyncWorker(
             }
 
             logger.LogInformation("Extracting index.db...");
-            using (var archive = ZipFile.OpenRead(tempFile))
+            await using (var archive = await ZipFile.OpenReadAsync(tempFile, ct))
             {
                 var dbEntry = archive.GetEntry("Public/index.db");
                 if (dbEntry == null)
@@ -50,7 +50,7 @@ public class WingetPackagesSyncWorker(
                 
                 if (File.Exists(tempDbPath)) File.Delete(tempDbPath);
                 
-                dbEntry.ExtractToFile(tempDbPath);
+                await dbEntry.ExtractToFileAsync(tempDbPath, ct);
             }
 
             await SyncDataFromSqliteToPostgres(tempDbPath, ct);
@@ -102,14 +102,23 @@ public class WingetPackagesSyncWorker(
                 where m.id == @idRowId
                 """, new { idRowId = package.IdRowId });
 
-            var latestVersion = versions
+            var versionsList = versions.ToList();
+            if (versionsList.Count == 0) continue;
+            
+            var latestVersion = versionsList
                 .MaxBy(x => x.Version, WingetVersionComparer.Instance);
+            
+            var sortedVersions = versionsList
+                .Select(x => x.Version)
+                .OrderByDescending(v => v, WingetVersionComparer.Instance)
+                .ToList();
 
             await postgresContext.WingetPackages
                 .Where(x => x.IdRowId == package.IdRowId)
                 .ExecuteUpdateAsync(x => x
                     .SetProperty(p => p.LastVersionRowId, latestVersion.VersionRowId)
-                    .SetProperty(p => p.LastVersion, latestVersion.Version), cancellationToken: ct);
+                    .SetProperty(p => p.LastVersion, latestVersion.Version)
+                    .SetProperty(p => p.Versions, sortedVersions), cancellationToken: ct);
         }
     }
 }

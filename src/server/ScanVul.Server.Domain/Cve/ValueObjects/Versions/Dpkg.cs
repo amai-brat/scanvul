@@ -6,6 +6,7 @@ namespace ScanVul.Server.Domain.Cve.ValueObjects.Versions;
 
 public sealed class Dpkg : IVersion
 {
+    public string OriginalVersionString { get; private init; } = string.Empty;
     public VersionType Type => VersionType.Dpkg;
 
     public uint Epoch { get; private init; }
@@ -61,6 +62,7 @@ public sealed class Dpkg : IVersion
         // Create instance (validation happens during comparison)
         output = new Dpkg
         {
+            OriginalVersionString = version,
             Epoch = epoch,
             Version = versionPart,
             Revision = revisionPart

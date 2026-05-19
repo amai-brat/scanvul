@@ -4,9 +4,10 @@ public abstract class AgentCommandBody;
 
 public class ReportPackagesCommandBody : AgentCommandBody;
 
-public class UpgradePackageCommandBody(string packageName, string packageManager) : AgentCommandBody
+public class UpgradePackageCommandBody(string packageName, string? packageVersion, string packageManager) : AgentCommandBody
 {
     public string PackageName { get; private set; } = packageName;
+    public string? PackageVersion { get; private set; } = packageVersion;
     public string PackageManager { get; private set; } = packageManager;
 }
 

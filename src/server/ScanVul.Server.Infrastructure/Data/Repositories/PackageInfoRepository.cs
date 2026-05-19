@@ -33,6 +33,16 @@ public class PackageInfoRepository(AppDbContext dbContext) : IPackageInfoReposit
         return package;
     }
 
+    public async Task<IReadOnlyCollection<VulnerablePackage>> GetVulnerableByIdsAsync(IReadOnlyCollection<long> vulnerablePackageIds, CancellationToken ct = default)
+    {
+        var packages = await dbContext.VulnerablePackages
+            .Include(x => x.PackageInfo)
+            .Where(x => vulnerablePackageIds.Contains(x.Id))
+            .ToListAsync(cancellationToken: ct);
+
+        return packages;
+    }
+
     public async Task<BduVulnerablePackage?> GetBduVulnerableByIdAsync(long vulnerablePackageId, CancellationToken ct = default)
     {
         var package = await dbContext.BduVulnerablePackages
@@ -40,5 +50,15 @@ public class PackageInfoRepository(AppDbContext dbContext) : IPackageInfoReposit
             .FirstOrDefaultAsync(x => x.Id == vulnerablePackageId, ct);
         
         return package;
+    }
+    
+    public async Task<IReadOnlyCollection<BduVulnerablePackage>> GetBduVulnerableByIdsAsync(IReadOnlyCollection<long> vulnerablePackageIds, CancellationToken ct = default)
+    {
+        var packages = await dbContext.BduVulnerablePackages
+            .Include(x => x.PackageInfo)
+            .Where(x => vulnerablePackageIds.Contains(x.Id))
+            .ToListAsync(cancellationToken: ct);
+
+        return packages;
     }
 }

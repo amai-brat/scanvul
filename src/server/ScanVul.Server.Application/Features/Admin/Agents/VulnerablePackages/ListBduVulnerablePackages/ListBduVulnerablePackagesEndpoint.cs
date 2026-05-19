@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using ScanVul.Server.Domain.AgentAggregate.Enums;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
 using ScanVul.Server.Domain.Cve.Repositories;
+using ScanVul.Server.Domain.Cve.Services;
 
 namespace ScanVul.Server.Application.Features.Admin.Agents.VulnerablePackages.ListBduVulnerablePackages;
 
 public class ListBduVulnerablePackagesEndpoint(
+    ISearchTermSanitizer sanitizer,
     IAgentRepository agentRepository,
     IBduRepository bduRepository)
     : Endpoint<ListBduVulnerablePackagesRequest, Results<Ok<ListBduVulnerablePackagesResponse>, ProblemDetails>>
@@ -51,7 +53,7 @@ public class ListBduVulnerablePackagesEndpoint(
             .ToDictionary(x => x.Identifier.First());
         
         var packages = agent.Computer.BduVulnerablePackages
-            .Select(p => p.MapToResponse(descriptionDic[p.VulnerabilityId]))
+            .Select(p => p.MapToResponse(descriptionDic[p.VulnerabilityId], sanitizer))
             .OrderBy(x => x.PackageName)
             .ThenBy(x => x.BduId)
             .ToList();

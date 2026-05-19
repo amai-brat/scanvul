@@ -1,7 +1,10 @@
 using System.Net;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using FastEndpoints;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using ScanVul.Server.Application.Helpers;
 using ScanVul.Server.Domain.AgentAggregate.Repositories;
 
 namespace ScanVul.Server.Application.Features.Admin.Agents.Commands.ListCommands;
@@ -10,6 +13,12 @@ public class ListCommandsEndpoint(
     IAgentRepository agentRepository)
     : Endpoint<ListCommandsRequest, Results<Ok<ListCommandsResponse>, ProblemDetails>>
 {
+    private static readonly JsonSerializerOptions SerializerOptions = new()
+    {
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    };
+    
     public override void Configure()
     {
         Version(1);
@@ -22,15 +31,14 @@ public class ListCommandsEndpoint(
         Description(x => x.WithTags("Admin"));
     }
     
-    public override async Task<Results<Ok<ListCommandsResponse>, ProblemDetails>> ExecuteAsync(
-        ListCommandsRequest req,
-        CancellationToken ct)
+    public override async Task HandleAsync(ListCommandsRequest req, CancellationToken ct)
     {
         var agent = await agentRepository.GetWithCommandsNoTrackingAsync(req.AgentId, ct);
         if (agent == null)
         {
             AddError(x => x.AgentId, "Agent not found");
-            return new ProblemDetails(ValidationFailures, statusCode: (int) HttpStatusCode.NotFound);
+            await Send.ResultAsync(new ProblemDetails(ValidationFailures, statusCode: (int)HttpStatusCode.NotFound));
+            return;
         }
         
         var dtos = agent.Commands
@@ -44,7 +52,8 @@ public class ListCommandsEndpoint(
                     CommandParams: cmd.Body
                 ))
             .ToList();
-        
-        return TypedResults.Ok(new ListCommandsResponse(dtos));
+
+        await this.SendCustom(new ListCommandsResponse(dtos), 
+            statusCode: 200, serializerOptions: SerializerOptions, ct: ct);
     }
 }

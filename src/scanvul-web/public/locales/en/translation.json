@@ -46,7 +46,8 @@
     "memory": "MEMORY",
 
     "commands": "Commands",
-    "command_block_desc": "Send remote commands to the agent",
+    "command_server_block_desc": "Send commands to server",
+    "command_agent_block_desc": "Send remote commands to the agent",
     "command_report_packages_title": "Report and scan Packages",
     "command_report_packages_desc": "Request package list update and scan",
     "command_report_packages_toast_msg": "Report packages command will be sent to agent",
@@ -61,6 +62,7 @@
     "detected_vuln_pkgs": "Detected Vulnerable Packages",
     "search_results": "Search Results",
     "no_packages_matching": "No packages found matching '{{pattern}}'",
+    "versions": "Versions",
 
     "scan_snapshots": "Scan Snapshots",
     "no_snapshots": "No snapshots available for this agent.",
@@ -70,6 +72,7 @@
     "no_vulns": "No vulnerabilities found",
     "max_cvss": "Max CVSS: {{score}}",
     "change_status": "Change status...",
+    "change_status_bulk": "Change the status for the vulnerabilities listed below in this software",
     "status_vulnerable": "Vulnerable",
     "status_falsePositive": "False Positive",
     "status_patchless": "Patchless",

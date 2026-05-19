@@ -22,7 +22,7 @@ public class UpgradePackageCommandEndpoint(
         {
             s.Summary = "Send to agent 'upgrade package' command";
             s.Description = "Send to agent 'upgrade package' command";
-            s.ExampleRequest = new UpgradePackageCommandRequest(-1, "7zip", PackageManagerType.Winget);
+            s.ExampleRequest = new UpgradePackageCommandRequest(-1, "7zip", "26.01", PackageManagerType.Winget);
         });
         Description(x => x
             .WithTags("Admin")
@@ -41,7 +41,7 @@ public class UpgradePackageCommandEndpoint(
         }
 
         var command = new AgentCommand(agent, new UpgradePackageCommandBody(
-            req.PackageName, req.PackageManager.ToString().ToLowerInvariant()));
+            req.PackageName, req.PackageVersion, req.PackageManager.ToString().ToLowerInvariant()));
         agent.Commands.Add(command);
         
         await unitOfWork.SaveChangesAsync(ct);

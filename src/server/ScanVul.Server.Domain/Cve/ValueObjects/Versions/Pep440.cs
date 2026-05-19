@@ -11,6 +11,7 @@ public sealed partial class Pep440 : IVersion
         RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant)]
     private static partial Regex ParserRegex();
     
+    public string OriginalVersionString { get; private init; } = string.Empty;
     public VersionType Type => VersionType.Pep440;
 
     public uint Epoch { get; private init; }
@@ -90,6 +91,7 @@ public sealed partial class Pep440 : IVersion
 
         output = new Pep440
         {
+            OriginalVersionString = version,
             Epoch = epoch,
             VersionStr = versionStr,
             PreReleaseStr = preReleaseStr,

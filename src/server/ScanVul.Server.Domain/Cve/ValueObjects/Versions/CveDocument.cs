@@ -47,6 +47,9 @@ public class AffectedItem
     public required string Product { get; set; }
     public required string Vendor { get; set; }
     
+    public List<string>? Platforms { get; set; }
+    public string? DefaultStatus { get; set; } 
+    
     [UsedImplicitly]
     public List<VersionInfo> Versions { get; set; } = [];
 }
@@ -58,6 +61,8 @@ public class VersionInfo
     public string VersionType { get; set; } = null!;
     public string? LessThan { get; set; }
     public string? LessThanOrEqual { get; set; }
+    
+    public List<VersionChange>? Changes { get; set; }
 
     public override string ToString()
     {
@@ -67,4 +72,10 @@ public class VersionInfo
                 ? $"[LessThan = {LessThan}]" 
                 : $"[Version = {Version}]";
     }
+}
+
+public class VersionChange
+{
+    public required string At { get; set; }
+    public required string Status { get; set; }
 }

@@ -368,7 +368,10 @@ const StatusBadge: React.FC<{ status: VulnerablePackageStatus }> = ({
 
 const PackageListItem: React.FC<{ item: PackageInfo }> = ({ item }) => (
   <li className="flex justify-between items-center py-2 border-b border-black/5 dark:border-white/5 last:border-0">
-    <span className="font-medium text-gray-800 dark:text-gray-200 truncate pr-2">
+    <span
+      className="font-medium text-gray-800 dark:text-gray-200 truncate pr-2"
+      title={`${item.name}`}
+    >
       {item.name}
     </span>
     <span className="text-gray-500 dark:text-gray-400 font-mono text-xs bg-black/5 dark:bg-white/5 px-1.5 py-0.5 rounded">
@@ -388,7 +391,7 @@ const VulnListItem: React.FC<{ item: VulnerablePackage }> = ({ item }) => (
     <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400 mt-0.5">
       <span
         className="truncate pr-2"
-        title={`Package ID: ${item.packageInfoId}`}
+        title={`Package ID: ${item.packageInfoId}. Name: ${item.packageName}`}
       >
         {item.packageName}
       </span>

@@ -7,7 +7,7 @@ namespace ScanVul.Agent.Services.PackageManagers;
 /// </summary>
 public class RpmPackageManager(ILogger<RpmPackageManager> logger) : IPackageManager
 {
-    public async Task UpgradePackageAsync(string packageName, CancellationToken ct = default)
+    public async Task UpgradePackageAsync(string packageName, string? packageVersion, CancellationToken ct = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(packageName);
         

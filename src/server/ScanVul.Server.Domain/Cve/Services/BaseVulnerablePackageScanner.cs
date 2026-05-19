@@ -3,6 +3,7 @@ using ScanVul.Server.Domain.AgentAggregate.Entities;
 using ScanVul.Server.Domain.AgentAggregate.Enums;
 using ScanVul.Server.Domain.AgentAggregate.Services;
 using ScanVul.Server.Domain.Common;
+using OperatingSystem = ScanVul.Server.Domain.AgentAggregate.Enums.OperatingSystem;
 
 namespace ScanVul.Server.Domain.Cve.Services;
 
@@ -18,12 +19,23 @@ public abstract class BaseVulnerablePackageScanner<TVulnPkg>(
         VulnerablePackageStatus.Patchless,
         VulnerablePackageStatus.Fixed,
     ];
+
+    /// <summary>
+    /// OSes with relaxed (not strict) package names (e.g. in Linux distributions package managers have strict package names, but Uninstall registers on Windows - not)
+    /// </summary>
+    // ReSharper disable once StaticMemberInGenericType
+    protected static readonly IReadOnlySet<OperatingSystem> SystemsWithRelaxedPackageNames = new HashSet<OperatingSystem>
+    {
+        OperatingSystem.Windows,
+    };
     
     public async Task ScanAsync(long computerId, CancellationToken ct = default)
     {
         try
         {
             await ScanInternalAsync(computerId, ct);
+            
+            await PostScanAsync(computerId, ct);
         }
         catch (Exception ex)
         {
@@ -61,13 +73,23 @@ public abstract class BaseVulnerablePackageScanner<TVulnPkg>(
         CancellationToken ct = default);
 
     /// <summary>
+    /// Things to do after scan
+    /// </summary>
+    /// <param name="computerId">Computer ID</param>
+    /// <param name="ct">Cancellation token</param>
+    protected virtual Task PostScanAsync(long computerId, CancellationToken ct)
+    {
+        return Task.CompletedTask;
+    }
+    
+    /// <summary>
     /// Get not rolling packages (rolling package means package that was existed on computer and updated) 
     /// </summary>
     /// <param name="removedVulnerablePackages">Removed vulnerable packages</param>
     /// <param name="addedVulnerablePackages">Added vulnerable packages</param>
     /// <param name="existingPackageStatuses">Dictionary with existing vulnerable packages: (name, vuln_id) => status</param>
     /// <returns>Tuple with not rolling packages</returns>
-    private (
+    private static (
         List<TVulnPkg> NotRollingRemoved,
         List<TVulnPkg> NotRollingAdded
         ) GetNotRollingPackages(

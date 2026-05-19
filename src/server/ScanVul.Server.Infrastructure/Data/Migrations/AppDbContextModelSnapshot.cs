@@ -20,7 +20,7 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.6")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -302,6 +302,12 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
 
                                     b2.Property<long>("PackageInfoId");
 
+                                    b2.Property<string>("PackageName")
+                                        .IsRequired();
+
+                                    b2.Property<string>("PackageVersion")
+                                        .IsRequired();
+
                                     b2.Property<int>("Status");
 
                                     b2.Property<string>("VulnerabilityId")
@@ -331,6 +337,12 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
 
                                     b2.Property<long>("PackageInfoId");
 
+                                    b2.Property<string>("PackageName")
+                                        .IsRequired();
+
+                                    b2.Property<string>("PackageVersion")
+                                        .IsRequired();
+
                                     b2.Property<int>("Status");
 
                                     b2.Property<string>("VulnerabilityId")
@@ -346,6 +358,12 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                                     b2.Property<long>("Id");
 
                                     b2.Property<long>("PackageInfoId");
+
+                                    b2.Property<string>("PackageName")
+                                        .IsRequired();
+
+                                    b2.Property<string>("PackageVersion")
+                                        .IsRequired();
 
                                     b2.Property<int>("Status");
 
@@ -375,6 +393,12 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                                     b2.Property<long>("Id");
 
                                     b2.Property<long>("PackageInfoId");
+
+                                    b2.Property<string>("PackageName")
+                                        .IsRequired();
+
+                                    b2.Property<string>("PackageVersion")
+                                        .IsRequired();
 
                                     b2.Property<int>("Status");
 
@@ -436,6 +460,12 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
 
                             b1.Property<long>("PackageInfoId");
 
+                            b1.Property<string>("PackageName")
+                                .IsRequired();
+
+                            b1.Property<string>("PackageVersion")
+                                .IsRequired();
+
                             b1.Property<int>("Status");
 
                             b1.Property<string>("VulnerabilityId")
@@ -472,6 +502,12 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                             b1.Property<long>("Id");
 
                             b1.Property<long>("PackageInfoId");
+
+                            b1.Property<string>("PackageName")
+                                .IsRequired();
+
+                            b1.Property<string>("PackageVersion")
+                                .IsRequired();
 
                             b1.Property<int>("Status");
 
@@ -562,6 +598,10 @@ namespace ScanVul.Server.Infrastructure.Data.Migrations
                         .HasColumnType("tsvector")
                         .HasColumnName("search_vector")
                         .HasComputedColumnSql("to_tsvector('english', coalesce(\"name\", '') || ' ' || coalesce(\"id\", ''))", true);
+
+                    b.PrimitiveCollection<List<string>>("Versions")
+                        .HasColumnType("text[]")
+                        .HasColumnName("versions");
 
                     b.HasKey("Id")
                         .HasName("pk_winget_packages");

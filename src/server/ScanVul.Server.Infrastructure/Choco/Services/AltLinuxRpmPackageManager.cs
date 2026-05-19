@@ -69,7 +69,8 @@ public class AltLinuxRpmPackageManager(
             Name: pkg.Name,
             Url: packageUrl,
             LastVersion: fullVersion,
-            Summary: pkg.Summary ?? string.Empty
+            Summary: pkg.Summary ?? string.Empty,
+            Versions: [fullVersion]
         );
     }
 

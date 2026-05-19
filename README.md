@@ -77,14 +77,15 @@
   - [x] endpoint like for CVE
   - [x] block on frontend with BDU
 - [x] change format of BDU documents' soft version info to like CVE documents'
-- [ ] find more appropriate package searching method [link](https://docs.opensearch.org/latest/query-dsl/term/index/)
-- [ ] rework version matching and comparing
+- [x] find more appropriate package searching method [link](https://docs.opensearch.org/latest/query-dsl/term/index/)
+  - [ ] *sanitizer should return more variants*
+- [x] rework version matching and comparing
   - [x] bdu: check package name firstly, after version
   - [x] bdu: BaseVersion with only numbers
   - [x] bdu: if BaseVersion with only numbers: i can check for equality
-- [ ] test
+- [x] test
   - [x] has vulnerability → update → no vulnerability
-  - [ ] version matching and comparing (unit tests)
+  - [x] version matching and comparing
 - [x] links to package managers as options **{not planned}**
 - [x] winget
   - [x] package manager searching
@@ -110,6 +111,7 @@
   - [x] snapshot and diff summary
   - [x] frontend: block right to commands with snapshot summary + diff summary, when clicking to snapshot, modal with info
   - [ ] *snapshot diffs for all organization's agents (to pdf)*
-- [ ] choose version to update
+- [x] choose version to update
 - [x] scan inventarized packages without sending command
+- [x] bulk change status of vulnerable package only by package (currently for all vulnerability you need to change status)
 

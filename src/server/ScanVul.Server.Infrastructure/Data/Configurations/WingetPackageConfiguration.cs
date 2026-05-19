@@ -10,6 +10,9 @@ public class WingetPackageConfiguration : IEntityTypeConfiguration<WingetPackage
     public void Configure(EntityTypeBuilder<WingetPackage> builder)
     {
         builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Versions)
+            .IsRequired(false);
         
         builder.Property<NpgsqlTsVector>("SearchVector")
             .HasComputedColumnSql(

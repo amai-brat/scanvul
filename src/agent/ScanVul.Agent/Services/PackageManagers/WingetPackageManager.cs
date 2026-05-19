@@ -20,7 +20,7 @@ public class WingetPackageManager(
     private const int NoAppsFoundCode = -1978335212;
     private const int NoUpdateAvailableCode = -1978335189;
     
-    public async Task UpgradePackageAsync(string packageName, CancellationToken ct = default)
+    public async Task UpgradePackageAsync(string packageName, string? packageVersion, CancellationToken ct = default)
     {
         using var runspace = RunspaceFactory.CreateRunspace();
         // ReSharper disable once MethodHasAsyncOverload
@@ -59,6 +59,7 @@ public class WingetPackageManager(
                     .WithExactMatch()
                     .WithIncludeUnknown()
                     .WithId(packageName)
+                    .WithVersion(packageVersion)
                     .Build();
                 
                 (exitCode, message) = await RunCommandAsync(ps, installCommand);

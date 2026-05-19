@@ -6,6 +6,7 @@ export interface PackageMetadata {
   url: string;
   lastVersion: string;
   summary: string;
+  versions: string[];
 }
 
 export interface SearchPackageResponse {

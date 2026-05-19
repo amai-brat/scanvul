@@ -29,11 +29,13 @@ public static class Entry
         if (environment.IsDevelopment())
         {
             settings = settings.ServerCertificateValidationCallback((_, _, _, _) => true);
+            settings = settings.DisableDirectStreaming();
+            settings = settings.RequestTimeout(TimeSpan.FromMinutes(30));
         }
         
         services.AddSingleton<IOpenSearchClient>(_ => new OpenSearchClient(settings));
         services.AddScoped<IOpenSearchFiller, OpenSearchFiller>();
-        services.AddScoped<ICveRepository, CveRepository>();
+        services.AddScoped<ICveRepository, CveRepositoryV2>();
         services.AddScoped<IBduRepository, BduRepository>();
         
         return services;

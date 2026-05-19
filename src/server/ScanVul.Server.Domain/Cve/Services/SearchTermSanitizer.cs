@@ -2,8 +2,10 @@ using System.Text.RegularExpressions;
 
 namespace ScanVul.Server.Domain.Cve.Services;
 
-public partial class SearchTermSanitizer
+public partial class SearchTermSanitizer : ISearchTermSanitizer
 {
+    private static readonly char[] TrimmedAffixes = ['-', '_', ' '];
+    
     [GeneratedRegex(@"\s*\([^)]*\)")]
     private static partial Regex ParenthesesWithContentRegex { get; }
     
@@ -13,10 +15,10 @@ public partial class SearchTermSanitizer
     [GeneratedRegex(@"\s+v?\d+(?:\.\d+)*$")]
     private static partial Regex VersionLikeRegex { get; }
     
-    public static string SanitizePackageName(string? name)
+    public string SanitizePackageName(string? name)
     {
         if (string.IsNullOrWhiteSpace(name))
-            return name?.Trim() ?? string.Empty;
+            return name ?? string.Empty;
 
         // Remove parentheses and their content
         var result = ParenthesesWithContentRegex.Replace(name, string.Empty);
@@ -28,6 +30,6 @@ public partial class SearchTermSanitizer
         // Remove any remaining version-like patterns not at the end
         result = VersionLikeRegex.Replace(result, string.Empty);
         
-        return result.Trim();
+        return result.Trim().Trim(TrimmedAffixes).Trim();
     }
 }

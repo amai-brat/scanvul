@@ -7,7 +7,9 @@ using ScanVul.Server.Domain.Cve.ValueObjects.Versions;
 
 namespace ScanVul.Server.Infrastructure.OpenSearch.Repositories;
 
-public class BduRepository(IOpenSearchClient client) : IBduRepository
+public class BduRepository(
+    ISearchTermSanitizer sanitizer,
+    IOpenSearchClient client) : IBduRepository
 {
     private const int MaxResults = 10000;
 
@@ -15,7 +17,7 @@ public class BduRepository(IOpenSearchClient client) : IBduRepository
         PackageInfo packageInfo, 
         CancellationToken ct = default)
     {
-        var sanitizedPackageName = SearchTermSanitizer.SanitizePackageName(packageInfo.Name);
+        var sanitizedPackageName = sanitizer.SanitizePackageName(packageInfo.Name);
         if (string.IsNullOrWhiteSpace(sanitizedPackageName))
             return [];
         

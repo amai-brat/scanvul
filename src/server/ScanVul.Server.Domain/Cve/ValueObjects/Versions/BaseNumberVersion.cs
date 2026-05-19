@@ -12,6 +12,7 @@ public class BaseNumberVersion : IVersion
     private static readonly char[] Separators = [',', '.', '~', '-', ':', ' ', '\t', '\n', '\r'];
     
     public IReadOnlyList<long> Segments { get; }
+    public string OriginalVersionString { get; private init; } = string.Empty;
     public VersionType Type => VersionType.BaseNumber;
     
     private BaseNumberVersion(IReadOnlyList<long> segments)
@@ -30,7 +31,6 @@ public class BaseNumberVersion : IVersion
         
         if (strSegments.Length == 0)
             return false;
-
         
         List<long> segments = [];
         foreach (var strSegment in strSegments)
@@ -41,7 +41,10 @@ public class BaseNumberVersion : IVersion
             segments.Add(segment);
         }
         
-        output = new BaseNumberVersion(segments);
+        output = new BaseNumberVersion(segments)
+        {
+            OriginalVersionString = version
+        };
         return true;
     }
 

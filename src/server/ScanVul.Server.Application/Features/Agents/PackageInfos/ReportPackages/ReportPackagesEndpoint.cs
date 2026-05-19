@@ -132,8 +132,8 @@ public class ReportPackagesEndpoint(
         List<PackageInfo> addedPackages,
         CancellationToken ct = default)
     {
-        cache.Set(CacheKeys.AddedVulnerablePackages(computerId), addedPackages);
-        cache.Set(CacheKeys.RemovedVulnerablePackages(computerId), removedPackages);
+        cache.Set(CacheKeys.AddedPackages(computerId), addedPackages);
+        cache.Set(CacheKeys.RemovedPackages(computerId), removedPackages);
         
         return Task.CompletedTask;
     }
