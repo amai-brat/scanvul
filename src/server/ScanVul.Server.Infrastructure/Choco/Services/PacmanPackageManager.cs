@@ -50,7 +50,8 @@ public class PacmanPackageManager(
             Name: pkg.PkgName,
             Url: packageUrl, 
             LastVersion: fullVersion,
-            Summary: pkg.PkgDesc
+            Summary: pkg.PkgDesc,
+            Versions: [fullVersion]
         );
     }
 

@@ -6,7 +6,14 @@ namespace ScanVul.Agent.Services.PackageManagers;
 public class ChocoPackageManager(
     ILogger<ChocoPackageManager> logger) : IPackageManager
 {
-    public async Task UpgradePackageAsync(string packageName, CancellationToken ct = default)
+    private static string GetVersionArguments(string? packageVersion)
+    {
+        if (string.IsNullOrWhiteSpace(packageVersion)) return string.Empty;
+
+        return $"--version {packageVersion} --allow-downgrade";
+    }
+    
+    public async Task UpgradePackageAsync(string packageName, string? packageVersion, CancellationToken ct = default)
     {
         using var runspace = RunspaceFactory.CreateRunspace();
         // ReSharper disable once MethodHasAsyncOverload
@@ -15,7 +22,7 @@ public class ChocoPackageManager(
         using var ps = PowerShell.Create();
         ps.Runspace = runspace;
 
-        ps.AddScript($"choco upgrade {packageName} -y --fail-on-unfound 2>&1; $LASTEXITCODE");
+        ps.AddScript($"choco upgrade {packageName} {GetVersionArguments(packageVersion)} -y --fail-on-unfound 2>&1; $LASTEXITCODE");
         
         var results = await ps.InvokeAsync();
         var lastResult = results.LastOrDefault();

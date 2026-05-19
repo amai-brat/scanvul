@@ -15,6 +15,7 @@ public static class Mapping
                 new UpgradePackageCommand(
                     command.Id, 
                     upgradePackageCommandBody.PackageName, 
+                    upgradePackageCommandBody.PackageVersion, 
                     upgradePackageCommandBody.PackageManager),
             DisableAgentCommandBody => new DisableAgentCommand(command.Id),
             _ => throw new ArgumentOutOfRangeException(nameof(command), command, null)

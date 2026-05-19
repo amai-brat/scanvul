@@ -15,7 +15,10 @@ public class ChocoPackageManager : IPackageManager
     {
         var logger = NullLogger.Instance;
         
-        var source = new PackageSource(ChocolateyFeedUrl);
+        var source = new PackageSource(ChocolateyFeedUrl)
+        {
+            AllowInsecureConnections = true
+        };
         var repository = Repository.Factory.GetCoreV3(source);
 
         var searchResource = await repository.GetResourceAsync<PackageSearchResource>(ct);
@@ -26,15 +29,26 @@ public class ChocoPackageManager : IPackageManager
                 take: 5, 
                 logger, 
                 ct);
-        
-        return searchResults
-            .Select(x => new PackageMetadata(
-                Name: x.Title, 
-                Url: x.PackageDetailsUrl.ToString(),
-                LastVersion: x.Identity.Version?.OriginalVersion
-                             ?? x.Identity.Version?.Version.ToString()
-                             ?? "<unknown>", 
-                Summary: x.Summary))
-            .ToList();
+
+        var tasks = searchResults
+            .Select(async x =>
+            {
+                var versions = await x.GetVersionsAsync();
+
+                return new PackageMetadata(
+                    Name: x.Title,
+                    Url: x.PackageDetailsUrl.ToString(),
+                    LastVersion: x.Identity.Version?.OriginalVersion
+                                 ?? x.Identity.Version?.Version.ToString()
+                                 ?? "<unknown>",
+                    Summary: x.Summary,
+                    Versions: versions
+                        .Select(v => v.Version.Version.ToString())
+                        .Where(v => !string.IsNullOrWhiteSpace(v))
+                        .ToList());
+            });
+
+        var arr = await Task.WhenAll(tasks);
+        return arr.ToList();
     }
 }

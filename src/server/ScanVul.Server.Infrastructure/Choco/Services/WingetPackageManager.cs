@@ -27,7 +27,8 @@ public class WingetPackageManager(AppDbContext dbContext) : IPackageManager
                 Name: p.Id, 
                 Url: GetWingetPackageUrlFromGithub(p.Name),
                 LastVersion:  p.LastVersion ?? "<unknown>",
-                Summary: $"Package name in Winget: {p.Name}"))
+                Summary: $"Package name in Winget: {p.Name}",
+                Versions: p.Versions))
             .ToList();
     }
 
