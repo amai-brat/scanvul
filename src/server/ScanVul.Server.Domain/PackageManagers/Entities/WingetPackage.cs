@@ -10,4 +10,6 @@ public class WingetPackage
 
     public long? LastVersionRowId { get; set; }
     public string? LastVersion { get; set; }
+    
+    public List<string> Versions { get; set; } = []; 
 }
