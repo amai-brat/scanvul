@@ -100,10 +100,6 @@ public abstract class BaseVulnerablePackageScanner<TVulnPkg>(
         List<TVulnPkg> notRollingRemoved = [];
         foreach (var vulnPkg in removedVulnerablePackages)
         {
-            // exists => rolling
-            if (existingPackageStatuses.TryGetValue((vulnPkg.PackageInfo.Name, vulnPkg.VulnerabilityId), out _)) 
-                continue;
-            
             notRollingRemoved.Add(vulnPkg);
         }
         

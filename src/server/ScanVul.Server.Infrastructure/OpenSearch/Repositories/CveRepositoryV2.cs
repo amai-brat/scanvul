@@ -89,7 +89,7 @@ public class CveRepositoryV2(
     {
         var searchRequest = new SearchRequest("cve-ng-index")
         {
-            Size = MaxResults,
+            Size = 10000,
             Query = new TermsQuery
             {
                 Field = "payload.cveMetadata.cveId.keyword",
